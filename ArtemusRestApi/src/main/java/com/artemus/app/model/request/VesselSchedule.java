@@ -2,8 +2,8 @@ package com.artemus.app.model.request;
 
 public class VesselSchedule {
 
-	private String lloydsCode;
-	private String voyageNum;
+	private String vesselName;
+	private String voyageNumber;
 
 	private String countryOfOrigin;
 	private String placeOfReceipt;
@@ -16,37 +16,22 @@ public class VesselSchedule {
 	// -------------------------------
 	private int vesselId;
 	private int voyageId;
+	private String lloydsCode;
 
-	public int getVesselId() {
-		return vesselId;
+	public String getVesselName() {
+		return vesselName;
 	}
 
-	public void setVesselId(int vesselId) {
-		this.vesselId = vesselId;
+	public void setVesselName(String vesselName) {
+		this.vesselName = vesselName;
 	}
 
-	public int getVoyageId() {
-		return voyageId;
+	public String getVoyageNumber() {
+		return voyageNumber;
 	}
 
-	public void setVoyageId(int voyageId) {
-		this.voyageId = voyageId;
-	}
-
-	public String getLloydsCode() {
-		return lloydsCode;
-	}
-
-	public void setLloydsCode(String lloydsCode) {
-		this.lloydsCode = lloydsCode;
-	}
-
-	public String getVoyageNum() {
-		return voyageNum;
-	}
-
-	public void setVoyageNum(String voyageNum) {
-		this.voyageNum = voyageNum;
+	public void setVoyageNumber(String voyageNumber) {
+		this.voyageNumber = voyageNumber;
 	}
 
 	public String getCountryOfOrigin() {
@@ -103,6 +88,84 @@ public class VesselSchedule {
 
 	public void setMoveType(String moveType) {
 		this.moveType = moveType;
+	}
+
+	public int getVesselId() {
+		return vesselId;
+	}
+
+	public void setVesselId(int vesselId) {
+		this.vesselId = vesselId;
+	}
+
+	public int getVoyageId() {
+		return voyageId;
+	}
+
+	public void setVoyageId(int voyageId) {
+		this.voyageId = voyageId;
+	}
+
+	public String getLloydsCode() {
+		return lloydsCode;
+	}
+
+	public void setLloydsCode(String lloydsCode) {
+		this.lloydsCode = lloydsCode;
+	}
+
+	public StringBuffer validateVesselSchedule() {
+		StringBuffer objVesselMessage = new StringBuffer();
+		if (moveType == null || moveType.isEmpty()) {
+			if (objVesselMessage.length() > 0) {
+				objVesselMessage.append(",");
+			}
+			objVesselMessage.append("moveType");
+		}
+		if (countryOfOrigin == null || countryOfOrigin.isEmpty()) {
+			if (objVesselMessage.length() > 0) {
+				objVesselMessage.append(",");
+			}
+			objVesselMessage.append("countryOfOrigin");
+		}
+		if (placeOfReceipt == null || placeOfReceipt.isEmpty()) {
+			if (objVesselMessage.length() > 0) {
+				objVesselMessage.append(",");
+			}
+			objVesselMessage.append("placeOfReceipt");
+		}
+		if (vesselName == null || vesselName.isEmpty()) {
+			if (objVesselMessage.length() > 0) {
+				objVesselMessage.append(",");
+			}
+			objVesselMessage.append("vesselName");
+		}
+		if (portOfDischarge == null || portOfDischarge.isEmpty()) {
+			if (objVesselMessage.length() > 0) {
+				objVesselMessage.append(",");
+			}
+			objVesselMessage.append("portOfDischarge");
+		}
+		if (voyageNumber == null || voyageNumber.isEmpty()) {
+			if (objVesselMessage.length() > 0) {
+				objVesselMessage.append(",");
+			}
+			objVesselMessage.append("voyageNumber");
+		}
+		if (portOfLoading == null || portOfLoading.isEmpty()) {
+			if (objVesselMessage.length() > 0) {
+				objVesselMessage.append(",");
+			}
+			objVesselMessage.append("portOfLoading");
+		}
+		if (placeOfDelivery == null || placeOfDelivery.isEmpty()) {
+			if (objVesselMessage.length() > 0) {
+				objVesselMessage.append(",");
+			}
+			objVesselMessage.append("placeOfDelivery");
+		}
+				
+		return objVesselMessage;
 	}
 
 }

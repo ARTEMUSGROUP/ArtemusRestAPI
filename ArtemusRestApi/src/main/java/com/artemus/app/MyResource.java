@@ -13,7 +13,7 @@ import com.artemus.app.annotations.Secured;
  */
 @Path("myresource")
 public class MyResource {
-	@Secured
+
     @GET
     @Produces({MediaType.APPLICATION_JSON})
     public Response getIt() {

@@ -5,7 +5,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class BillHeader {
-
 	private String billOfLading;
 	private String billType;
 	private String hblScac;

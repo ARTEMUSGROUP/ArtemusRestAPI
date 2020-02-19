@@ -94,5 +94,12 @@ public class AddressInfo {
 	public void setFaxNo(String faxNo) {
 		this.faxNo = faxNo;
 	}
+	
+	public String validateAddressInfo() {
+		String objAddressInfoMessage = "";
+		if(addressLine1==null || addressLine1.isEmpty())
+			objAddressInfoMessage=" addressLine1 ";
+		return objAddressInfoMessage;
+	}
 
 }

@@ -119,5 +119,16 @@ public class Package {
 	public void setDrainage(ValueUnit drainage) {
 		this.drainage = drainage;
 	}
+	
+	public StringBuffer validatePackage() {
+		StringBuffer objString = new StringBuffer();
+		if(packageType==null||packageType.isEmpty()) {
+			if (objString.length() > 0) {
+				objString.append(",");
+			}
+			objString.append("packageType");
+		}
+		return objString;
+	}
 
 }
