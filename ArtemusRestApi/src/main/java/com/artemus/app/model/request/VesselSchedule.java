@@ -2,7 +2,7 @@ package com.artemus.app.model.request;
 
 public class VesselSchedule {
 
-	private String lloydsCode;
+	private String vesselName;
 	private String voyageNum;
 
 	private String countryOfOrigin;
@@ -16,6 +16,7 @@ public class VesselSchedule {
 	// -------------------------------
 	private int vesselId;
 	private int voyageId;
+	private String lloydsCode;
 
 	public int getVesselId() {
 		return vesselId;

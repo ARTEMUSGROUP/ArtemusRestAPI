@@ -1,8 +1,21 @@
 package com.artemus.app.model.request;
 
 public class Party {
+	
 	private String name;
 	private AddressInfo addressInfo;
+
+	// -----------------
+	private int customerId;
+	
+
+	public int getCustomerId() {
+		return customerId;
+	}
+
+	public void setCustomerId(int customerId) {
+		this.customerId = customerId;
+	}
 
 	public String getName() {
 		return name;

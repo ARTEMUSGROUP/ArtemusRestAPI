@@ -38,6 +38,17 @@ public class BillHeader {
 
 	// Bill Update
 	private boolean isBillUpdate;
+	
+	//-----------------------------------------
+	private String loginScac;
+
+	public String getLoginScac() {
+		return loginScac;
+	}
+
+	public void setLoginScac(String loginScac) {
+		this.loginScac = loginScac;
+	}
 
 	public String getBillOfLading() {
 		return billOfLading;

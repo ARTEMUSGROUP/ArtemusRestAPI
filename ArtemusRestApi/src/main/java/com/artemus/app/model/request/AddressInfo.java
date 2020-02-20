@@ -12,8 +12,61 @@ public class AddressInfo {
 	private String faxNo;
 	//-------------------
 	private int addressId;
+	private String entityType;	
+	private String entityNumber;	
+	private String createdUser;
+	private String createdDate;
+	private String dob;
+	private String countryOfIssuance;
 	
-	
+
+	public String getEntityType() {
+		return entityType;
+	}
+
+	public void setEntityType(String entityType) {
+		this.entityType = entityType;
+	}
+
+	public String getEntityNumber() {
+		return entityNumber;
+	}
+
+	public void setEntityNumber(String entityNumber) {
+		this.entityNumber = entityNumber;
+	}
+
+	public String getCreatedUser() {
+		return createdUser;
+	}
+
+	public void setCreatedUser(String createdUser) {
+		this.createdUser = createdUser;
+	}
+
+	public String getCreatedDate() {
+		return createdDate;
+	}
+
+	public void setCreatedDate(String createdDate) {
+		this.createdDate = createdDate;
+	}
+
+	public String getDob() {
+		return dob;
+	}
+
+	public void setDob(String dob) {
+		this.dob = dob;
+	}
+
+	public String getCountryOfIssuance() {
+		return countryOfIssuance;
+	}
+
+	public void setCountryOfIssuance(String countryOfIssuance) {
+		this.countryOfIssuance = countryOfIssuance;
+	}
 
 	public int getAddressId() {
 		return addressId;
