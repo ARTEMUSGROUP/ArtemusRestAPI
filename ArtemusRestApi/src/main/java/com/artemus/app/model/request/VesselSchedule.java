@@ -128,12 +128,12 @@ public class VesselSchedule {
 			}
 			objVesselMessage.append("countryOfOrigin");
 		}
-		if (placeOfReceipt == null || placeOfReceipt.isEmpty()) {
-			if (objVesselMessage.length() > 0) {
-				objVesselMessage.append(",");
-			}
-			objVesselMessage.append("placeOfReceipt");
-		}
+//		if (placeOfReceipt == null || placeOfReceipt.isEmpty()) {
+//			if (objVesselMessage.length() > 0) {
+//				objVesselMessage.append(",");
+//			}
+//			objVesselMessage.append("placeOfReceipt");
+//		}
 		if (vesselName == null || vesselName.isEmpty()) {
 			if (objVesselMessage.length() > 0) {
 				objVesselMessage.append(",");
@@ -158,12 +158,12 @@ public class VesselSchedule {
 			}
 			objVesselMessage.append("portOfLoading");
 		}
-		if (placeOfDelivery == null || placeOfDelivery.isEmpty()) {
-			if (objVesselMessage.length() > 0) {
-				objVesselMessage.append(",");
-			}
-			objVesselMessage.append("placeOfDelivery");
-		}
+//		if (placeOfDelivery == null || placeOfDelivery.isEmpty()) {
+//			if (objVesselMessage.length() > 0) {
+//				objVesselMessage.append(",");
+//			}
+//			objVesselMessage.append("placeOfDelivery");
+//		}
 				
 		return objVesselMessage;
 	}

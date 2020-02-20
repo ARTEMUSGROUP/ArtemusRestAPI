@@ -8,7 +8,6 @@ import java.sql.SQLException;
 import com.artemus.app.connection.DBConnectionFactory;
 
 public class AuthenticationDAO {
-
 	Connection conn = null;
 	ResultSet rs = null;
 	PreparedStatement pstmt = null;
@@ -43,7 +42,5 @@ public class AuthenticationDAO {
 		}
 		return isChecked;
 	}
-	
-
 
 }

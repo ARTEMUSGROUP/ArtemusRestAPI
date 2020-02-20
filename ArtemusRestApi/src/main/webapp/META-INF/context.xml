@@ -7,7 +7,7 @@
 		maxIdle="30" 
 		maxWait="10000" 
 		username="root" 
-		password="@ss123" 
+		password="pretoriu@98335" 
 		driverClassName="com.mysql.cj.jdbc.Driver" 
-		url="jdbc:mysql://localhost:3307/artemus?autoReconnect=true"/>
+		url="jdbc:mysql://localhost:3306/artemus?autoReconnect=true"/>
 </Context>

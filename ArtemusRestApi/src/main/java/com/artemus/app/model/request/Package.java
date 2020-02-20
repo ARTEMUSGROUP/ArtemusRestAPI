@@ -4,7 +4,7 @@ public class Package {
 
 	private String packageType;
 	private String marks;
-	private int pieces;
+	private String pieces;
 	private ValueUnit weight;
 	private ValueUnit volume;
 	private ValueUnit length;
@@ -32,11 +32,11 @@ public class Package {
 		this.marks = marks;
 	}
 
-	public int getPieces() {
+	public String getPieces() {
 		return pieces;
 	}
 
-	public void setPieces(int pieces) {
+	public void setPieces(String pieces) {
 		this.pieces = pieces;
 	}
 
