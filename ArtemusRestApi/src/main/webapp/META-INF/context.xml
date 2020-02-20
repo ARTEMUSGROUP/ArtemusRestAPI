@@ -9,5 +9,5 @@
 		username="root" 
 		password="@ss123" 
 		driverClassName="com.mysql.cj.jdbc.Driver" 
-		url="jdbc:mysql://localhost:3306/artemus?autoReconnect=true"/>
+		url="jdbc:mysql://localhost:3307/artemus?autoReconnect=true"/>
 </Context>

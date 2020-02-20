@@ -14,7 +14,7 @@ public class AuthenticationDAO {
 	PreparedStatement pstmt = null;
 	
 	public AuthenticationDAO() {
-		conn = DBConnectionFactory.getConnectionFromUtils();
+		conn = DBConnectionFactory.getConnection();;
 	}
 
 	public void closeAll() {
