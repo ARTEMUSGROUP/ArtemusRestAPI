@@ -79,11 +79,6 @@ public class CustomerProfileDAO {
 			}
 		}
 		
-		if(customerGen)
-		{
-			
-		}
-		
 	}
 	
 	public void setAddressInfo(Party partyBean) {
