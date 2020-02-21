@@ -41,7 +41,7 @@ public class Equipment {
 		this.packages = packages;
 	}
 
-	public ArrayList<Cargo> getCargos() {
+	public ArrayList<Cargo> getCargos() {	
 		return cargos;
 	}
 
@@ -64,23 +64,35 @@ public class Equipment {
 			objString.append("equipmentType");
 		}
 		
-		int packageCount=0;
-		StringBuffer objPackageMsg = new StringBuffer();
-		for (Package objPackage : this.getPackages()) {
-			String str =  objPackage.validatePackage().toString();
-			if(str.length()>0) {
-				objPackageMsg.append(packageCount+": {"+str+"}");
-			}
-			packageCount++;
-		}
-		
-		if (objPackageMsg.length()>0) {
+		if(packages==null||packages.isEmpty()) {
 			if (objString.length() > 0) {
 				objString.append(",");
 			}
-			objString.append("packages : { "+objPackageMsg+" }");
+			objString.append("packages");
+		}else {
+			int packageCount=0;
+			StringBuffer objPackageMsg = new StringBuffer();
+			for (Package objPackage : this.getPackages()) {
+				String str =  objPackage.validatePackage().toString();
+				if(str.length()>0) {
+					objPackageMsg.append(packageCount+": {"+str+"}");
+				}
+				packageCount++;
+			}
+			if (objPackageMsg.length()>0) {
+				if (objString.length() > 0) {
+					objString.append(",");
+				}
+				objString.append("packages : { "+objPackageMsg+" }");
+			}
 		}
 		
+		if(cargos==null||cargos.isEmpty()) {
+			if (objString.length() > 0) {
+				objString.append(",");
+			}
+			objString.append("cargos: must not be empty ");
+		}
 		
 		return objString;
 	}

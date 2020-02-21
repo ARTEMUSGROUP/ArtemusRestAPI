@@ -9,6 +9,7 @@ import com.artemus.app.model.request.Equipment;
 
 public class BillHeaderUtils {
 	public void validateRequiredFields(BillHeader objBillHeader) throws MissingRequiredFieldException {
+		System.out.println("validateRequiredFields :: ");
 		StringBuffer objMessage = new StringBuffer();
 
 		if (objBillHeader.getBillOfLading() == null || objBillHeader.getBillOfLading().isEmpty()) {
@@ -25,9 +26,10 @@ public class BillHeaderUtils {
 			}
 			objMessage.append("billType");
 		} else {
-			if (!objBillHeader.getBillType().equalsIgnoreCase("way bill")
-					|| !objBillHeader.getBillType().equalsIgnoreCase("empty")
-					|| !objBillHeader.getBillType().equalsIgnoreCase("Original")) {
+			if (objBillHeader.getBillType().equalsIgnoreCase("way bill")
+					|| objBillHeader.getBillType().equalsIgnoreCase("empty")
+					|| objBillHeader.getBillType().equalsIgnoreCase("Original")) {
+			}else {
 				if (objMessage.length() > 0) {
 					objMessage.append(",");
 				}
@@ -41,9 +43,10 @@ public class BillHeaderUtils {
 			}
 			objMessage.append("nvoType");
 		} else {
-			if (!objBillHeader.getNvoType().equalsIgnoreCase("non NVO")
-					|| !objBillHeader.getNvoType().equalsIgnoreCase("automated NVO")
-					|| !objBillHeader.getNvoType().equalsIgnoreCase("non automated NVO")) {
+			if (objBillHeader.getNvoType().equalsIgnoreCase("non NVO")
+					|| objBillHeader.getNvoType().equalsIgnoreCase("automated NVO")
+					|| objBillHeader.getNvoType().equalsIgnoreCase("non automated NVO")) {
+			}else {
 				if (objMessage.length() > 0) {
 					objMessage.append(",");
 				}
@@ -76,6 +79,21 @@ public class BillHeaderUtils {
 					objMessage.append(",");
 				}
 				objMessage.append("consignee:{ " + objConsigneerMessage + " }");
+			}
+		}
+		
+		if (objBillHeader.getNotify() == null) {
+			if (objMessage.length() > 0) {
+				objMessage.append(",");
+			}
+			objMessage.append("notify");
+		} else {
+			String objNotifyMessage = objBillHeader.getNotify().validateParty();
+			if (objNotifyMessage.length() > 0) {
+				if (objMessage.length() > 0) {
+					objMessage.append(",");
+				}
+				objMessage.append("notify:{ " + objNotifyMessage + " }");
 			}
 		}
 

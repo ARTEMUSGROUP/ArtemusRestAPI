@@ -49,8 +49,13 @@ public class CustomerProfileDAO {
 		}
 	}
 	
+	public Connection getConnection() {
+		return con;
+	}
+	
 	public boolean validateBillHeaderParties(BillHeader objBillHeader)
 	{
+		System.out.println("validateBillHeaderParties ::");
 		validateCustomer(objBillHeader.getShipper(), objBillHeader.getLoginScac());
 		validateCustomer(objBillHeader.getBookingParty(), objBillHeader.getLoginScac());
 		validateCustomer(objBillHeader.getSeller(), objBillHeader.getLoginScac());

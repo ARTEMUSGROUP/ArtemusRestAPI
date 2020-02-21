@@ -43,6 +43,9 @@ public class VesselSchedule {
 	}
 
 	public String getPlaceOfReceipt() {
+		if (placeOfReceipt == null || placeOfReceipt.isEmpty()) {
+			placeOfReceipt = "";
+		}
 		return placeOfReceipt;
 	}
 

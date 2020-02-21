@@ -18,7 +18,9 @@ public class MyResource {
     @GET
     @Produces({MediaType.APPLICATION_JSON})
     public Response getIt() {
-//    	DemoDAO objDao = new DemoDAO();
-		return Response.status(200).entity("Got it! ").build();
+    	DemoDAO objDao = new DemoDAO();
+    	String connString = objDao.getConnection();
+    	objDao.closeAll();
+		return Response.status(200).entity("Got it! "+connString).build();
     }
 }
