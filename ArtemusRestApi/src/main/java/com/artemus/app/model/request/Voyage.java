@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import com.github.reinert.jjschema.Attributes;
 
-
 @Attributes(title = "Voyage", description = "Defines a voyage.")
 public class Voyage {
 	
