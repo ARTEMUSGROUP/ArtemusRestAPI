@@ -4,6 +4,17 @@ public class Party {
 	private String name;
 	private AddressInfo addressInfo;
 
+	// -----------------------
+	private int customerId;
+	
+	public int getCustomerId() {
+		return customerId;
+	}
+
+	public void setCustomerId(int customerId) {
+		this.customerId = customerId;
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -20,4 +31,13 @@ public class Party {
 		this.addressInfo = addressInfo;
 	}
 
+	public String validateParty() {
+		String objPartyMessage = "";
+		if (name == null || name.isEmpty())
+			objPartyMessage = " name :, ";
+		String addressInfoMessage = addressInfo.validateAddressInfo();
+		if (addressInfoMessage.length() > 0)
+			objPartyMessage = objPartyMessage + " addressInfo:{" + addressInfoMessage+"}";
+		return objPartyMessage;
+	}
 }

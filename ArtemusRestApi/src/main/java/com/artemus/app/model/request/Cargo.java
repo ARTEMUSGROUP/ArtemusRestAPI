@@ -9,6 +9,8 @@ public class Cargo {
 	private String country;
 
 	public String getDescriptionsOfGoods() {
+		if (descriptionsOfGoods==null)
+			descriptionsOfGoods="";
 		return descriptionsOfGoods;
 	}
 
@@ -17,6 +19,8 @@ public class Cargo {
 	}
 
 	public String getHarmonizeCode() {
+		if(harmonizeCode==null)
+			harmonizeCode="";
 		return harmonizeCode;
 	}
 
@@ -25,6 +29,8 @@ public class Cargo {
 	}
 
 	public String getHazardCode() {
+		if(hazardCode==null)
+			hazardCode="";
 		return hazardCode;
 	}
 
@@ -33,6 +39,8 @@ public class Cargo {
 	}
 
 	public String getManufacturer() {
+		if(manufacturer==null)
+			manufacturer="";
 		return manufacturer;
 	}
 
@@ -41,6 +49,8 @@ public class Cargo {
 	}
 
 	public String getCountry() {
+		if(country==null)
+			country="";
 		return country;
 	}
 
