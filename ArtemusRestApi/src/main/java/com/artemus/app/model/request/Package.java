@@ -17,7 +17,10 @@ public class Package {
 	private ValueUnit drainage;
 
 	public String getPackageType() {
-		return packageType;
+		if(packageType==null)
+			return packageType;	
+		else	
+		return packageType.toUpperCase();
 	}
 
 	public void setPackageType(String packageType) {
@@ -28,7 +31,7 @@ public class Package {
 		if (marks == null) {
 			marks = "NO MARKS";
 		}
-		return marks;
+		return marks.toUpperCase();
 	}
 
 	public void setMarks(String marks) {
@@ -36,7 +39,10 @@ public class Package {
 	}
 
 	public String getPieces() {
-		return pieces;
+		if(pieces==null)
+			return pieces;
+		else
+		return pieces.toUpperCase();
 	}
 
 	public void setPieces(String pieces) {

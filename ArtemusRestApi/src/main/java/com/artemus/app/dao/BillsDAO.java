@@ -81,7 +81,11 @@ public class BillsDAO {
 			stmt.setString(3, "COMPLETE");
 			stmt.setString(4, objBillHeader.getBillType());
 			stmt.setString(5, objBillHeader.getHblScac());
-			stmt.setString(6, objBillHeader.getNvoType());
+			if (objBillHeader.getNvoType().length() > 16) {
+				stmt.setString(6, objBillHeader.getNvoType().substring(0, 16));
+			} else {
+				stmt.setString(6, objBillHeader.getNvoType());
+			}
 			stmt.setString(7, objBillHeader.getNvoBill());
 			stmt.setString(8, objBillHeader.getScacBill());
 			stmt.setString(9, objBillHeader.getMasterBill());
@@ -142,7 +146,7 @@ public class BillsDAO {
 			stmt.executeUpdate();
 			System.out.println(stmt);
 			isDone = true;
-		}else {
+		} else {
 			stmt = con.prepareStatement("Insert into consignee_shipper_details values (?, ?, ?, ?, ?, ?, false,?)");
 			stmt.setInt(1, billLadingId);
 			stmt.setString(2, "");
@@ -189,7 +193,7 @@ public class BillsDAO {
 
 	public boolean insertIntoSeals(Equipment objEquipment, int billLadingId) {
 		try {
-			if (objEquipment.getSeals()!=null) {
+			if (objEquipment.getSeals() != null) {
 				stmt = con.prepareStatement("Insert into seal values (?, ?, ?)");
 				stmt.setInt(1, billLadingId);
 				for (String seal : objEquipment.getSeals()) {
@@ -208,7 +212,7 @@ public class BillsDAO {
 		}
 	}
 
-	public boolean addPackages(Equipment objEquipment, int billLadingId) {
+	public int addPackages(Equipment objEquipment, int billLadingId,int packageIndex) {
 		try {
 			stmt = con.prepareStatement(
 					"Insert into packages " + " (bill_lading_id, package_id,equipment_number, marks, pieces, packages)"
@@ -216,7 +220,7 @@ public class BillsDAO {
 			stmt1 = con.prepareStatement("Insert into packages_details "
 					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
 
-			int packageIndex = 0;
+			
 			for (Package objPackage : objEquipment.getPackages()) {
 				stmt.setInt(1, billLadingId);
 				stmt.setInt(2, packageIndex);
@@ -224,50 +228,51 @@ public class BillsDAO {
 				stmt.setString(4, objPackage.getMarks());
 				stmt.setString(5, objPackage.getPieces());
 				stmt.setString(6, objPackage.getPackageType());
+				System.out.println(stmt);
 				if (stmt.executeUpdate() != 1) {
-					return false;
+					return -1;
 				}
-
+				
 				// following query till end of the list PackagesBean to insert notify party
 				// records in packages table
 
 				stmt1.setInt(1, billLadingId);
 				stmt1.setInt(2, packageIndex);
 				stmt1.setString(3, objEquipment.getEquipmentNo());
-				
-				if(objPackage.getWeight().getUnit().equalsIgnoreCase("LBS")) {
-					stmt1.setDouble(4, objPackage.getWeight().getValue());	
+
+				if (objPackage.getWeight().getUnit().equalsIgnoreCase("LBS")) {
+					stmt1.setDouble(4, objPackage.getWeight().getValue());
 					stmt1.setString(16, objPackage.getWeight().getUnit());
-				}else {
+				} else {
 					stmt1.setDouble(4, 0);
 					stmt1.setString(16, "");
 				}
-				
-				if(objPackage.getWeight().getUnit().equalsIgnoreCase("KGS")||objPackage.getWeight().getUnit().equalsIgnoreCase("MT")) {
+
+				if (objPackage.getWeight().getUnit().equalsIgnoreCase("KGS")
+						|| objPackage.getWeight().getUnit().equalsIgnoreCase("MT")) {
 					stmt1.setDouble(5, objPackage.getWeight().getValue());
 					stmt1.setString(17, objPackage.getWeight().getUnit());
-				}else {
+				} else {
 					stmt1.setDouble(5, 0);
 					stmt1.setString(17, "");
 				}
-				
+
 				if (objPackage.getVolume().getUnit().equalsIgnoreCase("CF")) {
-					stmt1.setDouble(6, objPackage.getVolume().getValue());	
+					stmt1.setDouble(6, objPackage.getVolume().getValue());
 					stmt1.setString(18, objPackage.getVolume().getUnit());
-				}else {
+				} else {
 					stmt1.setDouble(6, 0);
 					stmt1.setString(18, "");
 				}
-				
-				if(objPackage.getVolume().getUnit().equalsIgnoreCase("CM")) {
+
+				if (objPackage.getVolume().getUnit().equalsIgnoreCase("CM")) {
 					stmt1.setDouble(7, objPackage.getVolume().getValue());
 					stmt1.setString(19, objPackage.getVolume().getUnit());
-				}else {
-					stmt1.setDouble(7,0);
+				} else {
+					stmt1.setDouble(7, 0);
 					stmt1.setString(19, "");
 				}
-				
-				
+
 				stmt1.setDouble(8, objPackage.getLength().getValue());
 				stmt1.setDouble(9, objPackage.getWidth().getValue());
 				stmt1.setDouble(10, objPackage.getHeight().getValue());
@@ -275,8 +280,8 @@ public class BillsDAO {
 				stmt1.setDouble(12, objPackage.getMin().getValue());
 				stmt1.setDouble(13, objPackage.getMax().getValue());
 				stmt1.setDouble(14, objPackage.getVents().getValue());
-				stmt1.setDouble(15, objPackage.getDrainage().getValue());				
-				
+				stmt1.setDouble(15, objPackage.getDrainage().getValue());
+
 				stmt1.setString(20, objPackage.getLength().getUnit());
 				stmt1.setString(21, objPackage.getWidth().getUnit());
 				stmt1.setString(22, objPackage.getHeight().getUnit());
@@ -287,30 +292,30 @@ public class BillsDAO {
 				stmt1.setString(27, objPackage.getDrainage().getUnit());
 
 				if (stmt1.executeUpdate() != 1) {
-					return false;
+					return -1;
 				}
 
-				packageIndex++;
+				++packageIndex;
 			}
-			return true;
+			return packageIndex;
 		} catch (SQLException e) {
 			e.printStackTrace();
-			return false;
+			return -1;
 		} catch (Exception e) {
 			e.printStackTrace();
-			return false;
+			return -1;
 		}
 	}
 
-	public boolean addCargos(Equipment objEquipment, int billLadingId) {
+	public int addCargos(Equipment objEquipment, int billLadingId,int cargoIndex) {
 		// TODO Auto-generated method stub
 		try {
 			System.out.println(objEquipment.getCargos());
-			if (objEquipment.getCargos()!=null) {
+			if (objEquipment.getCargos() != null) {
 				stmt = con.prepareStatement("Insert into cargo "
 						+ " (bill_lading_id, cargo_id, equipment_number, description, harmonize_code, "
 						+ " hazard_code, manufacturer, country,customer_id) values " + " (?,?,?,?,?,?,?,?,?)");
-				int cargoIndex = 0;
+				
 				for (Cargo objCargo : objEquipment.getCargos()) {
 					if (objCargo != null) {
 						stmt.setInt(1, billLadingId);
@@ -323,21 +328,20 @@ public class BillsDAO {
 						stmt.setString(8, objCargo.getCountry());
 						stmt.setInt(9, 0);// Field cannot get
 						if (stmt.executeUpdate() != 1) {
-							return false;
+							return -1;
 						}
 					}
-					cargoIndex++;
+					++cargoIndex;
 				}
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
-			return false;
+			return -1;
 		} catch (Exception e) {
 			e.printStackTrace();
-			return false;
+			return -1;
 		}
-		return true;
-
+		return cargoIndex;
 	}
 
 	public void insertIntoBillDetailStatus(BillHeader objBillHeader, int billLadingId) throws SQLException {
@@ -359,7 +363,7 @@ public class BillsDAO {
 		stmt.setBoolean(11, false);
 		stmt.setBoolean(12, false);
 		System.out.println(stmt);
-		
+
 		if (stmt.executeUpdate() != 1) {
 			throw new SQLException();
 		}
@@ -459,7 +463,8 @@ public class BillsDAO {
 	public boolean validateBillExist(BillHeader objBillHeader) {
 		boolean isExist = false;
 		try {
-			stmt = con.prepareStatement("select bill_lading_id from bill_header where login_scac=? and bill_lading_number = ?");
+			stmt = con.prepareStatement(
+					"select bill_lading_id from bill_header where login_scac=? and bill_lading_number = ?");
 			stmt.setString(1, objBillHeader.getLoginScac());
 			stmt.setString(2, objBillHeader.getBillOfLading());
 			if (stmt.executeQuery().next())

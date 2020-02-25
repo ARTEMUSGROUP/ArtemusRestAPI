@@ -8,6 +8,7 @@ import javax.ws.rs.core.Response;
 
 import com.artemus.app.annotations.Secured;
 import com.artemus.app.dao.DemoDAO;
+import com.artemus.app.model.response.ResponseMessage;
 
 /**
  * Root resource (exposed at "myresource" path)
@@ -17,10 +18,16 @@ public class MyResource {
 
     @GET
     @Produces({MediaType.APPLICATION_JSON})
-    public Response getIt() {
+    public ResponseMessage getIt() {
     	DemoDAO objDao = new DemoDAO();
     	String connString = objDao.getConnection();
     	objDao.closeAll();
-		return Response.status(200).entity("Got it! "+connString).build();
+    	ResponseMessage objResponse = new ResponseMessage();
+    	
+    	objResponse.setCode(200);
+    	objResponse.setStatus(Response.Status.OK);
+    	objResponse.setMessage("Got it! "+connString);
+    	
+		return objResponse;
     }
 }

@@ -138,6 +138,9 @@ public class BillsServiceImpl implements BillsService {
 
 	private void addEquipments(BillHeader objBillHeader, int billLadingId, BillsDAO objBillsDao) throws SQLException {
 		boolean returnedVal = true;
+		int packageIndex=0;
+		int cargoIndex=0;
+		
 		for (Equipment objEquipment : objBillHeader.getEquipments()) {
 			if (!objBillsDao.insertIntoEquipments(objEquipment, billLadingId)) {
 				returnedVal = false;
@@ -147,11 +150,13 @@ public class BillsServiceImpl implements BillsService {
 				returnedVal = false;
 				break;
 			}
-			if (!objBillsDao.addPackages(objEquipment, billLadingId)) {
+			packageIndex =objBillsDao.addPackages(objEquipment, billLadingId,packageIndex);
+			if (packageIndex == -1) {
 				returnedVal = false;
 				break;
 			}
-			if (!objBillsDao.addCargos(objEquipment, billLadingId)) {
+			cargoIndex = objBillsDao.addCargos(objEquipment, billLadingId,cargoIndex);
+			if (cargoIndex==-1) {
 				returnedVal = false;
 				break;
 			}

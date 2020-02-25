@@ -10,7 +10,10 @@ public class Equipment {
 	private ArrayList<Cargo> cargos;
 
 	public String getEquipmentNo() {
-		return equipmentNo;
+		if(equipmentNo==null)
+			return equipmentNo;
+			else	
+		return equipmentNo.toUpperCase();
 	}
 
 	public void setEquipmentNo(String equipmentNo) {
@@ -18,7 +21,10 @@ public class Equipment {
 	}
 
 	public String getEquipmentType() {
-		return equipmentType;
+		if(equipmentType==null)
+			return equipmentType;
+		else	
+		return equipmentType.toUpperCase();
 	}
 
 	public void setEquipmentType(String equipmentType) {
