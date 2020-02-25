@@ -2,41 +2,73 @@ package com.artemus.app.model.request;
 
 import java.util.ArrayList;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.NotBlank;
 import com.github.reinert.jjschema.Attributes;
+
 
 @Attributes(title = "Voyage", description = "Defines a voyage.")
 public class Voyage {
-	
+
 	@Attributes(required = true, description = "The voyage number identifying this voyage.")
-	private String voyage_num;
-	
+	@NotBlank(message = "voyageNumber cannot be blank")
+	private String voyageNumber;
+
 	@Attributes(required = true, description = "The vessel name for the vessel for this voyage.  It must already exist in our system.")
+	@NotBlank(message = "vesselName cannot be blank")
 	private String vesselName;
-	
+
 	@Attributes(required = false, description = "The SCAC for the operator of this vessel.  By default the SCAC for the vessel will be used.")
 	private String scacCode;
-	
+
 	@Attributes(required = false, description = "The number of crew members on the vessel.  Not used for U.S. Customs transmissions.")
 	private String crewMembers;
-	
+
 	@Attributes(required = false, description = "The number of passengers on the vessel.  Not used for U.S. Customs transmissions.")
 	private String passengers;
-	
+
 	@Attributes(required = false, description = "Canada customs report number.  Not used for U.S. Customs transmissions.")
 	private String reportNumber;
-	
-	@Attributes(required = false, description = "Defines a starting or stopping point for a voyage.  ")
-	private ArrayList<PortDetails> PortDetails;
-	
-	@Attributes(required = false, description = " Defines a location for this bill.  ")
-	private ArrayList<Location> Location;
 
-	public String getVoyage_num() {
-		return voyage_num;
+	@Attributes(required = true, description = "Defines a starting or stopping point for a voyage.  ")
+	@NotNull(message = "PortDetails cannot be null")
+	@Valid
+	private ArrayList<PortDetails> PortDetails;
+
+	@Attributes(required = true, description = " Defines a location for this bill.  ")
+	@NotNull(message = "locations cannot be null")
+	@Valid
+	private ArrayList<Location> locations;
+
+   // -----------------------------------
+	private int voyageId;
+	private int vesselId;
+	
+	
+	public int getVoyageId() {
+		return voyageId;
 	}
 
-	public void setVoyage_num(String voyage_num) {
-		this.voyage_num = voyage_num;
+	public void setVoyageId(int voyageId) {
+		this.voyageId = voyageId;
+	}
+
+	public int getVesselId() {
+		return vesselId;
+	}
+
+	public void setVesselId(int vesselId) {
+		this.vesselId = vesselId;
+	}
+
+	public String getVoyageNumber() {
+		return voyageNumber;
+	}
+
+	public void setVoyageNumber(String voyageNumber) {
+		this.voyageNumber = voyageNumber;
 	}
 
 	public String getVesselName() {
@@ -87,12 +119,12 @@ public class Voyage {
 		PortDetails = portDetails;
 	}
 
-	public ArrayList<Location> getLocation() {
-		return Location;
+	public ArrayList<Location> getLocations() {
+		return locations;
 	}
 
-	public void setLocation(ArrayList<Location> location) {
-		Location = location;
+	public void setLocations(ArrayList<Location> locations) {
+		this.locations = locations;
 	}
-	
+
 }
