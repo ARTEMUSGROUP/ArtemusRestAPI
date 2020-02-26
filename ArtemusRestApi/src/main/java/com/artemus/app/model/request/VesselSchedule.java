@@ -17,6 +17,7 @@ public class VesselSchedule {
 	private int vesselId;
 	private int voyageId;
 	private String lloydsCode;
+	private String vesselScac;
 
 	public String getVesselName() {
 		if (vesselName == null)
@@ -184,6 +185,14 @@ public class VesselSchedule {
 		}
 
 		return objVesselMessage;
+	}
+
+	public String getVesselScac() {
+		return vesselScac;
+	}
+
+	public void setVesselScac(String vesselScac) {
+		this.vesselScac = vesselScac;
 	}
 
 }

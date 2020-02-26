@@ -89,7 +89,7 @@ public class BillsDAO {
 			stmt.setString(7, objBillHeader.getNvoBill());
 			stmt.setString(8, objBillHeader.getScacBill());
 			stmt.setString(9, objBillHeader.getMasterBill());
-			stmt.setString(10, objBillHeader.getLoginScac());
+			stmt.setString(10, objBillHeader.getVesselSchedule().getVesselScac());
 
 			String VoyageNumber = objBillHeader.getVesselSchedule().getVoyageNumber();
 			stmt.setString(11, VoyageNumber);
