@@ -4,6 +4,9 @@ import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.artemus.app.dao.LocationDAO;
 import com.artemus.app.dao.VesselVoyageDAO;
 import com.artemus.app.dao.VoyageDAO;
@@ -17,7 +20,7 @@ import com.artemus.app.service.VoyageScheduleService;
 import com.artemus.app.utils.ValidateBeanUtil;
 
 public class VoyageScheduleServiceImpl implements VoyageScheduleService {
-
+	static Logger logger = LogManager.getLogger();
 	StringBuffer errorMessage = new StringBuffer("");
 
 	@Override
@@ -25,8 +28,8 @@ public class VoyageScheduleServiceImpl implements VoyageScheduleService {
 		// validate json
 		ValidateBeanUtil.buildDefaultValidatorFactory();
 		StringBuffer invalidJsonMsg = ValidateBeanUtil.getConstraintViolationMsgForVoyage(objVoyage);
-		if(invalidJsonMsg.length()>0) {
-			throw new MissingRequiredFieldException(invalidJsonMsg.toString());	
+		if (invalidJsonMsg.length() > 0) {
+			throw new MissingRequiredFieldException(invalidJsonMsg.toString());
 		}
 		// validate Country
 		validateCountry(objVoyage.getLocations());
@@ -34,20 +37,22 @@ public class VoyageScheduleServiceImpl implements VoyageScheduleService {
 		ValidateUnCode(objVoyage.getLocations(), objVoyage.getScacCode());
 		// VAlidate Vessel,Voyage
 		validateVesselVoyage(objVoyage);
-		if(errorMessage.length()>0) {
+		if (errorMessage.length() > 0) {
 			throw new ErrorResponseException(errorMessage.toString());
-		}else {
+		} else {
 			// Validate Location
-			if(ValidateLocation(objVoyage.getLocations(), objVoyage.getScacCode())) {
+			if (validateLocation(objVoyage.getLocations(), objVoyage.getScacCode())) {
 				populateVoyage(objVoyage);
 				validatePort(objVoyage);
-				validateVoyage(objVoyage);
-			}else {
-				throw new ErrorResponseException(ErrorMessages.INTERNAL_SERVER_ERROR.toString());
+				if (errorMessage.length() > 0) {
+					logger.debug(errorMessage);
+					throw new ErrorResponseException(errorMessage.toString());
+				}
+				if (!validateVoyage(objVoyage)) {
+					throw new ErrorResponseException(errorMessage.toString());
+				}
 			}
 		}
-	
-
 
 	}
 
@@ -60,16 +65,22 @@ public class VoyageScheduleServiceImpl implements VoyageScheduleService {
 			if (vesselID != 0) {
 				objVoyage.setVesselId(vesselID);
 				// Get voyageID
-				voyageID = objDao.validateVoyage(objVoyage.getVoyageNumber(), vesselID, objVoyage.getScacCode());
-				if (voyageID != 0) {
-					objVoyage.setVoyageId(voyageID);
-
-				} else {
-					errorMessage.append("voyageNumber does not exists.");
-				}
+//				voyageID = objDao.validateVoyage(objVoyage.getVoyageNumber(), vesselID, objVoyage.getScacCode());
+//				if (voyageID != 0) {
+//					objVoyage.setVoyageId(voyageID);
+//
+//				}
+//				else {
+//					if(errorMessage.length()>0) {
+//						errorMessage.append(" , ");
+//					}
+//					errorMessage.append("voyageNumber does not exists.");
+//				}
 			} else {
-				errorMessage.append("vesselName does not exists.");
-
+				if (errorMessage.length() > 0) {
+					errorMessage.append(" , ");
+				}
+				errorMessage.append("vesselName:"+objVoyage.getVesselName()+" does not exists for scac " + objVoyage.getScacCode());
 			}
 		} finally {
 			objDao.closeAll();
@@ -78,42 +89,41 @@ public class VoyageScheduleServiceImpl implements VoyageScheduleService {
 	}
 
 	boolean validateVoyage(Voyage voyage) {
+		logger.trace("inside validateVoyage");
 		VoyageDAO objVoyageDao = new VoyageDAO();
-		
-		boolean result = true;
-		try {
-			
-			if (objVoyageDao.isExist(voyage.getScacCode(), voyage.getVesselId(), voyage.getVoyageNumber())) {
 
-				errorMessage.append("Voyage with Voyage number");
-				errorMessage.append(voyage.getVoyageNumber());
-				errorMessage.append("already exists,ERROR");
-				
+		boolean result = false;
+		try {
+
+			if (objVoyageDao.isExist(voyage.getScacCode(), voyage.getVesselId(), voyage.getVoyageNumber())) {
+				if (errorMessage.length() > 0) {
+					errorMessage.append(" , ");
+				}
+				errorMessage.append("voyageNumber : " + voyage.getVoyageNumber() + " already exists");
 				result = false;
 			} else {
-
-					if (objVoyageDao.insert(voyage)) {
-						result = true;
-					
+				if (objVoyageDao.insert(voyage)) {
+					result = true;
 				}
-			}	
-		}finally {
+			}
+		} finally {
 			objVoyageDao.closeAll();
 		}
-		
+
 		return result;
 	}
 
-	boolean ValidateLocation(ArrayList<Location> objLocation, String loginScac) {
+	boolean validateLocation(ArrayList<Location> objLocation, String loginScac) {
 		boolean result = false;
 		LocationDAO objLocationdao = new LocationDAO(null);
 		try {
 			for (Location locationbean : objLocation) {
 				// Setting locationBean
 				locationbean = objLocationdao.setLocationBean(locationbean);
-				if (objLocationdao.checkForLocationName(locationbean.getLocation(), loginScac))
+				if (objLocationdao.checkForLocationName(locationbean.getLocation(), loginScac)) {
 					System.out.println("Location already exist");
-				else {
+					result = true;
+				} else {
 					if (objLocationdao.insert(locationbean, loginScac)) {
 						result = true;
 					} else {
@@ -122,7 +132,7 @@ public class VoyageScheduleServiceImpl implements VoyageScheduleService {
 					}
 				}
 			}
-		}finally {
+		} finally {
 			objLocationdao.closeAll();
 		}
 		return result;
@@ -135,9 +145,10 @@ public class VoyageScheduleServiceImpl implements VoyageScheduleService {
 				if (objLocationDao.isExistsCountry(locationbean.getCountry())) {
 					System.out.println("Country exist");
 				} else {
-					errorMessage.append("Country Code ");
-					errorMessage.append(locationbean.getCountry());
-					errorMessage.append(" does not exists");
+					if (errorMessage.length() > 0) {
+						errorMessage.append(" , ");
+					}
+					errorMessage.append("country : " + locationbean.getCountry() + " does not exists");
 					return false;
 				}
 			}
@@ -149,6 +160,8 @@ public class VoyageScheduleServiceImpl implements VoyageScheduleService {
 	}
 
 	private void populateVoyage(Voyage objVoyage) {
+		logger.info("Inside populate Voyage");
+
 		if (objVoyage.getCrewMembers() == null)
 			objVoyage.setCrewMembers("");
 		else
@@ -167,7 +180,7 @@ public class VoyageScheduleServiceImpl implements VoyageScheduleService {
 	}
 
 	private void validatePort(Voyage objVoyage) {
-
+		logger.trace("inside validatePort");
 		LocationDAO objLocationDAO = new LocationDAO(null);
 
 		boolean result;
@@ -185,10 +198,7 @@ public class VoyageScheduleServiceImpl implements VoyageScheduleService {
 		}
 
 		if (!portValidation) {
-//		    //Error Message
-			// generateResponseBean("PortCall", "Voyage should have atleast one discharge
-			// port","ERROR");
-
+			errorMessage.append("discharge : Voyage should have atleast one discharge");
 			result = false;
 		}
 		portValidation = false;
@@ -199,23 +209,24 @@ public class VoyageScheduleServiceImpl implements VoyageScheduleService {
 			}
 		}
 		if (!portValidation) {
-			// Error Message
-			// generateResponseBean("PortCall", "Voyage should have atleast one load
-			// port","ERROR");
 			result = false;
+			errorMessage.append("load: Voyage should have atleast one load");
 		}
 
 		portValidation = false;
+		int lastLoadPortCount = 0;
 		for (PortDetails portCall : objVoyage.getPortDetails()) {
 			if (portCall.getLastLoadPort() == true) {
 				portValidation = true;
+				lastLoadPortCount++;
 				break;
 			}
 		}
+		if (lastLoadPortCount > 1) {
+			errorMessage.append("lastLoadPort : only one lastLoadPort must be true");
+		}
 		if (!portValidation) {
-			// Error Message
-			// generateResponseBean("PortCall", "PortCall should have atleast one Lastload
-			// is 'TRUE'.","ERROR");
+			errorMessage.append("lastLoadPort : Voyage should have atleast one lastLoadPort");
 			result = false;
 		} else {
 
@@ -231,9 +242,6 @@ public class VoyageScheduleServiceImpl implements VoyageScheduleService {
 						lastloaddate1 = sdf.parse(lastloaddate);
 					} catch (Exception e) {
 						System.out.println("Date is not in correct format");
-						// Error Message
-						// generateResponseBean("PortCall", "PortCall date is in incorrect format,
-						// correct format is YYYY-MM-DD.","ERROR");
 						e.printStackTrace();
 						result = false;
 					}
@@ -259,26 +267,23 @@ public class VoyageScheduleServiceImpl implements VoyageScheduleService {
 					if (dichargedate1.compareTo(lastloaddate1) >= 0 || dichargedate1.compareTo(lastloaddate1) == 0) {
 						result = true;
 					} else {
-//					Response.setSource("data");
-//					Response.setElement("PortCall");
-//					Response.setCode("ERROR");
-//					Response.setDescription("The arrival date of discharge port "+amsvoyageBean.getLocation()[portCall.getLocationIndex()]+" should not be less than last load port.");
 						if ((objVoyage.getLocations().size()) < portCall.getLocationIndex()) {
-
+							if (errorMessage.length() > 0) {
+								errorMessage.append(" , ");
+							}
 							// Error message
-							errorMessage.append("PortCall, The LocationIndex");
-							errorMessage.append(portCall.getLocationIndex());
-							errorMessage.append("in a PortCall is invalid, ERROR");
-
+							errorMessage.append(
+									"locationIndex : " + portCall.getLocationIndex() + "in a PortCall is invalid");
 							result = false;
 							break;
 						} else {
-
+							if (errorMessage.length() > 0) {
+								errorMessage.append(" , ");
+							}
 							// Error message
-							errorMessage.append("PortCall, The arrival date of discharge port");
-							errorMessage.append(
-									objVoyage.getLocations().get(portCall.getLocationIndex() - 1).getLocation());
-							errorMessage.append("should not be less than last load port ,ERROR");
+							errorMessage.append("arrivalDate : "
+									+ objVoyage.getLocations().get(portCall.getLocationIndex() - 1).getLocation()
+									+ "should not be less than sailingDate ");
 
 							result = false;
 							break;
@@ -317,7 +322,10 @@ public class VoyageScheduleServiceImpl implements VoyageScheduleService {
 		boolean result = true;
 		try {
 			for (Location locationbean : objLocation) {
-				if (locationbean.getCustomCode() == null) {
+
+				objLocationdao.setLocationBean(locationbean);
+
+				if (locationbean.getCustomCode() != null && locationbean.getUnlocode() != null) {
 					// setting customCode from locationCode
 					String customCodefromUNCode = objLocationdao.getLocationCode(locationbean.getUnlocode(), loginScac);
 					locationbean.setCustomCode(customCodefromUNCode);
@@ -327,13 +335,17 @@ public class VoyageScheduleServiceImpl implements VoyageScheduleService {
 					locationbean.setCustomForeign(true);
 				} else if (objLocationdao.isDisctrictPort(locationbean.getCustomCode())) {
 					locationbean.setCustomForeign(false);
-				} else {
-					// Error Message Handle
-					errorMessage.append("CustomCode ");
-					errorMessage.append(locationbean.getUnlocode());
-					errorMessage.append(" does not exists");
-					result = false;
 				}
+//				else {
+//					// Error Message Handle
+//					if(errorMessage.length()>0) {
+//						errorMessage.append(" , ");
+//					}
+//					errorMessage.append("CustomCode ");
+//					errorMessage.append(locationbean.getUnlocode());
+//					errorMessage.append(" does not exists");
+//					result = false;
+//				}
 			}
 		} finally {
 			objLocationdao.closeAll();

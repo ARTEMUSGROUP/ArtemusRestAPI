@@ -5,13 +5,16 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.artemus.app.connection.DBConnectionFactory;
 import com.artemus.app.model.request.BillHeader;
 import com.artemus.app.model.request.Location;
 import com.artemus.app.model.request.Voyage;
 
 public class LocationDAO {
-
+	static Logger logger = LogManager.getLogger();
 	private Connection con;
 	private java.sql.PreparedStatement stmt = null, stmt2 = null, stmt3 = null, stmt4 = null;;
 	private ResultSet rs = null;
@@ -45,8 +48,8 @@ public class LocationDAO {
 			stmt = con.prepareStatement("Select location_code from location where unlocode=? and login_scac=? ");
 			stmt.setString(1, Unlocode);
 			stmt.setString(2, loginScac);
-
 			rs = stmt.executeQuery();
+			logger.info(stmt);
 			if (rs.next()) {
 				result = rs.getString(1);
 				return result;
@@ -112,6 +115,7 @@ public class LocationDAO {
 			stmt = con.prepareStatement("select port_name, port_code from foreign_port where port_code=? ");
 			stmt.setString(1, unCode);
 			rs = stmt.executeQuery();
+			logger.info(stmt);
 			if (rs.next()) {
 				result = true;
 			} else {
@@ -130,6 +134,7 @@ public class LocationDAO {
 			stmt = con.prepareStatement("select port_name, port_code from district_port where port_code=? ");
 			stmt.setString(1, unlocode);
 			rs = stmt.executeQuery();
+			logger.info(stmt);
 			if (rs.next()) {
 				result = true;
 			} else {
@@ -287,8 +292,10 @@ public class LocationDAO {
 		if (locationbean.getLocationType() == null)
 			locationbean.setLocationType("");
 		else {
-			if (locationbean.getLocationType().equals("marine"))
+			if (locationbean.getLocationType().equalsIgnoreCase("marine"))
 				locationbean.setLocationType("M");
+			if (locationbean.getLocationType().equalsIgnoreCase("inland"))
+				locationbean.setLocationType("I");
 		}
 		if (locationbean.getProvidence() == null)
 			locationbean.setProvidence("");

@@ -8,11 +8,7 @@ import org.hibernate.validator.constraints.NotBlank;
 import com.github.reinert.jjschema.Attributes;
 
 public class Location {
-
-	
-
 	@Attributes(required = true, description = "A unique index, identifying this location within this EDI transmission.  This could be your primary key, or just a number starting from one.")
-	@NotBlank(message = "location index cannot be blank")
 	private int locationIndex;
 	
 	@Attributes(required = true, description = "The name of this location.  If the location already exists in our system, this and an index are the only required attributes.")
@@ -20,7 +16,7 @@ public class Location {
 	private String location;
 	
 	@Attributes(required = false, description = "The location’s three letter country code, as defined by ISO 3166-1 alpha-3.  If this location does not already exist in our database, this field is required.T")
-	@Size(min = 3, max = 3, message = "country must be 3 letter country code of location")
+	@Size(min = 2, max = 3, message = "country must be 3 letter country code of location")
 	private String country;
 	
 	@Attributes(required = false, description = "The providence for this location.  For U.S. locations, use the two letter state abbreviation.")
@@ -38,7 +34,7 @@ public class Location {
 	private String unlocode;
 	
 	@Attributes(required = false, description = "“Schedule K” port code for this location.")
-	private String CustomCode;
+	private String customCode;
 
 	// -------------------------------------------
 	    private boolean isCustomForeign;
@@ -146,11 +142,11 @@ public class Location {
 	}
 
 	public String getCustomCode() {
-		return CustomCode;
+		return customCode;
 	}
 
 	public void setCustomCode(String customCode) {
-		CustomCode = customCode;
+		this.customCode = customCode;
 	}
 	
 }

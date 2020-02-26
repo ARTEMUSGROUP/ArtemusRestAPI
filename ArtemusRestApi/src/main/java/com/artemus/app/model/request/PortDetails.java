@@ -35,11 +35,12 @@ public class PortDetails {
 	@Attributes(required = false, description = "Indicates whether or not cargo will be discharged at this port.  Valid values are “true” and “false”.")
 	private Boolean discharge;
 	
-	@Attributes(required = true, description = "")
-	@NotBlank(message = "terminal cannot be blank")
+	@Attributes(required = false, description = "")
 	private String terminal;
 
 	public Boolean getLastLoadPort() {
+		if(lastLoadPort==null)
+			lastLoadPort=false;
 		return lastLoadPort;
 	}
 
@@ -64,6 +65,8 @@ public class PortDetails {
 	}
 
 	public Boolean getLoad() {
+		if(load==null)
+			load=false;
 		return load;
 	}
 
@@ -72,6 +75,8 @@ public class PortDetails {
 	}
 
 	public Boolean getDischarge() {
+		if(discharge==null)
+			discharge=false;
 		return discharge;
 	}
 
