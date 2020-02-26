@@ -10,17 +10,20 @@ public class AddressInfo {
 	private String zipCode;
 	private String phoneNo;
 	private String faxNo;
-	//-------------------
+	// -------------------
 	private int addressId;
 	private String entityType;
-	private String entityNumber;	
+	private String entityNumber;
 	private String createdUser;
 	private String createdDate;
 	private String dob;
 	private String countryOfIssuance;
 
 	public String getEntityType() {
-		return entityType;
+		if (entityType == null)
+			return entityType;
+		else
+			return entityType.toUpperCase();
 	}
 
 	public void setEntityType(String entityType) {
@@ -28,7 +31,10 @@ public class AddressInfo {
 	}
 
 	public String getEntityNumber() {
-		return entityNumber;
+		if (entityNumber == null)
+			return entityNumber;
+		else
+			return entityNumber.toUpperCase();
 	}
 
 	public void setEntityNumber(String entityNumber) {
@@ -36,7 +42,10 @@ public class AddressInfo {
 	}
 
 	public String getCreatedUser() {
-		return createdUser;
+		if (createdUser == null)
+			return createdUser;
+		else
+			return createdUser.toUpperCase();
 	}
 
 	public void setCreatedUser(String createdUser) {
@@ -44,7 +53,10 @@ public class AddressInfo {
 	}
 
 	public String getCreatedDate() {
-		return createdDate;
+		if (createdDate == null)
+			return createdDate;
+		else
+			return createdDate.toUpperCase();
 	}
 
 	public void setCreatedDate(String createdDate) {
@@ -52,7 +64,10 @@ public class AddressInfo {
 	}
 
 	public String getDob() {
-		return dob;
+		if (dob == null)
+			return dob;
+		else
+			return dob.toUpperCase();
 	}
 
 	public void setDob(String dob) {
@@ -60,7 +75,10 @@ public class AddressInfo {
 	}
 
 	public String getCountryOfIssuance() {
-		return countryOfIssuance;
+		if(countryOfIssuance==null)
+			return countryOfIssuance;
+		else
+			return countryOfIssuance.toUpperCase();
 	}
 
 	public void setCountryOfIssuance(String countryOfIssuance) {
@@ -76,7 +94,10 @@ public class AddressInfo {
 	}
 
 	public String getAddressType() {
-		return addressType;
+		if(addressType==null)
+return addressType;
+		else
+		return addressType.toUpperCase();
 	}
 
 	public void setAddressType(String addressType) {
@@ -84,7 +105,10 @@ public class AddressInfo {
 	}
 
 	public String getAddressLine1() {
-		return addressLine1;
+		if(addressLine1==null)
+			return addressLine1;
+		else
+		return addressLine1.toUpperCase();
 	}
 
 	public void setAddressLine1(String addressLine1) {
@@ -92,7 +116,10 @@ public class AddressInfo {
 	}
 
 	public String getAddressLine2() {
-		return addressLine2;
+		if(addressLine2==null)
+			return addressLine2;
+		else
+		return addressLine2.toUpperCase();
 	}
 
 	public void setAddressLine2(String addressLine2) {
@@ -100,7 +127,10 @@ public class AddressInfo {
 	}
 
 	public String getCity() {
-		return city;
+		if(city==null)
+			return city;
+		else	
+		return city.toUpperCase();
 	}
 
 	public void setCity(String city) {
@@ -108,7 +138,10 @@ public class AddressInfo {
 	}
 
 	public String getCountry() {
-		return country;
+		if(country==null)
+			return country;
+		else	
+		return country.toUpperCase();
 	}
 
 	public void setCountry(String country) {
@@ -116,7 +149,10 @@ public class AddressInfo {
 	}
 
 	public String getState() {
-		return state;
+		if(state==null)
+			return state;
+			else	
+		return state.toUpperCase();
 	}
 
 	public void setState(String state) {
@@ -124,7 +160,10 @@ public class AddressInfo {
 	}
 
 	public String getZipCode() {
-		return zipCode;
+		if(zipCode==null)
+			return zipCode;
+			else	
+		return zipCode.toUpperCase();
 	}
 
 	public void setZipCode(String zipCode) {
@@ -132,7 +171,10 @@ public class AddressInfo {
 	}
 
 	public String getPhoneNo() {
-		return phoneNo;
+		if(phoneNo==null)
+			return phoneNo;
+			else	
+		return phoneNo.toUpperCase();
 	}
 
 	public void setPhoneNo(String phoneNo) {
@@ -140,17 +182,20 @@ public class AddressInfo {
 	}
 
 	public String getFaxNo() {
-		return faxNo;
+		if(faxNo==null)
+			return faxNo;
+		else	
+		return faxNo.toUpperCase();
 	}
 
 	public void setFaxNo(String faxNo) {
 		this.faxNo = faxNo;
 	}
-	
+
 	public String validateAddressInfo() {
 		String objAddressInfoMessage = "";
-		if(addressLine1==null || addressLine1.isEmpty())
-			objAddressInfoMessage=" addressLine1 ";
+		if (addressLine1 == null || addressLine1.isEmpty())
+			objAddressInfoMessage = " addressLine1 ";
 		return objAddressInfoMessage;
 	}
 

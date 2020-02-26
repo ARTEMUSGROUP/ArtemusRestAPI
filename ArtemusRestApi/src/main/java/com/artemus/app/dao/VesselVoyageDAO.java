@@ -53,17 +53,17 @@ public class VesselVoyageDAO {
 		return 0;
 	}
 
-	public int validateVoyage(String voyageNumber, int VesselId, String loginScac) {
+	public int validateVoyage(BillHeader objBillHeader, int VesselId) {
 		ResultSet rs = null;
 		try {
-			stmt = con.prepareStatement(
-					"Select " + " voyage_id from voyage " + " where login_scac=? and vessel_id=? and voyage_number=?");
-			stmt.setString(1, loginScac);
+			stmt = con.prepareStatement("Select voyage_id,vessel_scac from voyage where login_scac=? and vessel_id=? and voyage_number=?");
+			stmt.setString(1, objBillHeader.getLoginScac());
 			stmt.setInt(2, VesselId);
-			stmt.setString(3, voyageNumber);
+			stmt.setString(3, objBillHeader.getVesselSchedule().getVoyageNumber());
 			rs = stmt.executeQuery();
 			System.out.println(stmt);
 			if (rs.next()) {
+				objBillHeader.getVesselSchedule().setVesselScac(rs.getString("vessel_scac"));
 				return rs.getInt(1);
 			}
 		} catch (Exception e) {

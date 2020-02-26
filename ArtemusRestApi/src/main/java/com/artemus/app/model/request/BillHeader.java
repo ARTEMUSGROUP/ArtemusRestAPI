@@ -1,4 +1,5 @@
 package com.artemus.app.model.request;
+
 import java.util.ArrayList;
 
 import javax.xml.bind.annotation.XmlRootElement;
@@ -37,11 +38,14 @@ public class BillHeader {
 
 	// Bill Update
 	private boolean isBillUpdate;
-	
+
 	private String loginScac;
 
 	public String getLoginScac() {
-		return loginScac;
+		if (loginScac == null)
+			return loginScac;
+		else
+			return loginScac.toUpperCase();
 	}
 
 	public void setLoginScac(String loginScac) {
@@ -49,7 +53,10 @@ public class BillHeader {
 	}
 
 	public String getBillOfLading() {
-		return billOfLading;
+		if (billOfLading == null)
+			return billOfLading;
+		else
+			return billOfLading.toUpperCase();
 	}
 
 	public void setBillOfLading(String billOfLading) {
@@ -57,7 +64,10 @@ public class BillHeader {
 	}
 
 	public String getBillType() {
-		return billType;
+		if (billType == null)
+			return billType;
+		else
+			return billType.toUpperCase();
 	}
 
 	public void setBillType(String billType) {
@@ -65,7 +75,11 @@ public class BillHeader {
 	}
 
 	public String getHblScac() {
-		return hblScac;
+		if (hblScac == null) {
+			return hblScac;
+		} else {
+			return hblScac.toUpperCase();
+		}
 	}
 
 	public void setHblScac(String hblScac) {
@@ -73,7 +87,10 @@ public class BillHeader {
 	}
 
 	public String getNvoType() {
-		return nvoType;
+		if (nvoType == null)
+			return nvoType;
+		else
+			return nvoType.toUpperCase();
 	}
 
 	public void setNvoType(String nvoType) {
@@ -81,7 +98,10 @@ public class BillHeader {
 	}
 
 	public String getNvoBill() {
-		return nvoBill;
+		if (nvoBill == null)
+			return nvoBill;
+		else
+			return nvoBill.toUpperCase();
 	}
 
 	public void setNvoBill(String nvoBill) {
@@ -89,7 +109,10 @@ public class BillHeader {
 	}
 
 	public String getScacBill() {
-		return scacBill;
+		if (scacBill == null)
+			return scacBill;
+		else
+			return scacBill.toUpperCase();
 	}
 
 	public void setScacBill(String scacBill) {
@@ -97,7 +120,10 @@ public class BillHeader {
 	}
 
 	public String getMasterBill() {
-		return masterBill;
+		if (masterBill == null)
+			return masterBill;
+		else
+			return masterBill.toUpperCase();
 	}
 
 	public void setMasterBill(String masterBill) {
@@ -227,5 +253,4 @@ public class BillHeader {
 				+ ", isBillUpdate=" + isBillUpdate + "]";
 	}
 
-	
 }
