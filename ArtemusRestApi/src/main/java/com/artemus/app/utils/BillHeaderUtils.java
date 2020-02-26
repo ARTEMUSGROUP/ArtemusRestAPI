@@ -1,8 +1,5 @@
 package com.artemus.app.utils;
 
-import java.util.Iterator;
-import java.util.Set;
-
 import com.artemus.app.exceptions.MissingRequiredFieldException;
 import com.artemus.app.model.request.BillHeader;
 import com.artemus.app.model.request.Equipment;
@@ -29,7 +26,10 @@ public class BillHeaderUtils {
 			if (objBillHeader.getBillType().equalsIgnoreCase("way bill")
 					|| objBillHeader.getBillType().equalsIgnoreCase("empty")
 					|| objBillHeader.getBillType().equalsIgnoreCase("Original")) {
-			}else {
+				if(objBillHeader.getBillType().equalsIgnoreCase("Original")) {
+					objBillHeader.setBillType("Orignal");
+				}
+			} else {
 				if (objMessage.length() > 0) {
 					objMessage.append(",");
 				}
@@ -46,7 +46,30 @@ public class BillHeaderUtils {
 			if (objBillHeader.getNvoType().equalsIgnoreCase("non NVO")
 					|| objBillHeader.getNvoType().equalsIgnoreCase("automated NVO")
 					|| objBillHeader.getNvoType().equalsIgnoreCase("non automated NVO")) {
-			}else {
+				if (objBillHeader.getNvoType().equalsIgnoreCase("non automated NVO")) {
+					if (objBillHeader.getNvoBill() == null || objBillHeader.getNvoBill().isEmpty()) {
+						if (objMessage.length() > 0) {
+							objMessage.append(",");
+						}
+						objMessage.append("nvoBill : Required when nvoType is 'non automated NVO'");
+					} else {
+						if (objBillHeader.getNvoBill().equalsIgnoreCase("House")) {
+							if(objBillHeader.getScacBill() == null || objBillHeader.getScacBill().isEmpty()) {
+								if (objMessage.length() > 0) {
+									objMessage.append(",");
+								}
+								objMessage.append("scacBill:Required when nvoBill is 'House'");
+							}
+							if(objBillHeader.getMasterBill() == null || objBillHeader.getMasterBill().isEmpty()) {
+								if (objMessage.length() > 0) {
+									objMessage.append(",");
+								}
+								objMessage.append("masterBill:Required when nvoType is 'House'");
+							}
+						}
+					}
+				}
+			} else {
 				if (objMessage.length() > 0) {
 					objMessage.append(",");
 				}
@@ -81,7 +104,7 @@ public class BillHeaderUtils {
 				objMessage.append("consignee:{ " + objConsigneerMessage + " }");
 			}
 		}
-		
+
 		if (objBillHeader.getNotify() == null) {
 			if (objMessage.length() > 0) {
 				objMessage.append(",");
@@ -111,25 +134,24 @@ public class BillHeaderUtils {
 				objMessage.append("vesselSchedule: { " + objVesselMessage + " }");
 			}
 		}
-		
-		
+
 		if (objBillHeader.getEquipments() == null || objBillHeader.getEquipments().isEmpty()
 				|| objBillHeader.getEquipments().size() == 0) {
 			if (objMessage.length() > 0) {
 				objMessage.append(",");
 			}
 			objMessage.append("equipments");
-		}else {
+		} else {
 			StringBuffer objEquipmentsMessage = new StringBuffer();
-			int equipmentCount=0;
+			int equipmentCount = 0;
 			for (Equipment objEquipment : objBillHeader.getEquipments()) {
-				String str =  objEquipment.validateEquipment().toString();
-				if(str.length()>0) {
-					objEquipmentsMessage.append(equipmentCount+": {"+str+"}");
+				String str = objEquipment.validateEquipment().toString();
+				if (str.length() > 0) {
+					objEquipmentsMessage.append(equipmentCount + ": {" + str + "}");
 				}
 				equipmentCount++;
 			}
-			
+
 			if (objEquipmentsMessage.length() > 0) {
 				if (objMessage.length() > 0) {
 					objMessage.append(",");

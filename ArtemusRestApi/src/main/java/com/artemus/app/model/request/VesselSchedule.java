@@ -17,9 +17,13 @@ public class VesselSchedule {
 	private int vesselId;
 	private int voyageId;
 	private String lloydsCode;
+	private String vesselScac;
 
 	public String getVesselName() {
-		return vesselName;
+		if (vesselName == null)
+			return vesselName;
+		else
+			return vesselName.toUpperCase();
 	}
 
 	public void setVesselName(String vesselName) {
@@ -27,7 +31,10 @@ public class VesselSchedule {
 	}
 
 	public String getVoyageNumber() {
-		return voyageNumber;
+		if (voyageNumber == null)
+			return voyageNumber;
+		else
+			return voyageNumber.toUpperCase();
 	}
 
 	public void setVoyageNumber(String voyageNumber) {
@@ -35,7 +42,10 @@ public class VesselSchedule {
 	}
 
 	public String getCountryOfOrigin() {
-		return countryOfOrigin;
+		if (countryOfOrigin == null)
+			return countryOfOrigin;
+		else
+			return countryOfOrigin.toUpperCase();
 	}
 
 	public void setCountryOfOrigin(String countryOfOrigin) {
@@ -46,7 +56,7 @@ public class VesselSchedule {
 		if (placeOfReceipt == null || placeOfReceipt.isEmpty()) {
 			placeOfReceipt = "";
 		}
-		return placeOfReceipt;
+		return placeOfReceipt.toUpperCase();
 	}
 
 	public void setPlaceOfReceipt(String placeOfReceipt) {
@@ -54,7 +64,10 @@ public class VesselSchedule {
 	}
 
 	public String getPortOfLoading() {
-		return portOfLoading;
+		if (portOfLoading == null)
+			return portOfLoading;
+		else
+			return portOfLoading.toUpperCase();
 	}
 
 	public void setPortOfLoading(String portOfLoading) {
@@ -62,7 +75,10 @@ public class VesselSchedule {
 	}
 
 	public String getPortOfDischarge() {
-		return portOfDischarge;
+		if (portOfDischarge == null)
+			return portOfDischarge;
+		else
+			return portOfDischarge.toUpperCase();
 	}
 
 	public void setPortOfDischarge(String portOfDischarge) {
@@ -70,7 +86,10 @@ public class VesselSchedule {
 	}
 
 	public String getPlaceOfDelivery() {
-		return placeOfDelivery;
+		if (placeOfDelivery == null || placeOfDelivery.isEmpty()) {
+			placeOfDelivery = "";
+		}
+		return placeOfDelivery.toUpperCase();
 	}
 
 	public void setPlaceOfDelivery(String placeOfDelivery) {
@@ -78,7 +97,10 @@ public class VesselSchedule {
 	}
 
 	public String getCanadaCustomsOffice() {
-		return canadaCustomsOffice;
+		if (canadaCustomsOffice == null)
+			return canadaCustomsOffice;
+		else
+			return canadaCustomsOffice.toUpperCase();
 	}
 
 	public void setCanadaCustomsOffice(String canadaCustomsOffice) {
@@ -86,7 +108,10 @@ public class VesselSchedule {
 	}
 
 	public String getMoveType() {
-		return moveType;
+		if (moveType == null)
+			return moveType;
+		else
+			return moveType.toUpperCase();
 	}
 
 	public void setMoveType(String moveType) {
@@ -110,7 +135,10 @@ public class VesselSchedule {
 	}
 
 	public String getLloydsCode() {
-		return lloydsCode;
+		if (lloydsCode == null)
+			return lloydsCode;
+		else
+			return lloydsCode.toUpperCase();
 	}
 
 	public void setLloydsCode(String lloydsCode) {
@@ -131,12 +159,6 @@ public class VesselSchedule {
 			}
 			objVesselMessage.append("countryOfOrigin");
 		}
-//		if (placeOfReceipt == null || placeOfReceipt.isEmpty()) {
-//			if (objVesselMessage.length() > 0) {
-//				objVesselMessage.append(",");
-//			}
-//			objVesselMessage.append("placeOfReceipt");
-//		}
 		if (vesselName == null || vesselName.isEmpty()) {
 			if (objVesselMessage.length() > 0) {
 				objVesselMessage.append(",");
@@ -161,14 +183,16 @@ public class VesselSchedule {
 			}
 			objVesselMessage.append("portOfLoading");
 		}
-//		if (placeOfDelivery == null || placeOfDelivery.isEmpty()) {
-//			if (objVesselMessage.length() > 0) {
-//				objVesselMessage.append(",");
-//			}
-//			objVesselMessage.append("placeOfDelivery");
-//		}
-				
+
 		return objVesselMessage;
+	}
+
+	public String getVesselScac() {
+		return vesselScac;
+	}
+
+	public void setVesselScac(String vesselScac) {
+		this.vesselScac = vesselScac;
 	}
 
 }

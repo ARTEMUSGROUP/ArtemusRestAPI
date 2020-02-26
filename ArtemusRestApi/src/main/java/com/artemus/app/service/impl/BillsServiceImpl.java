@@ -2,18 +2,13 @@ package com.artemus.app.service.impl;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Iterator;
 
 import com.artemus.app.dao.BillsDAO;
 import com.artemus.app.dao.CustomerProfileDAO;
 import com.artemus.app.dao.VesselVoyageDAO;
-import com.artemus.app.exceptions.ErrorResponse;
 import com.artemus.app.exceptions.ErrorResponseException;
-import com.artemus.app.exceptions.MissingRequiredFieldException;
 import com.artemus.app.model.request.BillHeader;
-import com.artemus.app.model.request.Cargo;
 import com.artemus.app.model.request.Equipment;
-import com.artemus.app.model.request.Package;
 import com.artemus.app.service.BillsService;
 import com.artemus.app.utils.BillHeaderUtils;
 
@@ -59,8 +54,7 @@ public class BillsServiceImpl implements BillsService {
 			if (vesselID != 0) {
 				objBillHeader.getVesselSchedule().setVesselId(vesselID);
 				// Get voyageID
-				voyageID = objDao.validateVoyage(objBillHeader.getVesselSchedule().getVoyageNumber(), vesselID,
-						objBillHeader.getLoginScac());
+				voyageID = objDao.validateVoyage(objBillHeader, vesselID);
 				if (voyageID != 0) {
 					objBillHeader.getVesselSchedule().setVoyageId(voyageID);
 					// validateDischargePort
@@ -138,6 +132,9 @@ public class BillsServiceImpl implements BillsService {
 
 	private void addEquipments(BillHeader objBillHeader, int billLadingId, BillsDAO objBillsDao) throws SQLException {
 		boolean returnedVal = true;
+		int packageIndex=0;
+		int cargoIndex=0;
+		
 		for (Equipment objEquipment : objBillHeader.getEquipments()) {
 			if (!objBillsDao.insertIntoEquipments(objEquipment, billLadingId)) {
 				returnedVal = false;
@@ -147,11 +144,13 @@ public class BillsServiceImpl implements BillsService {
 				returnedVal = false;
 				break;
 			}
-			if (!objBillsDao.addPackages(objEquipment, billLadingId)) {
+			packageIndex =objBillsDao.addPackages(objEquipment, billLadingId,packageIndex);
+			if (packageIndex == -1) {
 				returnedVal = false;
 				break;
 			}
-			if (!objBillsDao.addCargos(objEquipment, billLadingId)) {
+			cargoIndex = objBillsDao.addCargos(objEquipment, billLadingId,cargoIndex);
+			if (cargoIndex==-1) {
 				returnedVal = false;
 				break;
 			}

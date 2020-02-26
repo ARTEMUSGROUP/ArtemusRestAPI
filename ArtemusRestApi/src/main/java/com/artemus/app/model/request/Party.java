@@ -6,7 +6,7 @@ public class Party {
 
 	// -----------------------
 	private int customerId;
-	
+
 	public int getCustomerId() {
 		return customerId;
 	}
@@ -16,7 +16,10 @@ public class Party {
 	}
 
 	public String getName() {
-		return name;
+		if (name == null)
+			return name;
+		else
+			return name.toUpperCase();
 	}
 
 	public void setName(String name) {
@@ -37,7 +40,7 @@ public class Party {
 			objPartyMessage = " name :, ";
 		String addressInfoMessage = addressInfo.validateAddressInfo();
 		if (addressInfoMessage.length() > 0)
-			objPartyMessage = objPartyMessage + " addressInfo:{" + addressInfoMessage+"}";
+			objPartyMessage = objPartyMessage + " addressInfo:{" + addressInfoMessage + "}";
 		return objPartyMessage;
 	}
 }
