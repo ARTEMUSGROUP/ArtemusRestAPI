@@ -8,7 +8,6 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.NotBlank;
 import com.github.reinert.jjschema.Attributes;
 
-
 @Attributes(title = "Voyage", description = "Defines a voyage.")
 public class Voyage {
 
@@ -37,16 +36,10 @@ public class Voyage {
 	@Valid
 	private ArrayList<PortDetails> PortDetails;
 
-	@Attributes(required = true, description = " Defines a location for this bill.  ")
-	@NotNull(message = "locations cannot be null")
-	@Valid
-	private ArrayList<Location> locations;
-
-   // -----------------------------------
+	// -----------------------------------
 	private int voyageId;
 	private int vesselId;
-	
-	
+
 	public int getVoyageId() {
 		return voyageId;
 	}
@@ -119,12 +112,11 @@ public class Voyage {
 		PortDetails = portDetails;
 	}
 
-	public ArrayList<Location> getLocations() {
-		return locations;
-	}
-
-	public void setLocations(ArrayList<Location> locations) {
-		this.locations = locations;
+	@Override
+	public String toString() {
+		return "Voyage [voyageNumber=" + voyageNumber + ", vesselName=" + vesselName + ", scacCode=" + scacCode
+				+ ", crewMembers=" + crewMembers + ", passengers=" + passengers + ", reportNumber=" + reportNumber
+				+ ", PortDetails=" + PortDetails + ", voyageId=" + voyageId + ", vesselId=" + vesselId + "]";
 	}
 
 }

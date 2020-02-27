@@ -5,11 +5,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.artemus.app.connection.DBConnectionFactory;
 import com.artemus.app.model.request.Voyage;
 
 public class VoyageDAO {
-
+	static Logger logger = LogManager.getLogger();
 	private Connection con;
 	private java.sql.PreparedStatement stmt = null;
 	private ResultSet rs = null;
@@ -73,7 +76,7 @@ public class VoyageDAO {
 	}
 
 	public boolean insert(Voyage objmVoyageBean) {
-
+		logger.debug(objmVoyageBean.getPortDetails().toString());
 		String result = "";
 		int voyageId = 0;
 		try {
@@ -89,7 +92,7 @@ public class VoyageDAO {
 			stmt.setString(6, objmVoyageBean.getPassengers());
 			stmt.setString(7, objmVoyageBean.getReportNumber());
 			stmt.setString(8, "admin");
-
+			logger.debug(stmt);
 			stmt.execute();
 			rs = stmt.getGeneratedKeys();
 			if (rs.next()) {
@@ -102,7 +105,9 @@ public class VoyageDAO {
 
 			stmt.setString(1, objmVoyageBean.getScacCode());
 			stmt.setInt(2, voyageId);
+			
 			for (int i = 0; i < objmVoyageBean.getPortDetails().size(); i++) {
+				logger.debug(objmVoyageBean.toString());
 				stmt.setInt(3, objmVoyageBean.getPortDetails().get(i).getLocationIndex());
 				stmt.setBoolean(4, objmVoyageBean.getPortDetails().get(i).getLastLoadPort());
 				stmt.setString(5, objmVoyageBean.getPortDetails().get(i).getTerminal());
@@ -110,7 +115,8 @@ public class VoyageDAO {
 				stmt.setString(7, objmVoyageBean.getPortDetails().get(i).getArrivalDate());
 				stmt.setBoolean(8, objmVoyageBean.getPortDetails().get(i).getLoad());
 				stmt.setBoolean(9, objmVoyageBean.getPortDetails().get(i).getDischarge());
-				stmt.setString(10, objmVoyageBean.getLocations().get(i).getLocation());
+				stmt.setString(10, objmVoyageBean.getPortDetails().get(i).getLocation().getLocation());
+				logger.debug(stmt);
 				stmt.execute();
 
 //				stmt1= con.prepareStatement("update location " +
