@@ -80,8 +80,7 @@ public class VoyageScheduleServiceImpl implements VoyageScheduleService {
 				if (errorMessage.length() > 0) {
 					errorMessage.append(" , ");
 				}
-				errorMessage.append("vesselName:" + objVoyage.getVesselName() + " does not exists for scac "
-						+ objVoyage.getScacCode());
+				errorMessage.append("vesselName:"+objVoyage.getVesselName()+" does not exists for scac " + objVoyage.getScacCode());
 			}
 		} finally {
 			objDao.closeAll();
@@ -244,6 +243,7 @@ public class VoyageScheduleServiceImpl implements VoyageScheduleService {
 							e.printStackTrace();
 							result = false;
 						}
+
 						break;
 					}
 
@@ -262,8 +262,7 @@ public class VoyageScheduleServiceImpl implements VoyageScheduleService {
 							result = false;
 							break;
 						}
-						if (dichargedate1.compareTo(lastloaddate1) >= 0
-								|| dichargedate1.compareTo(lastloaddate1) == 0) {
+						if (dichargedate1.compareTo(lastloaddate1) >= 0 || dichargedate1.compareTo(lastloaddate1) == 0) {
 							result = true;
 						} else {
 							if ((objVoyage.getLocations().size()) < portCall.getLocationIndex()) {
@@ -308,14 +307,16 @@ public class VoyageScheduleServiceImpl implements VoyageScheduleService {
 							objPortDetailsBean.setTerminal("");
 						}
 					}
+
 					objmPortDetailsBeans.add(objPortDetailsBean);
 				}
+
 				objVoyage.setPortDetails(objmPortDetailsBeans);
 			}
-		} finally {
+		}finally {
 			objLocationDAO.closeAll();
 		}
-
+		
 	}
 
 	boolean ValidateUnCode(ArrayList<Location> objLocation, String loginScac) {
