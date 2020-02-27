@@ -1,20 +1,5 @@
 <!-- Test Server Config -->
-<Context path="/ArtemusApi" reloadable="true">
-	<Loader delegate="true"/>
-	<Resource name="jdbc/artemus" 
-		auth="Container" 
-		type="javax.sql.DataSource" 
-		maxActive="100" 
-		maxIdle="30" 
-		maxWait="10000" 
-		username="root" 
-		password="@ss123" 
-		driverClassName="com.mysql.jdbc.Driver" 
-		url="jdbc:mysql://localhost:3306/artemus?autoReconnect=true"/>
-</Context> 
-
-<!-- Radhika Server Config -->
-<!-- <Context path="/ArtemusRestApi" reloadable="true"> -->
+<!-- <Context path="/ArtemusApi" reloadable="true"> -->
 <!-- 	<Loader delegate="true"/> -->
 <!-- 	<Resource name="jdbc/artemus"  -->
 <!-- 		auth="Container"  -->
@@ -25,8 +10,23 @@
 <!-- 		username="root"  -->
 <!-- 		password="@ss123"  -->
 <!-- 		driverClassName="com.mysql.jdbc.Driver"  -->
-<!-- 		url="jdbc:mysql://localhost:3307/artemus?autoReconnect=true"/> -->
-<!-- </Context> -->
+<!-- 		url="jdbc:mysql://localhost:3306/artemus?autoReconnect=true"/> -->
+<!-- </Context>  -->
+
+<!-- Radhika Server Config -->
+<Context path="/ArtemusRestApi" reloadable="true">
+	<Loader delegate="true"/>
+	<Resource name="jdbc/artemus" 
+		auth="Container" 
+		type="javax.sql.DataSource" 
+		maxActive="100" 
+		maxIdle="30" 
+		maxWait="10000" 
+		username="root" 
+		password="@ss123" 
+		driverClassName="com.mysql.jdbc.Driver" 
+		url="jdbc:mysql://localhost:3307/artemus?autoReconnect=true"/>
+</Context>
 
 <!-- Akshay Server Config -->
 <!-- <Context path="/ArtemusRestApi" reloadable="true"> -->

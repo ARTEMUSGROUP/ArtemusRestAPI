@@ -80,7 +80,8 @@ public class VoyageScheduleServiceImpl implements VoyageScheduleService {
 				if (errorMessage.length() > 0) {
 					errorMessage.append(" , ");
 				}
-				errorMessage.append("vesselName:"+objVoyage.getVesselName()+" does not exists for scac " + objVoyage.getScacCode());
+				errorMessage.append("vesselName:" + objVoyage.getVesselName() + " does not exists for scac "
+						+ objVoyage.getScacCode());
 			}
 		} finally {
 			objDao.closeAll();
@@ -182,139 +183,139 @@ public class VoyageScheduleServiceImpl implements VoyageScheduleService {
 	private void validatePort(Voyage objVoyage) {
 		logger.trace("inside validatePort");
 		LocationDAO objLocationDAO = new LocationDAO(null);
-
-		boolean result;
-
-		ArrayList<PortDetails> objmPortDetailsBeans = new ArrayList<PortDetails>();
-
-		ArrayList<Location> objLocationbean = objVoyage.getLocations();
-		ArrayList<PortDetails> objPortCallbean = objVoyage.getPortDetails();
-		boolean portValidation = false;
-		for (PortDetails portCall : objVoyage.getPortDetails()) {
-			if (portCall.getDischarge() == true) {
-				portValidation = true;
-				break;
-			}
-		}
-
-		if (!portValidation) {
-			errorMessage.append("discharge : Voyage should have atleast one discharge");
-			result = false;
-		}
-		portValidation = false;
-		for (PortDetails portCall : objVoyage.getPortDetails()) {
-			if (portCall.getLoad() == true) {
-				portValidation = true;
-				break;
-			}
-		}
-		if (!portValidation) {
-			result = false;
-			errorMessage.append("load: Voyage should have atleast one load");
-		}
-
-		portValidation = false;
-		int lastLoadPortCount = 0;
-		for (PortDetails portCall : objVoyage.getPortDetails()) {
-			if (portCall.getLastLoadPort() == true) {
-				portValidation = true;
-				lastLoadPortCount++;
-				break;
-			}
-		}
-		if (lastLoadPortCount > 1) {
-			errorMessage.append("lastLoadPort : only one lastLoadPort must be true");
-		}
-		if (!portValidation) {
-			errorMessage.append("lastLoadPort : Voyage should have atleast one lastLoadPort");
-			result = false;
-		} else {
-
-			String lastloaddate;
-			String dischargeDate;
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-			java.util.Date lastloaddate1 = null;
-			java.util.Date dichargedate1 = null;
-			for (PortDetails portCall : objVoyage.getPortDetails()) {
-				if (portCall.getLastLoadPort() == true) {
-					lastloaddate = portCall.getArrivalDate();
-					try {
-						lastloaddate1 = sdf.parse(lastloaddate);
-					} catch (Exception e) {
-						System.out.println("Date is not in correct format");
-						e.printStackTrace();
-						result = false;
-					}
-
-					break;
-				}
-
-			}
+		try {
+			boolean result;
+			ArrayList<PortDetails> objmPortDetailsBeans = new ArrayList<PortDetails>();
+			ArrayList<Location> objLocationbean = objVoyage.getLocations();
+			ArrayList<PortDetails> objPortCallbean = objVoyage.getPortDetails();
+			boolean portValidation = false;
 			for (PortDetails portCall : objVoyage.getPortDetails()) {
 				if (portCall.getDischarge() == true) {
-					dischargeDate = portCall.getArrivalDate();
-					try {
-						dichargedate1 = sdf.parse(dischargeDate);
-					} catch (Exception e) {
-						System.out.println("Date is not in correct format");
-						// Error Message
-						// generateResponseBean("PortCall", "PortCall date is in incorrect format,
-						// correct format is YYYY-MM-DD.","ERROR");
-						e.printStackTrace();
-						result = false;
+					portValidation = true;
+					break;
+				}
+			}
+
+			if (!portValidation) {
+				errorMessage.append("discharge : Voyage should have atleast one discharge");
+				result = false;
+			}
+			portValidation = false;
+			for (PortDetails portCall : objVoyage.getPortDetails()) {
+				if (portCall.getLoad() == true) {
+					portValidation = true;
+					break;
+				}
+			}
+			if (!portValidation) {
+				result = false;
+				errorMessage.append("load: Voyage should have atleast one load");
+			}
+
+			portValidation = false;
+			int lastLoadPortCount = 0;
+			for (PortDetails portCall : objVoyage.getPortDetails()) {
+				if (portCall.getLastLoadPort() == true) {
+					portValidation = true;
+					lastLoadPortCount++;
+					break;
+				}
+			}
+			if (lastLoadPortCount > 1) {
+				errorMessage.append("lastLoadPort : only one lastLoadPort must be true");
+			}
+			if (!portValidation) {
+				errorMessage.append("lastLoadPort : Voyage should have atleast one lastLoadPort");
+				result = false;
+			} else {
+
+				String lastloaddate;
+				String dischargeDate;
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+				java.util.Date lastloaddate1 = null;
+				java.util.Date dichargedate1 = null;
+				for (PortDetails portCall : objVoyage.getPortDetails()) {
+					if (portCall.getLastLoadPort() == true) {
+						lastloaddate = portCall.getArrivalDate();
+						try {
+							lastloaddate1 = sdf.parse(lastloaddate);
+						} catch (Exception e) {
+							System.out.println("Date is not in correct format");
+							e.printStackTrace();
+							result = false;
+						}
 						break;
 					}
-					if (dichargedate1.compareTo(lastloaddate1) >= 0 || dichargedate1.compareTo(lastloaddate1) == 0) {
-						result = true;
-					} else {
-						if ((objVoyage.getLocations().size()) < portCall.getLocationIndex()) {
-							if (errorMessage.length() > 0) {
-								errorMessage.append(" , ");
-							}
-							// Error message
-							errorMessage.append(
-									"locationIndex : " + portCall.getLocationIndex() + "in a PortCall is invalid");
-							result = false;
-							break;
-						} else {
-							if (errorMessage.length() > 0) {
-								errorMessage.append(" , ");
-							}
-							// Error message
-							errorMessage.append("arrivalDate : "
-									+ objVoyage.getLocations().get(portCall.getLocationIndex() - 1).getLocation()
-									+ "should not be less than sailingDate ");
 
+				}
+				for (PortDetails portCall : objVoyage.getPortDetails()) {
+					if (portCall.getDischarge() == true) {
+						dischargeDate = portCall.getArrivalDate();
+						try {
+							dichargedate1 = sdf.parse(dischargeDate);
+						} catch (Exception e) {
+							System.out.println("Date is not in correct format");
+							// Error Message
+							// generateResponseBean("PortCall", "PortCall date is in incorrect format,
+							// correct format is YYYY-MM-DD.","ERROR");
+							e.printStackTrace();
 							result = false;
 							break;
 						}
+						if (dichargedate1.compareTo(lastloaddate1) >= 0
+								|| dichargedate1.compareTo(lastloaddate1) == 0) {
+							result = true;
+						} else {
+							if ((objVoyage.getLocations().size()) < portCall.getLocationIndex()) {
+								if (errorMessage.length() > 0) {
+									errorMessage.append(" , ");
+								}
+								// Error message
+								errorMessage.append(
+										"locationIndex : " + portCall.getLocationIndex() + "in a PortCall is invalid");
+								result = false;
+								break;
+							} else {
+								if (errorMessage.length() > 0) {
+									errorMessage.append(" , ");
+								}
+								// Error message
+								errorMessage.append("arrivalDate : "
+										+ objVoyage.getLocations().get(portCall.getLocationIndex() - 1).getLocation()
+										+ "should not be less than sailingDate ");
+
+								result = false;
+								break;
+							}
+						}
 					}
 				}
-			}
 
-			for (PortDetails portCallbean : objPortCallbean) {
-				PortDetails objPortDetailsBean = new PortDetails();
-				for (Location locationbean : objLocationbean) {
-					if (locationbean.getLocationIndex() == portCallbean.getLocationIndex()) {
-						objPortDetailsBean.setArrivalDate(portCallbean.getArrivalDate());
-						objPortDetailsBean.setSailingDate(portCallbean.getSailingDate());
-						objPortDetailsBean.setLoad(portCallbean.getLoad());
-						objPortDetailsBean.setDischarge(portCallbean.getDischarge());
-						objPortDetailsBean.setLastLoadPort(portCallbean.getLastLoadPort());
-						// objPortDetailsBean.setLocation(locationbean.getName().trim());
-						// objPortDetailsBean.setIsAmsSent(false); int
-						int locationid = objLocationDAO.getLocationId(locationbean.getLocation(),
-								objVoyage.getScacCode());
-						objPortDetailsBean.setLocationIndex(locationid);
-						objPortDetailsBean.setTerminal("");
+				for (PortDetails portCallbean : objPortCallbean) {
+					PortDetails objPortDetailsBean = new PortDetails();
+					for (Location locationbean : objLocationbean) {
+						if (locationbean.getLocationIndex() == portCallbean.getLocationIndex()) {
+							objPortDetailsBean.setArrivalDate(portCallbean.getArrivalDate());
+							objPortDetailsBean.setSailingDate(portCallbean.getSailingDate());
+							objPortDetailsBean.setLoad(portCallbean.getLoad());
+							objPortDetailsBean.setDischarge(portCallbean.getDischarge());
+							objPortDetailsBean.setLastLoadPort(portCallbean.getLastLoadPort());
+							// objPortDetailsBean.setLocation(locationbean.getName().trim());
+							// objPortDetailsBean.setIsAmsSent(false); int
+							int locationid = objLocationDAO.getLocationId(locationbean.getLocation(),
+									objVoyage.getScacCode());
+							objPortDetailsBean.setLocationIndex(locationid);
+							objPortDetailsBean.setTerminal("");
+						}
 					}
+					objmPortDetailsBeans.add(objPortDetailsBean);
 				}
-
-				objmPortDetailsBeans.add(objPortDetailsBean);
+				objVoyage.setPortDetails(objmPortDetailsBeans);
 			}
-
-			objVoyage.setPortDetails(objmPortDetailsBeans);
+		} finally {
+			objLocationDAO.closeAll();
 		}
+
 	}
 
 	boolean ValidateUnCode(ArrayList<Location> objLocation, String loginScac) {
