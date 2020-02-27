@@ -16,7 +16,7 @@ public class ValueUnit {
 		if (unit == null) {
 			unit = "";
 		}
-		return unit;
+		return unit.toUpperCase();
 	}
 
 	public void setUnit(String unit) {

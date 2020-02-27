@@ -11,7 +11,7 @@ public class Cargo {
 	public String getDescriptionsOfGoods() {
 		if (descriptionsOfGoods==null)
 			descriptionsOfGoods="";
-		return descriptionsOfGoods;
+		return descriptionsOfGoods.toUpperCase();
 	}
 
 	public void setDescriptionsOfGoods(String descriptionsOfGoods) {
@@ -21,7 +21,7 @@ public class Cargo {
 	public String getHarmonizeCode() {
 		if(harmonizeCode==null)
 			harmonizeCode="";
-		return harmonizeCode;
+		return harmonizeCode.toUpperCase();
 	}
 
 	public void setHarmonizeCode(String harmonizeCode) {
@@ -31,7 +31,7 @@ public class Cargo {
 	public String getHazardCode() {
 		if(hazardCode==null)
 			hazardCode="";
-		return hazardCode;
+		return hazardCode.toUpperCase();
 	}
 
 	public void setHazardCode(String hazardCode) {
@@ -41,7 +41,7 @@ public class Cargo {
 	public String getManufacturer() {
 		if(manufacturer==null)
 			manufacturer="";
-		return manufacturer;
+		return manufacturer.toUpperCase();
 	}
 
 	public void setManufacturer(String manufacturer) {
@@ -51,7 +51,7 @@ public class Cargo {
 	public String getCountry() {
 		if(country==null)
 			country="";
-		return country;
+		return country.toUpperCase();
 	}
 
 	public void setCountry(String country) {
