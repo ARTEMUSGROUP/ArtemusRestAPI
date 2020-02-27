@@ -212,7 +212,7 @@ public class LocationDAO {
 	 */
 
 	public boolean insert(Location locationbean, String loginScac) {
-		// TODO Auto-generated method stub
+		logger.info("inside insert location...");
 		boolean result = false;
 		Boolean flag = true;
 		try {

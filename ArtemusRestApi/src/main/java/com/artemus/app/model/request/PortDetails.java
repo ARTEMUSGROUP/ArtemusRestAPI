@@ -8,9 +8,9 @@ import org.hibernate.validator.constraints.NotBlank;
 import com.github.reinert.jjschema.Attributes;
 
 public class PortDetails {
-	
+
 	int locationIndex;
-	
+
 	@Attributes(required = false, description = "If the port call is a loading port, indicates whether or not this is the last loading port for the voyage.  Valid values are “true” and “false”.")
 	private Boolean lastLoadPort;
 
@@ -104,8 +104,11 @@ public class PortDetails {
 		this.locationIndex = locationIndex;
 	}
 
-	
-	
-	
+	@Override
+	public String toString() {
+		return "PortDetails [locationIndex=" + locationIndex + ", lastLoadPort=" + lastLoadPort + ", sailingDate="
+				+ sailingDate + ", arrivalDate=" + arrivalDate + ", load=" + load + ", discharge=" + discharge
+				+ ", terminal=" + terminal + ", location=" + location + "]";
+	}
 
 }

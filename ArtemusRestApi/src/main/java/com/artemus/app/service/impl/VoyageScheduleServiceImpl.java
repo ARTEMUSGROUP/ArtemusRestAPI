@@ -118,6 +118,7 @@ public class VoyageScheduleServiceImpl implements VoyageScheduleService {
 	}
 
 	boolean validateLocation(Voyage objVoyage, String loginScac) {
+		logger.info("inside validateLocation");
 		boolean result = false;
 		LocationDAO objLocationdao = new LocationDAO(null);
 		try {
@@ -126,6 +127,7 @@ public class VoyageScheduleServiceImpl implements VoyageScheduleService {
 				// Setting locationBean
 				locationbean = objLocationdao.setLocationBean(locationbean);
 				int locationId = objLocationdao.checkLocationForCustomCode(locationbean.getCustomCode(), loginScac);
+				logger.info("locationId :"+locationId);
 				if (locationId == 0) {
 					if (locationbean.getLocation() == null || locationbean.getLocation().isEmpty()) {
 						result = false;
@@ -141,6 +143,8 @@ public class VoyageScheduleServiceImpl implements VoyageScheduleService {
 				} else {
 					result = true;
 					locationbean.setLocationIndex(locationId);
+					locationbean.setLocationId(locationId);
+					
 				}
 			}
 		} finally {
@@ -339,16 +343,19 @@ public class VoyageScheduleServiceImpl implements VoyageScheduleService {
 				}
 
 				for (PortDetails portCallbean : objPortCallbean) {
+					logger.info(objPortCallbean.toString());
 					PortDetails objPortDetailsBean = new PortDetails();
-					
 					objPortDetailsBean.setArrivalDate(portCallbean.getArrivalDate());
 					objPortDetailsBean.setSailingDate(portCallbean.getSailingDate());
 					objPortDetailsBean.setLoad(portCallbean.getLoad());
 					objPortDetailsBean.setDischarge(portCallbean.getDischarge());
 					objPortDetailsBean.setLastLoadPort(portCallbean.getLastLoadPort());
 					objPortDetailsBean.setLocationIndex(portCallbean.getLocation().getLocationId());
+					Location objLocation = new Location();
+					objLocation.setLocationId(portCallbean.getLocation().getLocationId());
+					objLocation.setLocation(portCallbean.getLocation().getLocation());
+					objPortDetailsBean.setLocation(objLocation);
 					objPortDetailsBean.setTerminal("");
-					
 					objmPortDetailsBeans.add(objPortDetailsBean);
 				}
 

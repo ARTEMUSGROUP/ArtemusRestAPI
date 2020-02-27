@@ -9,6 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.artemus.app.connection.DBConnectionFactory;
+import com.artemus.app.exceptions.ErrorResponseException;
 import com.artemus.app.model.request.Voyage;
 
 public class VoyageDAO {
@@ -138,6 +139,10 @@ public class VoyageDAO {
 			result = "Success";
 		} catch (SQLException e) {
 			e.printStackTrace();
+			if(e.getClass().getName().endsWith("SQLIntegrityConstraintViolationException")) {
+				throw new ErrorResponseException("unlocode: is duplicate, please check portDetails data");
+			}
+			
 			result = "Exception";
 		} catch (Exception e) {
 			e.printStackTrace();
