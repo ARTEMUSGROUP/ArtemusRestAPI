@@ -13,6 +13,7 @@ import com.artemus.app.dao.VoyageDAO;
 import com.artemus.app.exceptions.ErrorResponseException;
 import com.artemus.app.exceptions.MissingRequiredFieldException;
 import com.artemus.app.model.request.Location;
+import com.artemus.app.model.request.PortCall;
 import com.artemus.app.model.request.PortDetails;
 import com.artemus.app.model.request.Voyage;
 import com.artemus.app.model.response.ErrorMessages;
@@ -210,7 +211,32 @@ public class VoyageScheduleServiceImpl implements VoyageScheduleService {
 				result = false;
 				errorMessage.append("load: Voyage should have atleast one load");
 			}
+			
+			portValidation = false;
+			for (PortDetails portCall : objVoyage.getPortDetails()) {
+				if (portCall.getLoad() == true && portCall.getDischarge()==true) {
+					portValidation = true;
+					break;
+				}
+			}
+			if (portValidation) {
+				result = false;
+				errorMessage.append("load: Voyage should not have a location with same discharge Port and load Port ");
+			}
 
+			portValidation = false;
+			for (PortDetails portCall : objVoyage.getPortDetails()) {
+				if (portCall.getLastLoadPort() == true && portCall.getDischarge()==true) {
+					portValidation = true;
+					break;
+				}
+			}
+			
+			if (portValidation) {
+				errorMessage.append("lastLoadPort ,Discharge: Voyage should not have a location with same Discharge port and lastLoadPort ");
+				result = false;
+			}
+			
 			portValidation = false;
 			int lastLoadPortCount = 0;
 			for (PortDetails portCall : objVoyage.getPortDetails()) {

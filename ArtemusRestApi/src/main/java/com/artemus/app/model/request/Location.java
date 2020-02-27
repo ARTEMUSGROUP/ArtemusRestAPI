@@ -1,5 +1,6 @@
 package com.artemus.app.model.request;
 
+import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
@@ -44,6 +45,14 @@ public class Location {
 		private String HoldAtLp;
 		private String CreatedUser;
 		
+		@AssertTrue(message = "Either unlocode or customCode must required")
+		public boolean isValid()
+		{	
+			if((unlocode ==null || unlocode.isEmpty()) && (customCode ==null || customCode.isEmpty()))
+				return false;
+				
+				return true;
+		}
 		
 		public int getLocationIndex() {
 			return locationIndex;
