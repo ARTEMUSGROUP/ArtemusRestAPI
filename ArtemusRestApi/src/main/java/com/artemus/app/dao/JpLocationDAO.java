@@ -61,14 +61,8 @@ public class JpLocationDAO {
 			return result;
 
 		}
+		
 
-		public void validatePort(Voyage objvoyage) {
-
-		}
-
-		public void insertLocation(Voyage objvoyage) {
-
-		}
 
 		public int getLocationId(String locationName, String loginScac) {
 			try {
@@ -128,7 +122,7 @@ public class JpLocationDAO {
 			return result;
 		}
 
-		public Boolean isDisctrictPort(String unlocode) {
+		public boolean isDisctrictPort(String unlocode) {
 			ResultSet rs = null;
 			Boolean result = true;
 			try {
@@ -169,47 +163,6 @@ public class JpLocationDAO {
 			}
 		}
 
-//		public boolean checkForLocationName(String locationName, String loginScac) {
-//			// TODO Auto-generated method stub
-//			boolean result = true;
-//			try {
-//				stmt = con.prepareStatement("Select location_name from location where location_name=? and login_scac=? "
-//						+ "union Select alt_name from alt_location where alt_name=? and login_scac=?");
-//				stmt.setString(1, locationName);
-//				stmt.setString(2, loginScac);
-//				stmt.setString(3, locationName);
-//				stmt.setString(4, loginScac);
-//				rs = stmt.executeQuery();
-//				if (rs.next()) {
-//					result = true;
-//				} else {
-//					result = false;
-//				}
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//			}
-//			return result;
-//		}
-
-		/*
-		 * public boolean getLocationCode(Location objlocationBean,String scacCode) {
-		 * boolean isValid = false; try { stmt = con.prepareStatement(
-		 * "(Select a.location_code from location a left outer join alt_location c on a.location_id=c.location_id,"
-		 * + " voyage_details b " +
-		 * " where c.alt_name like ? and a.login_scac= ? and b.location_id=a.location_id and b.voyage_id = ? and b.is_discharge_port=true )"
-		 * + " union" +
-		 * " (Select a.location_code from location a, voyage_details b  where a.location_name like ? "
-		 * +
-		 * " and a.login_scac= ?  and b.location_id=a.location_id and b.voyage_id = ? and b.is_discharge_port=true)"
-		 * ); stmt.setString(1, objlocationBean.getLocation() + "%"); stmt.setString(2,
-		 * scacCode); stmt.setInt(3, objlocationBean.getVoyageId()); stmt.setString(4,
-		 * objlocationBean.getLocation() + "%"); stmt.setString(5, scacCode);
-		 * stmt.setInt(6, objlocationBean.getVoyageId()); rs = stmt.executeQuery();
-		 * System.out.println(stmt.toString()); if (rs.next()) {
-		 * objlocationBean.setLocationCode(rs.getString("location_code")); isValid =
-		 * true; } else { isValid = false; } } catch (SQLException e) {
-		 * e.printStackTrace(); } return isValid; }
-		 */
 
 		public boolean insert(Location locationbean, String loginScac) {
 			logger.info("inside insert location...");
@@ -312,7 +265,7 @@ public class JpLocationDAO {
 				if (locationbean.getLocationType().equalsIgnoreCase("marine"))
 					locationbean.setLocationType("M");
 				if (locationbean.getLocationType().equalsIgnoreCase("inland"))
-					locationbean.setLocationType("I");
+					locationbean.setLocationType("M");
 			}
 			if (locationbean.getProvidence() == null)
 				locationbean.setProvidence("");

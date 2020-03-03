@@ -263,7 +263,7 @@ public class LocationDAO {
 				stmt.setBoolean(8, locationbean.isIsVoyageCreated());
 				stmt.setString(9, locationbean.getCreatedUser());
 				stmt.setBoolean(10, locationbean.isCustomForeign());
-				stmt.setString(11, "");
+				stmt.setString(11, locationbean.getUnlocode());
 
 				if (stmt.executeUpdate() < 0)
 					flag = false;
@@ -312,7 +312,7 @@ public class LocationDAO {
 			if (locationbean.getLocationType().equalsIgnoreCase("marine"))
 				locationbean.setLocationType("M");
 			if (locationbean.getLocationType().equalsIgnoreCase("inland"))
-				locationbean.setLocationType("I");
+				locationbean.setLocationType("M");
 		}
 		if (locationbean.getProvidence() == null)
 			locationbean.setProvidence("");

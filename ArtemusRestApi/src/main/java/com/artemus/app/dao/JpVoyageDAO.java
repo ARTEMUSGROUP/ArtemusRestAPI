@@ -84,7 +84,7 @@ public class JpVoyageDAO {
 		try {
 			stmt = con.prepareStatement("Insert into jp_voyage "
 					+ "(login_scac, voyage_number, vessel_id, vessel_scac, crew_members,"
-					+ " passengers, report_number, created_user, created_date)" + " VALUES (?,?,?,?,?,?,?,?,now()) ",
+					+ " passengers, report_number, created_user, created_date,is_jp_voyage)" + " VALUES (?,?,?,?,?,?,?,?,now(),?) ",
 					Statement.RETURN_GENERATED_KEYS);
 			stmt.setString(1, objmVoyageBean.getScacCode());
 			stmt.setString(2, objmVoyageBean.getVoyageNumber());
@@ -94,6 +94,7 @@ public class JpVoyageDAO {
 			stmt.setString(6, objmVoyageBean.getPassengers());
 			stmt.setString(7, objmVoyageBean.getReportNumber());
 			stmt.setString(8, "admin");
+			stmt.setString(9, "Y");
 			logger.debug(stmt);
 			stmt.execute();
 			rs = stmt.getGeneratedKeys();
