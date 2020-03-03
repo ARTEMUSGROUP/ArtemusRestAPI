@@ -20,11 +20,11 @@ public class LocationDAO {
 	private ResultSet rs = null;
 
 	public LocationDAO(Connection connection) {
-			if (connection != null) {
-				con = connection;
-			} else {
-				con = DBConnectionFactory.getConnection();
-			}
+		if (connection != null) {
+			con = connection;
+		} else {
+			con = DBConnectionFactory.getConnection();
+		}
 	}
 
 	public void closeAll() {
@@ -79,6 +79,7 @@ public class LocationDAO {
 			stmt.setString(2, loginScac);
 			stmt.setString(3, locationName);
 			stmt.setString(4, loginScac);
+			logger.debug(stmt);
 			rs = stmt.executeQuery();
 			if (rs.next()) {
 				return rs.getInt(1);
@@ -151,28 +152,44 @@ public class LocationDAO {
 
 	}
 
-	public boolean checkForLocationName(String locationName, String loginScac) {
-		// TODO Auto-generated method stub
-		ResultSet rs = null;
-		Boolean result = true;
+	public int checkLocationForCustomCode(String customCode, String loginScac) {
 		try {
-			stmt = con.prepareStatement("Select location_name from location where location_name=? and login_scac=? "
-					+ "union Select alt_name from alt_location where alt_name=? and login_scac=?");
-			stmt.setString(1, locationName);
+			stmt = con.prepareStatement("Select location_id from location where location_code=? and login_scac=? ");
+			stmt.setString(1, customCode);
 			stmt.setString(2, loginScac);
-			stmt.setString(3, locationName);
-			stmt.setString(4, loginScac);
 			rs = stmt.executeQuery();
 			if (rs.next()) {
-				result = true;
+				return rs.getInt("location_id");
 			} else {
-				result = false;
+				return 0;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+			return 0;
 		}
-		return result;
 	}
+
+//	public boolean checkForLocationName(String locationName, String loginScac) {
+//		// TODO Auto-generated method stub
+//		boolean result = true;
+//		try {
+//			stmt = con.prepareStatement("Select location_name from location where location_name=? and login_scac=? "
+//					+ "union Select alt_name from alt_location where alt_name=? and login_scac=?");
+//			stmt.setString(1, locationName);
+//			stmt.setString(2, loginScac);
+//			stmt.setString(3, locationName);
+//			stmt.setString(4, loginScac);
+//			rs = stmt.executeQuery();
+//			if (rs.next()) {
+//				result = true;
+//			} else {
+//				result = false;
+//			}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//		return result;
+//	}
 
 	/*
 	 * public boolean getLocationCode(Location objlocationBean,String scacCode) {
@@ -195,7 +212,7 @@ public class LocationDAO {
 	 */
 
 	public boolean insert(Location locationbean, String loginScac) {
-		// TODO Auto-generated method stub
+		logger.info("inside insert location...");
 		boolean result = false;
 		Boolean flag = true;
 		try {

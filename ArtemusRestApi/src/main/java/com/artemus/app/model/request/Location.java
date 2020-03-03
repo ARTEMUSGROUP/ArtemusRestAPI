@@ -1,89 +1,99 @@
 package com.artemus.app.model.request;
 
+import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.hibernate.validator.constraints.NotBlank;
 
 import com.github.reinert.jjschema.Attributes;
 
 public class Location {
-	@Attributes(required = true, description = "A unique index, identifying this location within this EDI transmission.  This could be your primary key, or just a number starting from one.")
-	private int locationIndex;
+
 	
+
 	@Attributes(required = true, description = "The name of this location.  If the location already exists in our system, this and an index are the only required attributes.")
 	@NotBlank(message = "location cannot be blank")
 	private String location;
-	
+
 	@Attributes(required = false, description = "The location’s three letter country code, as defined by ISO 3166-1 alpha-3.  If this location does not already exist in our database, this field is required.T")
 	@Size(min = 2, max = 3, message = "country must be 3 letter country code of location")
 	private String country;
-	
+
 	@Attributes(required = false, description = "The providence for this location.  For U.S. locations, use the two letter state abbreviation.")
 	@Size(min = 2, max = 2, message = "providence must be 2 letter state abbreviation")
 	private String providence;
-	
+
 	@Attributes(required = false, description = "This can be either “inland” or “marine”, indicating whether this location is a sea port.")
 	@Pattern(regexp = "inland|marine", flags = Pattern.Flag.CASE_INSENSITIVE)
 	private String locationType;
-	
+
 	@Attributes(required = false, description = "Canada customs office code for this location.  Only valid for Canada locations.")
 	private String canadaCustomCode;
-	
+
 	@Attributes(required = false, description = "United Nations location code (UN/LOCCODE) for this location.")
 	private String unlocode;
-	
+
 	@Attributes(required = false, description = "“Schedule K” port code for this location.")
 	private String customCode;
 
 	// -------------------------------------------
-	    private boolean isCustomForeign;
-		
-		private int locationId;
-		private boolean IsVoyageCreated;
-		private String HoldAtLp;
-		private String CreatedUser;
-		
-		
-		public int getLocationIndex() {
-			return locationIndex;
-		}
+	private int locationIndex;
+	private boolean isCustomForeign;
+	private int locationId;
+	private boolean IsVoyageCreated;
+	private String HoldAtLp;
+	private String CreatedUser;
 
-		public void setLocationIndex(int locationIndex) {
-			this.locationIndex = locationIndex;
-		}	
-		
+	@AssertTrue(message = " Either unlocode or customCode must required")
+	public boolean isValid() {
+		if ((unlocode == null || unlocode.isEmpty()) && (customCode == null || customCode.isEmpty())) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	public int getLocationIndex() {
+		return locationIndex;
+	}
+
+	public void setLocationIndex(int locationIndex) {
+		this.locationIndex = locationIndex;
+	}
+
 	public String getCreatedUser() {
-			return CreatedUser;
-		}
+		return CreatedUser;
+	}
 
-		public void setCreatedUser(String createdUser) {
-			CreatedUser = createdUser;
-		}
+	public void setCreatedUser(String createdUser) {
+		CreatedUser = createdUser;
+	}
 
 	public String getHoldAtLp() {
-			return HoldAtLp;
-		}
+		return HoldAtLp;
+	}
 
-		public void setHoldAtLp(String holdAtLp) {
-			HoldAtLp = holdAtLp;
-		}
+	public void setHoldAtLp(String holdAtLp) {
+		HoldAtLp = holdAtLp;
+	}
 
 	public boolean isIsVoyageCreated() {
-			return IsVoyageCreated;
-		}
+		return IsVoyageCreated;
+	}
 
-		public void setIsVoyageCreated(boolean isVoyageCreated) {
-			IsVoyageCreated = isVoyageCreated;
-		}
+	public void setIsVoyageCreated(boolean isVoyageCreated) {
+		IsVoyageCreated = isVoyageCreated;
+	}
 
 	public int getLocationId() {
-			return locationId;
-		}
+		return locationId;
+	}
 
-		public void setLocationId(int locationId) {
-			this.locationId = locationId;
-		}
+	public void setLocationId(int locationId) {
+		this.locationId = locationId;
+	}
 
 	public boolean isCustomForeign() {
 		return isCustomForeign;
@@ -148,5 +158,14 @@ public class Location {
 	public void setCustomCode(String customCode) {
 		this.customCode = customCode;
 	}
-	
+
+	@Override
+	public String toString() {
+		return "Location [locationIndex=" + locationIndex + ", location=" + location + ", country=" + country
+				+ ", providence=" + providence + ", locationType=" + locationType + ", canadaCustomCode="
+				+ canadaCustomCode + ", unlocode=" + unlocode + ", customCode=" + customCode + ", isCustomForeign="
+				+ isCustomForeign + ", locationId=" + locationId + ", IsVoyageCreated=" + IsVoyageCreated
+				+ ", HoldAtLp=" + HoldAtLp + ", CreatedUser=" + CreatedUser + "]";
+	}
+
 }
