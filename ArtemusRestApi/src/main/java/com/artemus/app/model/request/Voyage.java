@@ -39,6 +39,7 @@ public class Voyage {
 	// -----------------------------------
 	private int voyageId;
 	private int vesselId;
+	private String vesselScacCode;
 
 	public int getVoyageId() {
 		return voyageId;
@@ -112,11 +113,20 @@ public class Voyage {
 		PortDetails = portDetails;
 	}
 
+	public String getVesselScacCode() {
+		return vesselScacCode;
+	}
+
+	public void setVesselScacCode(String vesselScacCode) {
+		this.vesselScacCode = vesselScacCode;
+	}
+
 	@Override
 	public String toString() {
 		return "Voyage [voyageNumber=" + voyageNumber + ", vesselName=" + vesselName + ", scacCode=" + scacCode
 				+ ", crewMembers=" + crewMembers + ", passengers=" + passengers + ", reportNumber=" + reportNumber
-				+ ", PortDetails=" + PortDetails + ", voyageId=" + voyageId + ", vesselId=" + vesselId + "]";
+				+ ", PortDetails=" + PortDetails + ", voyageId=" + voyageId + ", vesselId=" + vesselId
+				+ ", vesselScacCode=" + vesselScacCode + "]";
 	}
 
 }

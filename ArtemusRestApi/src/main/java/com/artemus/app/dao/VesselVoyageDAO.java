@@ -6,6 +6,7 @@ import java.sql.SQLException;
 
 import com.artemus.app.connection.DBConnectionFactory;
 import com.artemus.app.model.request.BillHeader;
+import com.artemus.app.model.request.Voyage;
 
 public class VesselVoyageDAO {
 	private Connection con;
@@ -39,12 +40,29 @@ public class VesselVoyageDAO {
 
 	public int validateLloydsCode(String vesselName, String loginScac) {
 		try {
-			stmt = con.prepareStatement("Select vessel_id from vessel " + " where vessel_name=? and login_scac=?");
+			stmt = con.prepareStatement("Select vessel_id,usa_scac_code from vessel " + " where vessel_name=? and login_scac=?");
 			stmt.setString(1, vesselName);
 			stmt.setString(2, loginScac);
 			rs = stmt.executeQuery();
 			System.out.println(stmt);
 			if (rs.next()) {
+				return rs.getInt(1);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+	
+	public int validateLloydsCode(Voyage objVoyage, String loginScac) {
+		try {
+			stmt = con.prepareStatement("Select vessel_id,usa_scac_code from vessel " + " where vessel_name=? and login_scac=?");
+			stmt.setString(1, objVoyage.getVesselName());
+			stmt.setString(2, loginScac);
+			rs = stmt.executeQuery();
+			System.out.println(stmt);
+			if (rs.next()) {
+				objVoyage.setVesselScacCode(rs.getString("usa_scac_code"));
 				return rs.getInt(1);
 			}
 		} catch (SQLException e) {
