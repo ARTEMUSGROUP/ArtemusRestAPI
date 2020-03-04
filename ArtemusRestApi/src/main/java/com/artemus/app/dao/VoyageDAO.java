@@ -88,7 +88,7 @@ public class VoyageDAO {
 			stmt.setString(1, objmVoyageBean.getScacCode());
 			stmt.setString(2, objmVoyageBean.getVoyageNumber());
 			stmt.setInt(3, objmVoyageBean.getVesselId());
-			stmt.setString(4, objmVoyageBean.getScacCode());
+			stmt.setString(4, objmVoyageBean.getVesselScacCode());
 			stmt.setString(5, objmVoyageBean.getCrewMembers());
 			stmt.setString(6, objmVoyageBean.getPassengers());
 			stmt.setString(7, objmVoyageBean.getReportNumber());
