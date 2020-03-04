@@ -40,6 +40,8 @@ public class BillHeader {
 	private boolean isBillUpdate;
 
 	private String loginScac;
+	// --------------------------
+	public int billLadingId;
 
 	public String getLoginScac() {
 		if (loginScac == null)
@@ -242,6 +244,14 @@ public class BillHeader {
 		this.isBillUpdate = isBillUpdate;
 	}
 
+	public int getBillLadingId() {
+		return billLadingId;
+	}
+
+	public void setBillLadingId(int billLadingId) {
+		this.billLadingId = billLadingId;
+	}
+
 	@Override
 	public String toString() {
 		return "BillHeader [billOfLading=" + billOfLading + ", billType=" + billType + ", hblScac=" + hblScac
@@ -250,7 +260,8 @@ public class BillHeader {
 				+ ", consolidator=" + consolidator + ", stuffer=" + stuffer + ", consignee=" + consignee + ", notify="
 				+ notify + ", importer=" + importer + ", buyer=" + buyer + ", shipTo=" + shipTo + ", notifyParties="
 				+ notifyParties + ", vesselSchedule=" + vesselSchedule + ", equipments=" + equipments
-				+ ", isBillUpdate=" + isBillUpdate + "]";
+				+ ", isBillUpdate=" + isBillUpdate + ", loginScac=" + loginScac + ", billLadingId=" + billLadingId
+				+ "]";
 	}
 
 }
