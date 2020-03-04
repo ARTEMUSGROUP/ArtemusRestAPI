@@ -43,6 +43,8 @@ public class BillHeader {
 	private boolean isBillUpdate;
 
 	private String loginScac;
+	// --------------------------
+	public int billLadingId;
 
 	public String getLoginScac() {
 		if (loginScac == null)
@@ -244,8 +246,6 @@ public class BillHeader {
 	public void setBillUpdate(boolean isBillUpdate) {
 		this.isBillUpdate = isBillUpdate;
 	}
-
-	
 	
 	public ArrayList<JPEquipment> getJpequipments() {
 		return jpequipments;
@@ -254,16 +254,13 @@ public class BillHeader {
 	public void setJpequipments(ArrayList<JPEquipment> jpequipments) {
 		this.jpequipments = jpequipments;
 	}
-
-	@Override
-	public String toString() {
-		return "BillHeader [billOfLading=" + billOfLading + ", billType=" + billType + ", hblScac=" + hblScac
-				+ ", nvoType=" + nvoType + ", nvoBill=" + nvoBill + ", scacBill=" + scacBill + ", masterBill="
-				+ masterBill + ", shipper=" + shipper + ", bookingParty=" + bookingParty + ", seller=" + seller
-				+ ", consolidator=" + consolidator + ", stuffer=" + stuffer + ", consignee=" + consignee + ", notify="
-				+ notify + ", importer=" + importer + ", buyer=" + buyer + ", shipTo=" + shipTo + ", notifyParties="
-				+ notifyParties + ", vesselSchedule=" + vesselSchedule + ", equipments=" + equipments
-				+ ", isBillUpdate=" + isBillUpdate + "]";
+	public int getBillLadingId() {
+		return billLadingId;
 	}
+
+	public void setBillLadingId(int billLadingId) {
+		this.billLadingId = billLadingId;
+	}
+
 
 }
