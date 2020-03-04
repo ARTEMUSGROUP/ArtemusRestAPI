@@ -171,10 +171,12 @@ return addressType;
 	}
 
 	public String getPhoneNo() {
-		if(phoneNo==null)
+		if(phoneNo==null || phoneNo.isEmpty()) {
+			phoneNo="";
 			return phoneNo;
-			else	
-		return phoneNo.toUpperCase();
+		}
+		
+		return phoneNo;
 	}
 
 	public void setPhoneNo(String phoneNo) {

@@ -229,6 +229,7 @@ public class JPVoyageScheduleServiceImpl implements JPVoyageScheduleService{
 				errorMessage.append("load: Voyage should have atleast one load");
 			}
 
+			
 			portValidation = false;
 			for (PortDetails portCall : objVoyage.getPortDetails()) {
 				if (portCall.getLoad() == true && portCall.getDischarge() == true) {

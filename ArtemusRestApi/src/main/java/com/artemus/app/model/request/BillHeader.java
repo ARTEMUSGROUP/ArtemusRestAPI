@@ -35,6 +35,9 @@ public class BillHeader {
 	private VesselSchedule vesselSchedule;
 
 	private ArrayList<Equipment> equipments;
+	
+	// Japan Equipments
+	private ArrayList<JPEquipment> jpequipments;
 
 	// Bill Update
 	private boolean isBillUpdate;
@@ -240,6 +243,16 @@ public class BillHeader {
 
 	public void setBillUpdate(boolean isBillUpdate) {
 		this.isBillUpdate = isBillUpdate;
+	}
+
+	
+	
+	public ArrayList<JPEquipment> getJpequipments() {
+		return jpequipments;
+	}
+
+	public void setJpequipments(ArrayList<JPEquipment> jpequipments) {
+		this.jpequipments = jpequipments;
 	}
 
 	@Override
