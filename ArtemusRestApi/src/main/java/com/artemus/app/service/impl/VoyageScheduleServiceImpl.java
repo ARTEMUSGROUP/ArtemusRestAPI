@@ -65,7 +65,7 @@ public class VoyageScheduleServiceImpl implements VoyageScheduleService {
 		VesselVoyageDAO objDao = new VesselVoyageDAO();
 		try {
 			// Get vesselID
-			vesselID = objDao.validateLloydsCode(objVoyage.getVesselName(), objVoyage.getScacCode());
+			vesselID = objDao.validateLloydsCode(objVoyage, objVoyage.getScacCode());
 			if (vesselID != 0) {
 				objVoyage.setVesselId(vesselID);
 				// Get voyageID
