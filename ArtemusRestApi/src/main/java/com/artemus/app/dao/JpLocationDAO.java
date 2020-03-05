@@ -45,9 +45,8 @@ public class JpLocationDAO {
 			ResultSet rs = null;
 			String result = "";
 			try {
-				stmt = con.prepareStatement("Select location_code from location where unlocode=? and login_scac=? ");
+				stmt = con.prepareStatement("Select location_code from portcode_unlocode where unlocode=? ");
 				stmt.setString(1, Unlocode);
-				stmt.setString(2, loginScac);
 				rs = stmt.executeQuery();
 				logger.info(stmt);
 				if (rs.next()) {

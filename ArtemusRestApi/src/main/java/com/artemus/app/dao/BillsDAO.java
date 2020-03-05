@@ -611,9 +611,10 @@ public class BillsDAO {
 			stmt.setString(1, objBillHeader.getLoginScac());
 			stmt.setString(2, objBillHeader.getBillOfLading());
 			rs= stmt.executeQuery();
-			if (rs.next())
+			if (rs.next()) {
 				objBillHeader.setBillLadingId(rs.getInt("bill_lading_id"));
 				isExist = true;
+			}
 			System.out.println(stmt);
 		} catch (Exception e) {
 			e.printStackTrace();

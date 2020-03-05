@@ -58,7 +58,7 @@ public class BillHeaderUtils {
 								if (objMessage.length() > 0) {
 									objMessage.append(",");
 								}
-								objMessage.append("scacBill:Required when nvoBill is 'House'");
+								objMessage.append("masterBillScac:Required when nvoBill is 'House'");
 							}
 							if(objBillHeader.getMasterBill() == null || objBillHeader.getMasterBill().isEmpty()) {
 								if (objMessage.length() > 0) {
