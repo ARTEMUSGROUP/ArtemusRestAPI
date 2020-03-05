@@ -86,7 +86,7 @@ public class JPBillsDAO {
 				stmt.setString(6, objBillHeader.getNvoType());
 			}
 			stmt.setString(7, objBillHeader.getNvoBill());
-			stmt.setString(8, objBillHeader.getScacBill());
+			stmt.setString(8, objBillHeader.getMasterBillScac());
 			stmt.setString(9, objBillHeader.getMasterBill());
 			stmt.setString(10, objBillHeader.getVesselSchedule().getVesselScac());
 

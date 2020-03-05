@@ -54,7 +54,7 @@ public class BillHeaderUtils {
 						objMessage.append("nvoBill : Required when nvoType is 'non automated NVO'");
 					} else {
 						if (objBillHeader.getNvoBill().equalsIgnoreCase("House")) {
-							if(objBillHeader.getScacBill() == null || objBillHeader.getScacBill().isEmpty()) {
+							if(objBillHeader.getMasterBillScac() == null || objBillHeader.getMasterBillScac().isEmpty()) {
 								if (objMessage.length() > 0) {
 									objMessage.append(",");
 								}

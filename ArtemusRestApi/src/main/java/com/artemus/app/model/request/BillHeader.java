@@ -11,7 +11,8 @@ public class BillHeader {
 	private String hblScac;
 	private String nvoType;
 	private String nvoBill;
-	private String scacBill;
+	private String masterBillScac;
+	//private String scacBill;
 	private String masterBill;
 
 	// Shipping Info
@@ -113,22 +114,28 @@ public class BillHeader {
 		this.nvoBill = nvoBill;
 	}
 
-	public String getScacBill() {
-		if (scacBill == null)
-			return scacBill;
-		else
-			return scacBill.toUpperCase();
-	}
+	/*
+	 * public String getScacBill() { if (scacBill == null) return scacBill; else
+	 * return scacBill.toUpperCase(); }
+	 * 
+	 * public void setScacBill(String scacBill) { this.scacBill = scacBill; }
+	 */
 
-	public void setScacBill(String scacBill) {
-		this.scacBill = scacBill;
-	}
-
+	
+	
 	public String getMasterBill() {
 		if (masterBill == null)
 			return masterBill;
 		else
 			return masterBill.toUpperCase();
+	}
+
+	public String getMasterBillScac() {
+		return masterBillScac;
+	}
+
+	public void setMasterBillScac(String masterBillScac) {
+		this.masterBillScac = masterBillScac;
 	}
 
 	public void setMasterBill(String masterBill) {

@@ -3,6 +3,8 @@ package com.artemus.app.service.impl;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,10 +35,11 @@ public class JPVoyageScheduleServiceImpl implements JPVoyageScheduleService{
 		if (invalidJsonMsg.length() > 0) {
 			throw new MissingRequiredFieldException(invalidJsonMsg.toString());
 		}
-		// validate Country
-		validateCountry(objVoyage);
+		
 		// Validate UnCode
 		ValidateUnCode(objVoyage, objVoyage.getScacCode());
+		// validate Country
+		validateCountry(objVoyage);
 		// VAlidate Vessel,Voyage
 		validateVesselVoyage(objVoyage);
 		if (errorMessage.length() > 0) {
@@ -160,11 +163,11 @@ public class JPVoyageScheduleServiceImpl implements JPVoyageScheduleService{
 				Location locationbean = objPortDetail.getLocation();
 				if (objLocationDao.isExistsCountry(locationbean.getCountry())) {
 					System.out.println("Country exist");
-				} else {
+				} else if(objPortDetail.getLocation().getCustomCode()==null || objPortDetail.getLocation().getCustomCode().isEmpty() ){
 					if (errorMessage.length() > 0) {
 						errorMessage.append(" , ");
 					}
-					errorMessage.append("country : " + locationbean.getCountry() + " does not exists");
+					errorMessage.append("country : " + locationbean.getCountry() + " is mandatory for creation of new location");
 					return false;
 				}
 			}
@@ -206,10 +209,11 @@ public class JPVoyageScheduleServiceImpl implements JPVoyageScheduleService{
 			ArrayList<PortDetails> objmPortDetailsBeans = new ArrayList<PortDetails>();
 			ArrayList<PortDetails> objPortCallbean = objVoyage.getPortDetails();
 			boolean portValidation = false;
+			int dischargeportCount=0;
 			for (PortDetails portCall : objVoyage.getPortDetails()) {
 				if (portCall.getDischarge() == true) {
 					portValidation = true;
-					break;
+					dischargeportCount=dischargeportCount+1;
 				}
 			}
 
@@ -282,9 +286,68 @@ public class JPVoyageScheduleServiceImpl implements JPVoyageScheduleService{
 				result = false;
 			}
 
+			// Validate first discharge port as japan port 
+			Date jpArrivalDate[] =new Date[dischargeportCount];
+			Date firstDischargedate;
+	        String arrivaldate[] = new String[dischargeportCount];
+	        String firstDisArrivaldate = null;
+	        int i=0;
+	        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	        for (PortDetails portCall : objVoyage.getPortDetails()) {
+				if (portCall.getDischarge() == true) {
+					System.out.println(portCall.getLocation().getLocation()+portCall.getArrivalDate());
+					arrivaldate[i] = portCall.getArrivalDate();
+					try {
+						jpArrivalDate[i] = sdf.parse(arrivaldate[i]);
+						i=i+1;
+					} catch (Exception e) {
+						System.out.println("Date is not in correct format");
+						errorMessage.append(
+								"arrivalDate of lastLoadPort : is not in correct format, correct format is YYYY-MM-DD");
+						e.printStackTrace();
+						result = false;
+					}
+                   
+				}
+
+			}
+	        Arrays.sort(jpArrivalDate);
+	        for(Date date1:jpArrivalDate)
+	        {
+	        	firstDischargedate=date1;
+	        	firstDisArrivaldate=sdf.format(firstDischargedate);
+	        	System.out.println(firstDisArrivaldate);
+	        	break;
+	        }
+	        
+	        JpLocationDAO objLocationdao = new JpLocationDAO(null);
+	        boolean isJapanPort=false;
+	        
+	        for (PortDetails portCall : objVoyage.getPortDetails()) {
+				if (portCall.getDischarge() == true) {
+					if(firstDisArrivaldate.equalsIgnoreCase(portCall.getArrivalDate()))
+					{
+						
+						isJapanPort=objLocationdao.isDisctrictPort(portCall.getLocation().getCustomCode());
+						System.out.println("isDistrict Port"+portCall.getLocation().getCustomCode()+isJapanPort);
+						break;
+					}
+				}
+			}
+	        if(!isJapanPort)
+	        {
+	        	if (errorMessage.length() > 0) {
+					errorMessage.append(" , ");
+				}
+				// Error message
+				errorMessage.append(" The first discharge port must be Japan Port");
+	        }
+	        
+	        
+	       // to check arrival Date in correct format
+	        
 			String lastloaddate;
 			String dischargeDate;
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 			java.util.Date lastloaddate1 = null;
 			java.util.Date dichargedate1 = null;
 			for (PortDetails portCall : objVoyage.getPortDetails()) {
@@ -405,9 +468,22 @@ public class JPVoyageScheduleServiceImpl implements JPVoyageScheduleService{
 
 				if (objLocationdao.isDisctrictPort(locationbean.getCustomCode())) {
 					locationbean.setCustomForeign(false);
-				} else {
+				} else if (objLocationdao.isForeignPort(locationbean.getCustomCode())) {
 					locationbean.setCustomForeign(true);
-				}  
+				} else {
+					// Error Message Handle
+					if (errorMessage.length() > 0) {
+						errorMessage.append(" , ");
+					}
+					if (locationbean.getUnlocode() != null && (!locationbean.getUnlocode().isEmpty())) {
+						errorMessage
+								.append("customCode for unlocode : " + locationbean.getUnlocode() + " does not exists");
+					} else {
+						errorMessage.append("customCode : does not exists");
+					}
+
+					result = false;
+				}
 
 			}
 		} finally {

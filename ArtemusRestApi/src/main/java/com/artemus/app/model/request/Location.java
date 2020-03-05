@@ -144,7 +144,7 @@ public class Location {
 	}
 
 	public String getUnlocode() {
-		return unlocode;
+		return unlocode.replaceAll("//s", "");
 	}
 
 	public void setUnlocode(String unlocode) {

@@ -88,7 +88,7 @@ public class BillsDAO {
 				stmt.setString(6, objBillHeader.getNvoType());
 			}
 			stmt.setString(7, objBillHeader.getNvoBill());
-			stmt.setString(8, objBillHeader.getScacBill());
+			stmt.setString(8, objBillHeader.getMasterBillScac());
 			stmt.setString(9, objBillHeader.getMasterBill());
 			stmt.setString(10, objBillHeader.getVesselSchedule().getVesselScac());
 
@@ -153,7 +153,7 @@ public class BillsDAO {
 				stmt.setString(4, objBillHeader.getNvoType());
 			}
 			stmt.setString(5, objBillHeader.getNvoBill());
-			stmt.setString(6, objBillHeader.getScacBill());
+			stmt.setString(6, objBillHeader.getMasterBillScac());
 			stmt.setString(7, objBillHeader.getMasterBill());
 			stmt.setString(8, objBillHeader.getVesselSchedule().getVesselScac());
 

@@ -35,10 +35,11 @@ public class VoyageScheduleServiceImpl implements VoyageScheduleService {
 		if (invalidJsonMsg.length() > 0) {
 			throw new MissingRequiredFieldException(invalidJsonMsg.toString());
 		}
-		// validate Country
-		validateCountry(objVoyage);
+		
 		// Validate UnCode
 		ValidateUnCode(objVoyage, objVoyage.getScacCode());
+		// validate Country
+		validateCountry(objVoyage);
 		// VAlidate Vessel,Voyage
 		validateVesselVoyage(objVoyage);
 		if (errorMessage.length() > 0) {
