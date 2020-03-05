@@ -21,7 +21,7 @@ import com.artemus.app.model.response.ErrorMessages;
 import com.artemus.app.service.JPVoyageScheduleService;
 import com.artemus.app.utils.ValidateBeanUtil;
 
-public class JPVoyageScheduleServiceImpl implements JPVoyageScheduleService{
+public class JPVoyageScheduleServiceImpl implements JPVoyageScheduleService {
 
 	static Logger logger = LogManager.getLogger();
 	StringBuffer errorMessage = new StringBuffer("");
@@ -35,11 +35,11 @@ public class JPVoyageScheduleServiceImpl implements JPVoyageScheduleService{
 		if (invalidJsonMsg.length() > 0) {
 			throw new MissingRequiredFieldException(invalidJsonMsg.toString());
 		}
-		
+
 		// Validate UnCode
 		ValidateUnCode(objVoyage, objVoyage.getScacCode());
 		// validate Country
-		validateCountry(objVoyage);
+		// validateCountry(objVoyage);
 		// VAlidate Vessel,Voyage
 		validateVesselVoyage(objVoyage);
 		if (errorMessage.length() > 0) {
@@ -56,12 +56,16 @@ public class JPVoyageScheduleServiceImpl implements JPVoyageScheduleService{
 				if (!validateVoyage(objVoyage)) {
 					throw new ErrorResponseException(errorMessage.toString());
 				}
+			} else {
+				if (errorMessage.length() > 0) {
+					logger.debug(errorMessage);
+					throw new ErrorResponseException(errorMessage.toString());
+				}
 			}
 		}
 
 	}
 
-	
 	private void validateVesselVoyage(Voyage objVoyage) {
 		int vesselID, voyageID;
 		VesselVoyageDAO objDao = new VesselVoyageDAO();
@@ -70,18 +74,6 @@ public class JPVoyageScheduleServiceImpl implements JPVoyageScheduleService{
 			vesselID = objDao.validateLloydsCode(objVoyage, objVoyage.getScacCode());
 			if (vesselID != 0) {
 				objVoyage.setVesselId(vesselID);
-				// Get voyageID
-//				voyageID = objDao.validateVoyage(objVoyage.getVoyageNumber(), vesselID, objVoyage.getScacCode());
-//				if (voyageID != 0) {
-//					objVoyage.setVoyageId(voyageID);
-//
-//				}
-//				else {
-//					if(errorMessage.length()>0) {
-//						errorMessage.append(" , ");
-//					}
-//					errorMessage.append("voyageNumber does not exists.");
-//				}
 			} else {
 				if (errorMessage.length() > 0) {
 					errorMessage.append(" , ");
@@ -130,24 +122,31 @@ public class JPVoyageScheduleServiceImpl implements JPVoyageScheduleService{
 				// Setting locationBean
 				locationbean = objLocationdao.setLocationBean(locationbean);
 				int locationId = objLocationdao.checkLocationForCustomCode(locationbean.getCustomCode(), loginScac);
-				logger.info("locationId :"+locationId);
+				logger.info("locationId :" + locationId);
 				if (locationId == 0) {
-					if (locationbean.getLocation() == null || locationbean.getLocation().isEmpty()) {				
-						result = false;
-						break;
-					} else {
-						if (objLocationdao.insert(locationbean, loginScac)) {
-							result = true;
-						} else {
+					if (!validateCountry(locationbean, objLocationdao)) {
+						if ((locationbean.getLocation() == null || locationbean.getLocation().isEmpty())
+								&& locationbean.getCountry() == null || locationbean.getCountry().isEmpty()) {
+							if (errorMessage.length() > 0) {
+								errorMessage.append(" , ");
+							}
+							errorMessage.append("location: " + locationbean.getLocation() + " does not exist for "
+									+ loginScac + " please add 'country' to create new location");
 							result = false;
 							break;
+						} else {
+							if (objLocationdao.insert(locationbean, loginScac)) {
+								result = true;
+							} else {
+								result = false;
+								break;
+							}
 						}
 					}
 				} else {
 					result = true;
 					locationbean.setLocationIndex(locationId);
 					locationbean.setLocationId(locationId);
-					
 				}
 			}
 		} finally {
@@ -156,23 +155,11 @@ public class JPVoyageScheduleServiceImpl implements JPVoyageScheduleService{
 		return result;
 	}
 
-	boolean validateCountry(Voyage objVoyage) {
-		JpLocationDAO objLocationDao = new JpLocationDAO(null);
-		try {
-			for (PortDetails objPortDetail : objVoyage.getPortDetails()) {
-				Location locationbean = objPortDetail.getLocation();
-				if (objLocationDao.isExistsCountry(locationbean.getCountry())) {
-					System.out.println("Country exist");
-				} else if(objPortDetail.getLocation().getCustomCode()==null || objPortDetail.getLocation().getCustomCode().isEmpty() ){
-					if (errorMessage.length() > 0) {
-						errorMessage.append(" , ");
-					}
-					errorMessage.append("country : " + locationbean.getCountry() + " is mandatory for creation of new location");
-					return false;
-				}
-			}
-		} finally {
-			objLocationDao.closeAll();
+	boolean validateCountry(Location locationbean, JpLocationDAO objLocationDao) {
+		if (objLocationDao.isExistsCountry(locationbean.getCountry())) {
+			System.out.println("Country exist");
+		} else {
+			return false;
 		}
 		return true;
 	}
@@ -209,11 +196,11 @@ public class JPVoyageScheduleServiceImpl implements JPVoyageScheduleService{
 			ArrayList<PortDetails> objmPortDetailsBeans = new ArrayList<PortDetails>();
 			ArrayList<PortDetails> objPortCallbean = objVoyage.getPortDetails();
 			boolean portValidation = false;
-			int dischargeportCount=0;
+			int dischargeportCount = 0;
 			for (PortDetails portCall : objVoyage.getPortDetails()) {
 				if (portCall.getDischarge() == true) {
 					portValidation = true;
-					dischargeportCount=dischargeportCount+1;
+					dischargeportCount = dischargeportCount + 1;
 				}
 			}
 
@@ -233,7 +220,6 @@ public class JPVoyageScheduleServiceImpl implements JPVoyageScheduleService{
 				errorMessage.append("load: Voyage should have atleast one load");
 			}
 
-			
 			portValidation = false;
 			for (PortDetails portCall : objVoyage.getPortDetails()) {
 				if (portCall.getLoad() == true && portCall.getDischarge() == true) {
@@ -277,7 +263,7 @@ public class JPVoyageScheduleServiceImpl implements JPVoyageScheduleService{
 				}
 				errorMessage.append("lastLoadPort : only one lastLoadPort must be true");
 			}
-			
+
 			if (!portValidation) {
 				if (errorMessage.length() > 0) {
 					errorMessage.append(" , ");
@@ -286,20 +272,20 @@ public class JPVoyageScheduleServiceImpl implements JPVoyageScheduleService{
 				result = false;
 			}
 
-			// Validate first discharge port as japan port 
-			Date jpArrivalDate[] =new Date[dischargeportCount];
+			// Validate first discharge port as japan port
+			Date jpArrivalDate[] = new Date[dischargeportCount];
 			Date firstDischargedate;
-	        String arrivaldate[] = new String[dischargeportCount];
-	        String firstDisArrivaldate = null;
-	        int i=0;
-	        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-	        for (PortDetails portCall : objVoyage.getPortDetails()) {
+			String arrivaldate[] = new String[dischargeportCount];
+			String firstDisArrivaldate = null;
+			int i = 0;
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+			for (PortDetails portCall : objVoyage.getPortDetails()) {
 				if (portCall.getDischarge() == true) {
-					System.out.println(portCall.getLocation().getLocation()+portCall.getArrivalDate());
+					System.out.println(portCall.getLocation().getLocation() + portCall.getArrivalDate());
 					arrivaldate[i] = portCall.getArrivalDate();
 					try {
 						jpArrivalDate[i] = sdf.parse(arrivaldate[i]);
-						i=i+1;
+						i = i + 1;
 					} catch (Exception e) {
 						System.out.println("Date is not in correct format");
 						errorMessage.append(
@@ -307,45 +293,41 @@ public class JPVoyageScheduleServiceImpl implements JPVoyageScheduleService{
 						e.printStackTrace();
 						result = false;
 					}
-                   
+
 				}
 
 			}
-	        Arrays.sort(jpArrivalDate);
-	        for(Date date1:jpArrivalDate)
-	        {
-	        	firstDischargedate=date1;
-	        	firstDisArrivaldate=sdf.format(firstDischargedate);
-	        	System.out.println(firstDisArrivaldate);
-	        	break;
-	        }
-	        
-	        JpLocationDAO objLocationdao = new JpLocationDAO(null);
-	        boolean isJapanPort=false;
-	        
-	        for (PortDetails portCall : objVoyage.getPortDetails()) {
+			Arrays.sort(jpArrivalDate);
+			for (Date date1 : jpArrivalDate) {
+				firstDischargedate = date1;
+				firstDisArrivaldate = sdf.format(firstDischargedate);
+				System.out.println(firstDisArrivaldate);
+				break;
+			}
+
+			JpLocationDAO objLocationdao = new JpLocationDAO(null);
+			boolean isJapanPort = false;
+
+			for (PortDetails portCall : objVoyage.getPortDetails()) {
 				if (portCall.getDischarge() == true) {
-					if(firstDisArrivaldate.equalsIgnoreCase(portCall.getArrivalDate()))
-					{
-						
-						isJapanPort=objLocationdao.isDisctrictPort(portCall.getLocation().getCustomCode());
-						System.out.println("isDistrict Port"+portCall.getLocation().getCustomCode()+isJapanPort);
+					if (firstDisArrivaldate.equalsIgnoreCase(portCall.getArrivalDate())) {
+
+						isJapanPort = objLocationdao.isDisctrictPort(portCall.getLocation().getCustomCode());
+						System.out.println("isDistrict Port" + portCall.getLocation().getCustomCode() + isJapanPort);
 						break;
 					}
 				}
 			}
-	        if(!isJapanPort)
-	        {
-	        	if (errorMessage.length() > 0) {
+			if (!isJapanPort) {
+				if (errorMessage.length() > 0) {
 					errorMessage.append(" , ");
 				}
 				// Error message
 				errorMessage.append(" The first discharge port must be Japan Port");
-	        }
-	        
-	        
-	       // to check arrival Date in correct format
-	        
+			}
+
+			// to check arrival Date in correct format
+
 			String lastloaddate;
 			String dischargeDate;
 			java.util.Date lastloaddate1 = null;
@@ -401,7 +383,7 @@ public class JPVoyageScheduleServiceImpl implements JPVoyageScheduleService{
 				try {
 					arrivalDate = sdf.parse(portCall.getArrivalDate());
 					sailingDate = sdf.parse(portCall.getSailingDate());
-					if (sailingDate.after(arrivalDate)|| sailingDate.compareTo(arrivalDate)==0) {
+					if (sailingDate.after(arrivalDate) || sailingDate.compareTo(arrivalDate) == 0) {
 						System.out.println("sailingDate is greater than or equal to arrivalDate for Location: "
 								+ portCall.getLocation().getLocation());
 					} else {
@@ -459,17 +441,31 @@ public class JPVoyageScheduleServiceImpl implements JPVoyageScheduleService{
 				Location locationbean = objPortDetail.getLocation();
 				objLocationdao.setLocationBean(locationbean);
 
-				if (locationbean.getCustomCode() == null) {
+				if (locationbean.getCustomCode() == null || locationbean.getCustomCode().isEmpty()) {
 					// setting customCode from locationCode
 					String customCodefromUNCode = objLocationdao.getLocationCode(locationbean.getUnlocode(), loginScac);
+					logger.debug(customCodefromUNCode);
 					locationbean.setCustomCode(customCodefromUNCode);
 				}
-				
 
-				if (objLocationdao.isDisctrictPort(locationbean.getCustomCode())) {
-					locationbean.setCustomForeign(false);
-				} else if (objLocationdao.isForeignPort(locationbean.getCustomCode())) {
-					locationbean.setCustomForeign(true);
+				if (locationbean.getCustomCode() != null && !locationbean.getCustomCode().isEmpty()) {
+					if (objLocationdao.isDisctrictPort(locationbean.getCustomCode())) {
+						locationbean.setCustomForeign(false);
+					} else if (objLocationdao.isForeignPort(locationbean.getCustomCode())) {
+						locationbean.setCustomForeign(true);
+					} else {
+						// Error Message Handle
+						if (errorMessage.length() > 0) {
+							errorMessage.append(" , ");
+						}
+						if (locationbean.getUnlocode() != null && (!locationbean.getUnlocode().isEmpty())) {
+							errorMessage.append(
+									"customCode for unlocode : " + locationbean.getUnlocode() + " does not exists");
+						} else {
+							errorMessage.append("customCode : does not exists");
+						}
+						result = false;
+					}
 				} else {
 					// Error Message Handle
 					if (errorMessage.length() > 0) {
@@ -478,11 +474,7 @@ public class JPVoyageScheduleServiceImpl implements JPVoyageScheduleService{
 					if (locationbean.getUnlocode() != null && (!locationbean.getUnlocode().isEmpty())) {
 						errorMessage
 								.append("customCode for unlocode : " + locationbean.getUnlocode() + " does not exists");
-					} else {
-						errorMessage.append("customCode : does not exists");
 					}
-
-					result = false;
 				}
 
 			}
@@ -492,5 +484,4 @@ public class JPVoyageScheduleServiceImpl implements JPVoyageScheduleService{
 		return result;
 	}
 
-	
 }

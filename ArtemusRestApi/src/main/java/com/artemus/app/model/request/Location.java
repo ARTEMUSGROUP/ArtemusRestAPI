@@ -18,7 +18,7 @@ public class Location {
 	private String location;
 
 	@Attributes(required = false, description = "The location’s three letter country code, as defined by ISO 3166-1 alpha-3.  If this location does not already exist in our database, this field is required.T")
-	@Size(min = 2, max = 3, message = "country must be 3 letter country code of location")
+	@Size(max = 3, message = "country must be 3 letter country code of location")
 	private String country;
 
 	@Attributes(required = false, description = "The providence for this location.  For U.S. locations, use the two letter state abbreviation.")

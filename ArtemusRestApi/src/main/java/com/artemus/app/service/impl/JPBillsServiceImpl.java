@@ -187,7 +187,6 @@ public class JPBillsServiceImpl implements JPBillsService {
 		validateCustomer(objBillHeader.getShipper(), objBillHeader.getLoginScac(),objCustomerProfiledao);
 		validateCustomer(objBillHeader.getConsignee(), objBillHeader.getLoginScac(),objCustomerProfiledao);
 		validateCustomer(objBillHeader.getNotify(), objBillHeader.getLoginScac(),objCustomerProfiledao);
-
 		return true;
 		
 	}
