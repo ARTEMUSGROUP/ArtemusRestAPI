@@ -12,7 +12,7 @@ public class BillHeader {
 	private String nvoType;
 	private String nvoBill;
 	private String masterBillScac;
-	//private String scacBill;
+	// private String scacBill;
 	private String masterBill;
 
 	// Shipping Info
@@ -36,12 +36,12 @@ public class BillHeader {
 	private VesselSchedule vesselSchedule;
 
 	private ArrayList<Equipment> equipments;
-	
+
 	// Japan Equipments
 	private ArrayList<JPEquipment> jpequipments;
 
 	// Bill Update
-	private boolean isBillUpdate;
+	// private boolean isBillUpdate;
 
 	private String loginScac;
 	// --------------------------
@@ -121,8 +121,6 @@ public class BillHeader {
 	 * public void setScacBill(String scacBill) { this.scacBill = scacBill; }
 	 */
 
-	
-	
 	public String getMasterBill() {
 		if (masterBill == null)
 			return masterBill;
@@ -246,14 +244,14 @@ public class BillHeader {
 		this.equipments = equipments;
 	}
 
-	public boolean isBillUpdate() {
-		return isBillUpdate;
-	}
+//	public boolean isBillUpdate() {
+//		return isBillUpdate;
+//	}
+//
+//	public void setBillUpdate(boolean isBillUpdate) {
+//		this.isBillUpdate = isBillUpdate;
+//	}
 
-	public void setBillUpdate(boolean isBillUpdate) {
-		this.isBillUpdate = isBillUpdate;
-	}
-	
 	public ArrayList<JPEquipment> getJpequipments() {
 		return jpequipments;
 	}
@@ -261,6 +259,7 @@ public class BillHeader {
 	public void setJpequipments(ArrayList<JPEquipment> jpequipments) {
 		this.jpequipments = jpequipments;
 	}
+
 	public int getBillLadingId() {
 		return billLadingId;
 	}
@@ -268,6 +267,5 @@ public class BillHeader {
 	public void setBillLadingId(int billLadingId) {
 		this.billLadingId = billLadingId;
 	}
-
 
 }

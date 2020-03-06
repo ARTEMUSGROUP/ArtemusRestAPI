@@ -135,7 +135,7 @@ public class VoyageScheduleServiceImpl implements VoyageScheduleService {
 				locationbean = objLocationdao.setLocationBean(locationbean);
 				int locationId = objLocationdao.checkLocationForCustomCode(locationbean.getCustomCode(), loginScac);
 				logger.info("locationId :" + locationId);
-				if (locationId == 0) {
+				if (locationId == 0) {				
 					if (!validateCountry(locationbean, objLocationdao)) {
 						if ((locationbean.getLocation() == null || locationbean.getLocation().isEmpty())
 								&& locationbean.getCountry() == null || locationbean.getCountry().isEmpty()) {
@@ -144,6 +144,22 @@ public class VoyageScheduleServiceImpl implements VoyageScheduleService {
 							}
 							errorMessage.append("location: " + locationbean.getLocation() + " does not exist for "
 									+ loginScac + " please add 'country' to create new location");
+							result = false;
+							break;
+						} else {
+							if (objLocationdao.insert(locationbean, loginScac)) {
+								result = true;
+							} else {
+								result = false;
+								break;
+							}
+						}
+					}else {
+						if ((locationbean.getLocation() == null || locationbean.getLocation().isEmpty())) {
+							if (errorMessage.length() > 0) {
+								errorMessage.append(" , ");
+							}
+							errorMessage.append("location: location name is reqired to create new location");
 							result = false;
 							break;
 						} else {

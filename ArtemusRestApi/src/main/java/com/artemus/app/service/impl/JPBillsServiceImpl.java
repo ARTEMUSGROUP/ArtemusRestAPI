@@ -48,56 +48,6 @@ public class JPBillsServiceImpl implements JPBillsService {
 		}
 		
 	}
-	
-	/*
-	 * private void settingJPEqipmentBean(BillHeader objBillHeader) {
-	 * 
-	 * ArrayList<JPEquipment> jpequipments=null;
-	 * 
-	 * for(JPEquipment objeqipment:objBillHeader.getJpequipments()) { //Set Service
-	 * Type if(objeqipment.getServiceType().equalsIgnoreCase("CY Delivery") ||
-	 * objeqipment.getServiceType().isEmpty() || objeqipment.getServiceType()
-	 * ==null) { objeqipment.setServiceTypeId("51"); }else
-	 * if(objeqipment.getServiceType().equalsIgnoreCase("CFS Delivery")) {
-	 * objeqipment.setServiceTypeId("52"); }else
-	 * if(objeqipment.getServiceType().equalsIgnoreCase("DOOR Delivery")) {
-	 * objeqipment.setServiceTypeId("53"); }
-	 * 
-	 * //Set Container Ownership
-	 * if(objeqipment.getContainerOwnership().equalsIgnoreCase("Shipper supplied")
-	 * || objeqipment.getContainerOwnership().isEmpty() ||
-	 * objeqipment.getContainerOwnership() ==null) {
-	 * objeqipment.setContainerOwnershipId("1"); }else
-	 * if(objeqipment.getContainerOwnership().equalsIgnoreCase("Carrier supplied"))
-	 * { objeqipment.setContainerOwnershipId("2"); }else
-	 * if(objeqipment.getContainerOwnership().
-	 * equalsIgnoreCase("Consolidator supplied")) {
-	 * objeqipment.setContainerOwnershipId("3"); }else
-	 * if(objeqipment.getContainerOwnership().
-	 * equalsIgnoreCase("Deconsolidator supplied")) {
-	 * objeqipment.setContainerOwnershipId("4"); }else
-	 * if(objeqipment.getContainerOwnership().
-	 * equalsIgnoreCase("Third party supplied")) {
-	 * objeqipment.setContainerOwnershipId("5"); }
-	 * 
-	 * //Set Vanning Type
-	 * if(objeqipment.getVanningType().equalsIgnoreCase("Shipper Load") ||
-	 * objeqipment.getContainerOwnership().isEmpty() ||
-	 * objeqipment.getContainerOwnership() ==null) {
-	 * objeqipment.setVanningTypeId("4"); }else
-	 * if(objeqipment.getVanningType().equalsIgnoreCase("Carrier Load")) {
-	 * objeqipment.setVanningTypeId("1"); }else
-	 * if(objeqipment.getVanningType().equalsIgnoreCase("Consignee Load")) {
-	 * objeqipment.setVanningTypeId("16"); }
-	 * 
-	 * //Set costomConventionId if(objeqipment.getCcid()==null ||
-	 * objeqipment.getCcid().isEmpty()) { objeqipment.setCustomConventionId("-1"); }
-	 * 
-	 * 
-	 * }
-	 * 
-	 * }
-	 */
 
 	private void validateVesselVoyage(BillHeader objBillHeader) {
 		System.out.println("validateVesselVoyage ::");

@@ -22,7 +22,6 @@ import com.artemus.app.service.JPVoyageScheduleService;
 import com.artemus.app.utils.ValidateBeanUtil;
 
 public class JPVoyageScheduleServiceImpl implements JPVoyageScheduleService {
-
 	static Logger logger = LogManager.getLogger();
 	StringBuffer errorMessage = new StringBuffer("");
 
@@ -125,6 +124,7 @@ public class JPVoyageScheduleServiceImpl implements JPVoyageScheduleService {
 				logger.info("locationId :" + locationId);
 				if (locationId == 0) {
 					if (!validateCountry(locationbean, objLocationdao)) {
+						logger.info("! validateCountry :");
 						if ((locationbean.getLocation() == null || locationbean.getLocation().isEmpty())
 								&& locationbean.getCountry() == null || locationbean.getCountry().isEmpty()) {
 							if (errorMessage.length() > 0) {
@@ -132,6 +132,22 @@ public class JPVoyageScheduleServiceImpl implements JPVoyageScheduleService {
 							}
 							errorMessage.append("location: " + locationbean.getLocation() + " does not exist for "
 									+ loginScac + " please add 'country' to create new location");
+							result = false;
+							break;
+						} else {
+							if (objLocationdao.insert(locationbean, loginScac)) {
+								result = true;
+							} else {
+								result = false;
+								break;
+							}
+						}
+					}else {
+						if ((locationbean.getLocation() == null || locationbean.getLocation().isEmpty())) {
+							if (errorMessage.length() > 0) {
+								errorMessage.append(" , ");
+							}
+							errorMessage.append("location: location name is reqired to create new location");
 							result = false;
 							break;
 						} else {
@@ -305,14 +321,14 @@ public class JPVoyageScheduleServiceImpl implements JPVoyageScheduleService {
 				break;
 			}
 
-			JpLocationDAO objLocationdao = new JpLocationDAO(null);
+//			JpLocationDAO objLocationdao = new JpLocationDAO(null);
 			boolean isJapanPort = false;
 
 			for (PortDetails portCall : objVoyage.getPortDetails()) {
 				if (portCall.getDischarge() == true) {
 					if (firstDisArrivaldate.equalsIgnoreCase(portCall.getArrivalDate())) {
 
-						isJapanPort = objLocationdao.isDisctrictPort(portCall.getLocation().getCustomCode());
+						isJapanPort = objLocationDAO.isDisctrictPort(portCall.getLocation().getCustomCode());
 						System.out.println("isDistrict Port" + portCall.getLocation().getCustomCode() + isJapanPort);
 						break;
 					}

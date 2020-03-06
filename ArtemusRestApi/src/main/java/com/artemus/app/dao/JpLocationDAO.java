@@ -90,6 +90,7 @@ public class JpLocationDAO {
 				stmt = con.prepareStatement("Select iso_code from country where iso_code=? ");
 				stmt.setString(1, objLocationName);
 				rs = stmt.executeQuery();
+				logger.info(stmt);
 				if (rs.next()) {
 					result = true;
 				} else {
@@ -226,6 +227,7 @@ public class JpLocationDAO {
 						rs = stmt.getGeneratedKeys();
 						rs.next();
 						locationbean.setLocationId(rs.getInt(1));
+						logger.info(locationbean.getLocationId());
 					}
 				}
 			} catch (Exception e) {
