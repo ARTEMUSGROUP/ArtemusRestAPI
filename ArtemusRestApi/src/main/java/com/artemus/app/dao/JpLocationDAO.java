@@ -216,13 +216,15 @@ public class JpLocationDAO {
 					stmt.setString(9, locationbean.getCreatedUser());
 					stmt.setBoolean(10, locationbean.isCustomForeign());
 					stmt.setString(11,locationbean.getUnlocode() );
-
+					
+					System.out.println("Inside Location Insert");
 					if (stmt.executeUpdate() < 0)
 						flag = false;
 					else {
 						rs = stmt.getGeneratedKeys();
 						rs.next();
 						locationbean.setLocationId(rs.getInt(1));
+						System.out.println("locationID"+rs.getInt(1));
 					}
 				}
 			} catch (Exception e) {

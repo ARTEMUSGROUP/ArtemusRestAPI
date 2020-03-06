@@ -204,6 +204,7 @@ public class JPBillsServiceImpl implements JPBillsService {
 				if(objParty.getAddressInfo().getPhoneNo() !=null || !objParty.getAddressInfo().getPhoneNo().isEmpty())
 				{
 				customerGen=objCustomerProfiledao.addCustomer(objParty,loginScac);
+				System.out.println("Customer created"+customerGen);
 				}else {
 					
 					errorMessage.append("phone number is mandatory for "+objParty.getName());
