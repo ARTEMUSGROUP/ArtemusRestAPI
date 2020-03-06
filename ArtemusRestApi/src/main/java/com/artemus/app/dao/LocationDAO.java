@@ -238,15 +238,17 @@ public class LocationDAO {
 				stmt.setString(3, loginScac);
 				stmt.setString(4, locationbean.getLocation());
 				stmt.executeUpdate();
-
+				logger.info(stmt);	
 				stmt2 = con.prepareStatement(
 						"update location set hold_at_lp=?,location_type=? where location_id=? and login_scac=?");
 				stmt2.setString(1, locationbean.getHoldAtLp());
 				stmt2.setString(2, locationbean.getLocationType());
 				stmt2.setInt(3, locationbean.getLocationId());
 				stmt2.setString(4, loginScac);
+				logger.info(stmt2);	
 				if (stmt2.executeUpdate() < 0)
 					flag = false;
+				
 			} else {
 				stmt = con.prepareStatement("INSERT INTO location (location_code,"
 						+ "  login_scac, location_name,country, state, location_type, "
@@ -263,13 +265,14 @@ public class LocationDAO {
 				stmt.setString(9, locationbean.getCreatedUser());
 				stmt.setBoolean(10, locationbean.isCustomForeign());
 				stmt.setString(11, locationbean.getUnlocode());
-
+				logger.info(stmt);
 				if (stmt.executeUpdate() < 0)
 					flag = false;
 				else {
 					rs = stmt.getGeneratedKeys();
 					rs.next();
 					locationbean.setLocationId(rs.getInt(1));
+					logger.info(locationbean.getLocationId());
 				}
 			}
 		} catch (Exception e) {

@@ -25,6 +25,7 @@
 <!-- 		username="root"  -->
 <!-- 		password="@ss123"  -->
 <!-- 		driverClassName="com.mysql.jdbc.Driver"  -->
+<!-- 		removeAbandoned="true" removeAbandonedTimeout="60" logAbandoned="true" -->
 <!-- 		url="jdbc:mysql://localhost:3307/artemus?autoReconnect=true"/> -->
 <!-- </Context>  -->
 
@@ -40,7 +41,6 @@
 		username="root" 
 		password="pretoriu@98335" 
 		driverClassName="com.mysql.jdbc.Driver" 
-		url="jdbc:mysql://localhost:3306/artemus?autoReconnect=true"
-		/>
+		url="jdbc:mysql://localhost:3306/artemus?autoReconnect=true"/>
 </Context>
 

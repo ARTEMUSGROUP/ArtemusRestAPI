@@ -90,6 +90,7 @@ public class JpLocationDAO {
 				stmt = con.prepareStatement("Select iso_code from country where iso_code=? ");
 				stmt.setString(1, objLocationName);
 				rs = stmt.executeQuery();
+				logger.info(stmt);
 				if (rs.next()) {
 					result = true;
 				} else {
@@ -106,8 +107,11 @@ public class JpLocationDAO {
 			ResultSet rs = null;
 			Boolean result = true;
 			try {
-				stmt = con.prepareStatement("select port_name, port_code from foreign_port where port_code=? ");
+				stmt = con.prepareStatement("select port_name, port_code from district_port where port_code=? " + 
+						" union" + 
+						" select port_name, port_code from foreign_port where port_code=? and port_code NOT IN (select port_code from japan_port) ");
 				stmt.setString(1, unCode);
+				stmt.setString(2, unCode);
 				rs = stmt.executeQuery();
 				logger.info(stmt);
 				if (rs.next()) {
@@ -224,7 +228,7 @@ public class JpLocationDAO {
 						rs = stmt.getGeneratedKeys();
 						rs.next();
 						locationbean.setLocationId(rs.getInt(1));
-						System.out.println("locationID"+rs.getInt(1));
+						logger.info(locationbean.getLocationId());
 					}
 				}
 			} catch (Exception e) {
