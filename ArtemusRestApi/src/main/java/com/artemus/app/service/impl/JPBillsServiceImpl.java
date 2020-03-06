@@ -145,11 +145,12 @@ public class JPBillsServiceImpl implements JPBillsService {
 	{
 		boolean customerGen=false;
 		
-		if(objParty !=null) {
+		if(objParty !=null && (objParty.getAddressInfo().getPhoneNo() !=null || !objParty.getAddressInfo().getPhoneNo().isEmpty())) {
 			if(objCustomerProfiledao.isCustomerExists(objParty,loginScac)) {
+				objCustomerProfiledao.updateCustomerPhone(objParty, loginScac);
 				customerGen=true;
-			}else {
-				
+				System.out.println("Customer phone updated");
+			}else{
 				if(objParty.getAddressInfo().getPhoneNo() !=null || !objParty.getAddressInfo().getPhoneNo().isEmpty())
 				{
 				customerGen=objCustomerProfiledao.addCustomer(objParty,loginScac);
@@ -159,6 +160,8 @@ public class JPBillsServiceImpl implements JPBillsService {
 					errorMessage.append("phone number is mandatory for "+objParty.getName());
 				}
 			}
+		}else {
+			errorMessage.append("phone number is mandatory for "+objParty.getName());
 		}
 		
 	}
