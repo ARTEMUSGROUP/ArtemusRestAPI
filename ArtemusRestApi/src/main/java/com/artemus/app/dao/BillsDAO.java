@@ -172,14 +172,14 @@ public class BillsDAO {
 			stmt.setString(20, "");
 			stmt.setString(21, "");
 			stmt.setString(22, "");
-			stmt.setString(23, "");
-			stmt.setString(24, "");
+			stmt.setInt(23, 0);
+			stmt.setInt(24, 0);
 			stmt.setString(25, "");
-			stmt.setString(26, "");
+			stmt.setInt(26, 0);
 			stmt.setString(27, "");
 			stmt.setString(28, "");
 
-			stmt.setString(29, objBillHeader.getBillOfLading());
+			stmt.setInt(29, objBillHeader.getBillLadingId());
 			stmt.setString(30, objBillHeader.getLoginScac());
 			System.out.println(stmt);
 			if (stmt.executeUpdate() != 1) {
