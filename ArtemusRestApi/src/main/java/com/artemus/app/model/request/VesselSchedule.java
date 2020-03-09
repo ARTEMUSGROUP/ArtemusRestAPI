@@ -194,5 +194,42 @@ public class VesselSchedule {
 	public void setVesselScac(String vesselScac) {
 		this.vesselScac = vesselScac;
 	}
+	
+	public StringBuffer jpvalidateVesselSchedule() {
+		StringBuffer objVesselMessage = new StringBuffer();
+
+		if (countryOfOrigin == null || countryOfOrigin.isEmpty()) {
+			if (objVesselMessage.length() > 0) {
+				objVesselMessage.append(",");
+			}
+			objVesselMessage.append("countryOfOrigin");
+		}
+		if (vesselName == null || vesselName.isEmpty()) {
+			if (objVesselMessage.length() > 0) {
+				objVesselMessage.append(",");
+			}
+			objVesselMessage.append("vesselName");
+		}
+		if (portOfDischarge == null || portOfDischarge.isEmpty()) {
+			if (objVesselMessage.length() > 0) {
+				objVesselMessage.append(",");
+			}
+			objVesselMessage.append("portOfDischarge");
+		}
+		if (voyageNumber == null || voyageNumber.isEmpty()) {
+			if (objVesselMessage.length() > 0) {
+				objVesselMessage.append(",");
+			}
+			objVesselMessage.append("voyageNumber");
+		}
+		if (portOfLoading == null || portOfLoading.isEmpty()) {
+			if (objVesselMessage.length() > 0) {
+				objVesselMessage.append(",");
+			}
+			objVesselMessage.append("portOfLoading");
+		}
+
+		return objVesselMessage;
+	}
 
 }

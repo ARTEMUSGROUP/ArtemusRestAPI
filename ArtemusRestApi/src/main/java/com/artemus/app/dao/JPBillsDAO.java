@@ -6,24 +6,21 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.artemus.app.connection.DBConnectionFactory;
 import com.artemus.app.model.request.BillHeader;
 import com.artemus.app.model.request.Cargo;
-import com.artemus.app.model.request.Equipment;
+import com.artemus.app.model.request.JPEquipment;
 import com.artemus.app.model.request.Package;
 import com.artemus.app.model.request.Party;
 
-public class BillsDAO {
+public class JPBillsDAO {
+
 	private Connection con;
 	private java.sql.PreparedStatement stmt = null;
 	private java.sql.PreparedStatement stmt1 = null, MIstmt = null;
 	private ResultSet rs = null, MIrs = null;
-	static Logger logger = LogManager.getLogger();
 
-	public BillsDAO(Connection connection) {
+	public JPBillsDAO(Connection connection) {
 		try {
 			if (connection != null) {
 				con = connection;
@@ -63,11 +60,12 @@ public class BillsDAO {
 			e.printStackTrace();
 		}
 	}
-
+	
+	
 	public int insertIntoBillHeader(BillHeader objBillHeader) {
 		int billLadingId = 0;
 		try {
-			stmt = con.prepareStatement("Insert into bill_header "
+			stmt = con.prepareStatement("Insert into jp_bill_header "
 					+ "(login_scac, bill_lading_number, bill_status, bill_type, hbl_scac,"
 					+ " nvo_type, nvo_bl, scac_bill, master_bill, master_carrier_scac, voyage_number, voyage_id ,"
 					+ " load_port, discharge_port, country_of_origin, place_of_receipt, "
@@ -133,138 +131,59 @@ public class BillsDAO {
 		return billLadingId; // billLadingId
 	}
 
-	public boolean updateBillHeader(BillHeader objBillHeader) throws SQLException {
-		boolean isUpdated = false;
-			stmt = con.prepareStatement("Update bill_header set bill_status=?, bill_type=?,"
-					+ " hbl_scac=?, nvo_type=?, nvo_bl=?, scac_bill=?, master_bill=?, "
-					+ " master_carrier_scac=?,voyage_number=?,voyage_id=?, load_port=?, discharge_port=?,"
-					+ " country_of_origin= ?, place_of_receipt= ?, place_of_delivery= ?,"
-					+ " move_type= ?, split_bill_number=?, shipment_type=?,transmission_type=?, "
-					+ " carnet_number=?, carnet_country=?, shipment_sub_type=?, estimated_value=?, estimated_quantity=?, "
-					+ " unit_of_measure=?, estimated_weight=?, weight_qualifier=?,canada_carrier_office=? "
-					+ " where bill_lading_id=? and login_scac=?");
-
-			stmt.setString(1, "COMPLETE");
-			stmt.setString(2, objBillHeader.getBillType());
-			stmt.setString(3, objBillHeader.getHblScac());
-			if (objBillHeader.getNvoType().length() > 16) {
-				stmt.setString(4, objBillHeader.getNvoType().substring(0, 16));
-			} else {
-				stmt.setString(4, objBillHeader.getNvoType());
-			}
-			stmt.setString(5, objBillHeader.getNvoBill());
-			stmt.setString(6, objBillHeader.getMasterBillScac());
-			stmt.setString(7, objBillHeader.getMasterBill());
-			stmt.setString(8, objBillHeader.getVesselSchedule().getVesselScac());
-
-			stmt.setString(9, objBillHeader.getVesselSchedule().getVoyageNumber());
-			stmt.setInt(10, objBillHeader.getVesselSchedule().getVoyageId());
-			stmt.setString(11, objBillHeader.getVesselSchedule().getPortOfLoading());
-			stmt.setString(12, objBillHeader.getVesselSchedule().getPortOfDischarge());
-			stmt.setString(13, objBillHeader.getVesselSchedule().getCountryOfOrigin());
-			stmt.setString(14, objBillHeader.getVesselSchedule().getPlaceOfReceipt());
-			stmt.setString(15, objBillHeader.getVesselSchedule().getPlaceOfDelivery());
-			stmt.setString(16, objBillHeader.getVesselSchedule().getMoveType());
-
-			stmt.setString(17, "");
-			stmt.setString(18, "");
-			stmt.setString(19, "");
-			stmt.setString(20, "");
-			stmt.setString(21, "");
-			stmt.setString(22, "");
-			stmt.setInt(23, 0);
-			stmt.setInt(24, 0);
-			stmt.setString(25, "");
-			stmt.setInt(26, 0);
-			stmt.setString(27, "");
-			stmt.setString(28, "");
-
-			stmt.setInt(29, objBillHeader.getBillLadingId());
-			stmt.setString(30, objBillHeader.getLoginScac());
-			System.out.println(stmt);
-			if (stmt.executeUpdate() != 1) {
-				isUpdated = false;
-			} else {
-				isUpdated = true;
-			}
-
-		return isUpdated;
-	}
-
 	public boolean insertIntoConsigneeShipperDetails(Party objParty, String tag, int billLadingId) throws SQLException {
 		boolean isDone = false;
 		if (objParty != null) {
-			stmt = con.prepareStatement("Insert into consignee_shipper_details values (?, ?, ?, ?, ?, ?, false,?)");
+			stmt = con.prepareStatement("Insert into jp_consignee_shipper_details values (?, ?, ?, ?, ?, ?, ?,false,?)");
 			stmt.setInt(1, billLadingId);
 			stmt.setString(2, objParty.getName());
 			stmt.setString(3, tag);
 			stmt.setString(4, objParty.getAddressInfo().getAddressLine1());
 			stmt.setString(5, objParty.getAddressInfo().getAddressLine2());
 			stmt.setString(6, objParty.getAddressInfo().getCity() + "," + objParty.getAddressInfo().getZipCode());
-			stmt.setInt(7, objParty.getCustomerId());
-			logger.info(stmt);
-			if (stmt.executeUpdate() != 1) {
-				throw new SQLException();
-			}
+			stmt.setString(7, objParty.getAddressInfo().getPhoneNo());
+			stmt.setInt(8, objParty.getCustomerId());
+			stmt.executeUpdate();
+			System.out.println(stmt);
 			isDone = true;
 		} else {
-			stmt = con.prepareStatement("Insert into consignee_shipper_details values (?, ?, ?, ?, ?, ?, false,?)");
+			stmt = con.prepareStatement("Insert into jp_consignee_shipper_details values (?, ?, ?, ?, ?, ?, ?,false,?)");
 			stmt.setInt(1, billLadingId);
 			stmt.setString(2, "");
 			stmt.setString(3, tag);
 			stmt.setString(4, "");
 			stmt.setString(5, "");
 			stmt.setString(6, "");
-			stmt.setInt(7, 0);
-			logger.info(stmt);
-			if (stmt.executeUpdate() != 1) {
-				throw new SQLException();
-			}
+			stmt.setString(7, objParty.getAddressInfo().getPhoneNo());
+			stmt.setInt(8, 0);
+			stmt.executeUpdate();
+			System.out.println(stmt);
 			isDone = true;
 		}
 		return isDone;
 	}
 
-	public boolean deleteFromConsigneeShipperDetails(int billLadingId) throws SQLException {
-		boolean isDone = false;
-		stmt = con.prepareStatement("Delete from consignee_shipper_details where bill_lading_id=?");
-		stmt.setInt(1, billLadingId);
-		logger.info(stmt);
-		stmt.executeUpdate();
-		isDone = true;
-		return isDone;
-	}
+	/*
+	 * public void insertIntoNotifyPartyDetails(ArrayList<String> notifyParties, int
+	 * billLadingId) throws SQLException { stmt =
+	 * con.prepareStatement("Insert into notify_party_details values (?,?)"); for
+	 * (String notifyParty : notifyParties) { stmt.setInt(1, billLadingId);
+	 * stmt.setString(2, notifyParty); System.out.println(stmt); if
+	 * (stmt.executeUpdate() != 1) { throw new SQLException(); } } }
+	 */
 
-	public void insertIntoNotifyPartyDetails(ArrayList<String> notifyParties, int billLadingId) throws SQLException {
-		stmt = con.prepareStatement("Insert into notify_party_details values (?,?)");
-		for (String notifyParty : notifyParties) {
-			stmt.setInt(1, billLadingId);
-			stmt.setString(2, notifyParty);
-			logger.info(stmt);
-			if (stmt.executeUpdate() != 1) {
-				throw new SQLException();
-			}
-		}
-	}
-
-	public boolean deleteFromNotifyPartyDetails(int billLadingId) throws SQLException {
-		boolean isDone = false;
-		stmt = con.prepareStatement("Delete from notify_party_details where bill_lading_id=?");
-		stmt.setInt(1, billLadingId);
-		logger.info(stmt);
-		stmt.executeUpdate();
-		isDone = true;
-		return isDone;
-	}
-
-	public boolean insertIntoEquipments(Equipment objEquipment, int billLadingId) {
+	public boolean insertIntoEquipments(JPEquipment objEquipment, int billLadingId) {
 		try {
-			stmt = con.prepareStatement("Insert into equipment values (?,?,?)");
+			stmt = con.prepareStatement("Insert into jp_equipment values (?,?,?,?,?,?,?)");
 			stmt.setInt(1, billLadingId);
 			stmt.setString(2, objEquipment.getEquipmentNo());
 			stmt.setString(3, objEquipment.getEquipmentType());
+			stmt.setString(4, objEquipment.getServiceTypeId());
+			stmt.setString(5, objEquipment.getContainerOwnershipId());
+			stmt.setString(6, objEquipment.getVanningTypeId());
+			stmt.setString(7, objEquipment.getCustomConventionId());
 			stmt.executeUpdate();
-			logger.info(stmt);
+			System.out.println(stmt);
 			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -274,20 +193,10 @@ public class BillsDAO {
 		return false;
 	}
 
-	public boolean deleteFromEquipment(int billLadingId) throws SQLException {
-		boolean isDone = false;
-		stmt = con.prepareStatement("Delete from equipment where bill_lading_id=?");
-		stmt.setInt(1, billLadingId);
-		stmt.executeUpdate();
-		logger.info(stmt);
-		isDone = true;
-		return isDone;
-	}
-
-	public boolean insertIntoSeals(Equipment objEquipment, int billLadingId) {
+	public boolean insertIntoSeals(JPEquipment objEquipment, int billLadingId) {
 		try {
 			if (objEquipment.getSeals() != null) {
-				stmt = con.prepareStatement("Insert into seal values (?, ?, ?)");
+				stmt = con.prepareStatement("Insert into jp_seal values (?, ?, ?)");
 				stmt.setInt(1, billLadingId);
 				for (String seal : objEquipment.getSeals()) {
 					stmt.setString(2, objEquipment.getEquipmentNo());
@@ -305,24 +214,15 @@ public class BillsDAO {
 		}
 	}
 
-	public boolean deleteFromSeal(int billLadingId) throws SQLException {
-		boolean isDone = false;
-		stmt = con.prepareStatement("Delete from seal where bill_lading_id=?");
-		stmt.setInt(1, billLadingId);
-		logger.info(stmt);
-		stmt.executeUpdate();
-		isDone = true;
-		return isDone;
-	}
-
-	public int addPackages(Equipment objEquipment, int billLadingId, int packageIndex) {
+	public int addPackages(JPEquipment objEquipment, int billLadingId,int packageIndex) {
 		try {
 			stmt = con.prepareStatement(
-					"Insert into packages " + " (bill_lading_id, package_id,equipment_number, marks, pieces, packages)"
+					"Insert into jp_packages " + " (bill_lading_id, package_id,equipment_number, marks, pieces, packages)"
 							+ " values (?, ?, ?, ?, ?, ?)");
-			stmt1 = con.prepareStatement("Insert into packages_details "
+			stmt1 = con.prepareStatement("Insert into jp_packages_details "
 					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
 
+			
 			for (Package objPackage : objEquipment.getPackages()) {
 				stmt.setInt(1, billLadingId);
 				stmt.setInt(2, packageIndex);
@@ -334,7 +234,7 @@ public class BillsDAO {
 				if (stmt.executeUpdate() != 1) {
 					return -1;
 				}
-
+				
 				// following query till end of the list PackagesBean to insert notify party
 				// records in packages table
 
@@ -409,29 +309,15 @@ public class BillsDAO {
 		}
 	}
 
-	public boolean deleteFromPackages(int billLadingId) throws SQLException {
-		boolean isDone = false;
-		stmt = con.prepareStatement("Delete from packages where bill_lading_id=?");
-		stmt.setInt(1, billLadingId);
-		logger.info(stmt);
-		stmt.executeUpdate();
-		stmt = con.prepareStatement("Delete from packages_details where bill_lading_id=?");
-		stmt.setInt(1, billLadingId);
-		logger.info(stmt);
-		stmt.executeUpdate();
-		isDone = true;
-		return isDone;
-	}
-
-	public int addCargos(Equipment objEquipment, int billLadingId, int cargoIndex) {
+	public int addCargos(JPEquipment objEquipment, int billLadingId,int cargoIndex) {
 		// TODO Auto-generated method stub
 		try {
 			System.out.println(objEquipment.getCargos());
 			if (objEquipment.getCargos() != null) {
-				stmt = con.prepareStatement("Insert into cargo "
+				stmt = con.prepareStatement("Insert into jp_cargo "
 						+ " (bill_lading_id, cargo_id, equipment_number, description, harmonize_code, "
-						+ " hazard_code, manufacturer, country,customer_id) values " + " (?,?,?,?,?,?,?,?,?)");
-
+						+ " hazard_code,customer_id) values " + " (?,?,?,?,?,?,?)");
+				
 				for (Cargo objCargo : objEquipment.getCargos()) {
 					if (objCargo != null) {
 						stmt.setInt(1, billLadingId);
@@ -440,9 +326,7 @@ public class BillsDAO {
 						stmt.setString(4, objCargo.getDescriptionsOfGoods());
 						stmt.setString(5, objCargo.getHarmonizeCode());
 						stmt.setString(6, objCargo.getHazardCode());
-						stmt.setString(7, objCargo.getManufacturer());
-						stmt.setString(8, objCargo.getCountry());
-						stmt.setInt(9, 0);// Field cannot get
+						stmt.setInt(7, 0);// Field cannot get
 						if (stmt.executeUpdate() != 1) {
 							return -1;
 						}
@@ -460,19 +344,9 @@ public class BillsDAO {
 		return cargoIndex;
 	}
 
-	public boolean deleteFromCargo(int billLadingId) throws SQLException {
-		boolean isDone = false;
-		stmt = con.prepareStatement("Delete from cargo where bill_lading_id=?");
-		stmt.setInt(1, billLadingId);
-		logger.info(stmt);
-		stmt.executeUpdate();
-		isDone = true;
-		return isDone;
-	}
-
 	public void insertIntoBillDetailStatus(BillHeader objBillHeader, int billLadingId) throws SQLException {
 		stmt = con.prepareStatement(
-				"Insert into bill_detail_status (login_scac, bill_lading_id, is_ams_sent, is_isf_sent, is_readonly, "
+				"Insert into jp_bill_detail_status (login_scac, bill_lading_id, is_ams_sent, is_isf_sent, is_readonly, "
 						+ "error_code, isf_error_code, error_description, isf_error_description, is_manifest_error, is_isf_error, is_ams_error, "
 						+ "updated_date)" + "values(?,?,?,?,?,?,?,?,?,?,?,?,now())");
 
@@ -494,29 +368,12 @@ public class BillsDAO {
 			throw new SQLException();
 		}
 	}
-	
-	public void updateBillDetailStatus(BillHeader objBillHeader, int billLadingId) throws SQLException {
-		stmt = con.prepareStatement("Update bill_detail_status " +
-				" set is_readonly=?, error_description=?, isf_error_description=?, is_manifest_error=?, is_isf_error=?, is_ams_sent=? " +
-				" where bill_lading_id=? and login_scac=?");
-		stmt.setBoolean(1,false);
-		stmt.setString(2,"");
-		stmt.setString(3,"");
-		stmt.setBoolean(4,false);
-		stmt.setBoolean(5,false);
-		stmt.setBoolean(6,false);			
-		stmt.setInt(7, billLadingId);
-		stmt.setString(8,objBillHeader.getLoginScac());
-		stmt.executeUpdate();
-		logger.info(stmt);
-		stmt.executeUpdate();
-	}
 
 	public void insertIntoVoyagePortDetails(BillHeader objBillHeader, String dischargePort) {
 		if (dischargePort.equals(""))
 			dischargePort = objBillHeader.getVesselSchedule().getPortOfDischarge();
 		try {
-			stmt = con.prepareStatement("select arrival_date from voyage_details a, location b "
+			stmt = con.prepareStatement("select arrival_date,sailing_date from jp_voyage_details a, location b "
 					+ "where a.login_scac=? and a.voyage_id=? and a.is_discharge_port=? "
 					+ "and a.location_id=b.location_id and b.location_code=? ");
 
@@ -528,8 +385,8 @@ public class BillsDAO {
 			rs = stmt.executeQuery();
 			System.out.println(stmt);
 			if (rs.next()) {
-				stmt = con.prepareStatement("replace into voyage_port_details "
-						+ "(login_scac, voyage_id, load_port, discharge_port, is_ams_sent, eta) values(?,?,?,?,?,?)");
+				stmt = con.prepareStatement("replace into jp_voyage_port_details "
+						+ "(login_scac, voyage_id, load_port, discharge_port, is_ams_sent, eta, dta) values(?,?,?,?,?,?,?)");
 				stmt.setString(1, objBillHeader.getLoginScac());
 				stmt.setInt(2, objBillHeader.getVesselSchedule().getVoyageId());
 				stmt.setString(3, objBillHeader.getVesselSchedule().getPortOfLoading());
@@ -539,6 +396,7 @@ public class BillsDAO {
 								objBillHeader.getVesselSchedule().getPortOfLoading(),
 								objBillHeader.getVesselSchedule().getPortOfDischarge(), objBillHeader.getLoginScac()));
 				stmt.setString(6, rs.getString(1));
+				stmt.setString(7, rs.getString(2));
 				stmt.executeUpdate();
 				System.out.println(stmt);
 			}
@@ -554,7 +412,7 @@ public class BillsDAO {
 		boolean result = false;
 
 		MIstmt = con.prepareStatement(
-				"Select * from voyage_port_details where login_scac=? and voyage_id=? and load_port=? and discharge_port=? and is_ams_sent=true");
+				"Select * from jp_voyage_port_details where login_scac=? and voyage_id=? and load_port=? and discharge_port=? and is_ams_sent=true");
 		MIstmt.setString(1, loginScac);
 		MIstmt.setInt(2, voyageId);
 		MIstmt.setString(3, loadPortCode);
@@ -588,7 +446,7 @@ public class BillsDAO {
 		String districtPort = "";
 		try {
 			stmt = con.prepareStatement("select b.location_code,a.arrival_date from "
-					+ "voyage_details a,location b where a.login_scac=? and a.voyage_id=? and "
+					+ "jp_voyage_details a,location b where a.login_scac=? and a.voyage_id=? and "
 					+ "a.location_id=b.location_id and is_discharge_port=true order by 2 asc");
 			stmt.setString(1, loginScac);
 			stmt.setInt(2, voyageId);
@@ -607,19 +465,17 @@ public class BillsDAO {
 		boolean isExist = false;
 		try {
 			stmt = con.prepareStatement(
-					"select bill_lading_id from bill_header where login_scac=? and bill_lading_number = ?");
+					"select bill_lading_id from jp_bill_header where login_scac=? and bill_lading_number = ?");
 			stmt.setString(1, objBillHeader.getLoginScac());
 			stmt.setString(2, objBillHeader.getBillOfLading());
-			rs= stmt.executeQuery();
-			if (rs.next()) {
-				objBillHeader.setBillLadingId(rs.getInt("bill_lading_id"));
+			if (stmt.executeQuery().next())
 				isExist = true;
-			}
 			System.out.println(stmt);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return isExist;
 	}
-
+	
+	
 }

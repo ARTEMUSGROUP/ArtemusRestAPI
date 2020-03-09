@@ -2,9 +2,10 @@ package com.artemus.app.utils;
 
 import com.artemus.app.exceptions.MissingRequiredFieldException;
 import com.artemus.app.model.request.BillHeader;
-import com.artemus.app.model.request.Equipment;
+import com.artemus.app.model.request.JPEquipment;
 
-public class BillHeaderUtils {
+public class JPBillHeaderUtils {
+
 	public void validateRequiredFields(BillHeader objBillHeader) throws MissingRequiredFieldException {
 		System.out.println("validateRequiredFields :: ");
 		StringBuffer objMessage = new StringBuffer();
@@ -126,7 +127,7 @@ public class BillHeaderUtils {
 			}
 			objMessage.append("vesselSchedule");
 		} else {
-			StringBuffer objVesselMessage = objBillHeader.getVesselSchedule().validateVesselSchedule();
+			StringBuffer objVesselMessage = objBillHeader.getVesselSchedule().jpvalidateVesselSchedule();
 			if (objVesselMessage.length() > 0) {
 				if (objMessage.length() > 0) {
 					objMessage.append(",");
@@ -135,8 +136,8 @@ public class BillHeaderUtils {
 			}
 		}
 
-		if (objBillHeader.getEquipments() == null || objBillHeader.getEquipments().isEmpty()
-				|| objBillHeader.getEquipments().size() == 0) {
+		if (objBillHeader.getJpequipments() == null || objBillHeader.getJpequipments().isEmpty()
+				|| objBillHeader.getJpequipments().size() == 0) {
 			if (objMessage.length() > 0) {
 				objMessage.append(",");
 			}
@@ -144,8 +145,8 @@ public class BillHeaderUtils {
 		} else {
 			StringBuffer objEquipmentsMessage = new StringBuffer();
 			int equipmentCount = 0;
-			for (Equipment objEquipment : objBillHeader.getEquipments()) {
-				String str = objEquipment.validateEquipment().toString();
+			for (JPEquipment objEquipment : objBillHeader.getJpequipments()) {
+				String str = objEquipment.validateJPEquipment().toString();
 				if (str.length() > 0) {
 					objEquipmentsMessage.append(equipmentCount + ": {" + str + "}");
 				}
@@ -165,4 +166,5 @@ public class BillHeaderUtils {
 		}
 
 	}
+	
 }

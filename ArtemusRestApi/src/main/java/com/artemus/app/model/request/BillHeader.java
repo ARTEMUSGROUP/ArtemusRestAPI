@@ -11,7 +11,8 @@ public class BillHeader {
 	private String hblScac;
 	private String nvoType;
 	private String nvoBill;
-	private String scacBill;
+	private String masterBillScac;
+	// private String scacBill;
 	private String masterBill;
 
 	// Shipping Info
@@ -36,8 +37,11 @@ public class BillHeader {
 
 	private ArrayList<Equipment> equipments;
 
+	// Japan Equipments
+	private ArrayList<JPEquipment> jpequipments;
+
 	// Bill Update
-	private boolean isBillUpdate;
+	// private boolean isBillUpdate;
 
 	private String loginScac;
 	// --------------------------
@@ -110,22 +114,26 @@ public class BillHeader {
 		this.nvoBill = nvoBill;
 	}
 
-	public String getScacBill() {
-		if (scacBill == null)
-			return scacBill;
-		else
-			return scacBill.toUpperCase();
-	}
-
-	public void setScacBill(String scacBill) {
-		this.scacBill = scacBill;
-	}
+	/*
+	 * public String getScacBill() { if (scacBill == null) return scacBill; else
+	 * return scacBill.toUpperCase(); }
+	 * 
+	 * public void setScacBill(String scacBill) { this.scacBill = scacBill; }
+	 */
 
 	public String getMasterBill() {
 		if (masterBill == null)
 			return masterBill;
 		else
 			return masterBill.toUpperCase();
+	}
+
+	public String getMasterBillScac() {
+		return masterBillScac;
+	}
+
+	public void setMasterBillScac(String masterBillScac) {
+		this.masterBillScac = masterBillScac;
 	}
 
 	public void setMasterBill(String masterBill) {
@@ -236,12 +244,20 @@ public class BillHeader {
 		this.equipments = equipments;
 	}
 
-	public boolean isBillUpdate() {
-		return isBillUpdate;
+//	public boolean isBillUpdate() {
+//		return isBillUpdate;
+//	}
+//
+//	public void setBillUpdate(boolean isBillUpdate) {
+//		this.isBillUpdate = isBillUpdate;
+//	}
+
+	public ArrayList<JPEquipment> getJpequipments() {
+		return jpequipments;
 	}
 
-	public void setBillUpdate(boolean isBillUpdate) {
-		this.isBillUpdate = isBillUpdate;
+	public void setJpequipments(ArrayList<JPEquipment> jpequipments) {
+		this.jpequipments = jpequipments;
 	}
 
 	public int getBillLadingId() {
@@ -250,18 +266,6 @@ public class BillHeader {
 
 	public void setBillLadingId(int billLadingId) {
 		this.billLadingId = billLadingId;
-	}
-
-	@Override
-	public String toString() {
-		return "BillHeader [billOfLading=" + billOfLading + ", billType=" + billType + ", hblScac=" + hblScac
-				+ ", nvoType=" + nvoType + ", nvoBill=" + nvoBill + ", scacBill=" + scacBill + ", masterBill="
-				+ masterBill + ", shipper=" + shipper + ", bookingParty=" + bookingParty + ", seller=" + seller
-				+ ", consolidator=" + consolidator + ", stuffer=" + stuffer + ", consignee=" + consignee + ", notify="
-				+ notify + ", importer=" + importer + ", buyer=" + buyer + ", shipTo=" + shipTo + ", notifyParties="
-				+ notifyParties + ", vesselSchedule=" + vesselSchedule + ", equipments=" + equipments
-				+ ", isBillUpdate=" + isBillUpdate + ", loginScac=" + loginScac + ", billLadingId=" + billLadingId
-				+ "]";
 	}
 
 }
