@@ -9,7 +9,9 @@ public class Cargo {
 	private String country;
 
 	public String getDescriptionsOfGoods() {
-		return descriptionsOfGoods;
+		if (descriptionsOfGoods==null)
+			descriptionsOfGoods="";
+		return descriptionsOfGoods.toUpperCase();
 	}
 
 	public void setDescriptionsOfGoods(String descriptionsOfGoods) {
@@ -17,7 +19,9 @@ public class Cargo {
 	}
 
 	public String getHarmonizeCode() {
-		return harmonizeCode;
+		if(harmonizeCode==null)
+			harmonizeCode="";
+		return harmonizeCode.toUpperCase();
 	}
 
 	public void setHarmonizeCode(String harmonizeCode) {
@@ -25,7 +29,9 @@ public class Cargo {
 	}
 
 	public String getHazardCode() {
-		return hazardCode;
+		if(hazardCode==null)
+			hazardCode="";
+		return hazardCode.toUpperCase();
 	}
 
 	public void setHazardCode(String hazardCode) {
@@ -33,7 +39,9 @@ public class Cargo {
 	}
 
 	public String getManufacturer() {
-		return manufacturer;
+		if(manufacturer==null)
+			manufacturer="";
+		return manufacturer.toUpperCase();
 	}
 
 	public void setManufacturer(String manufacturer) {
@@ -41,7 +49,9 @@ public class Cargo {
 	}
 
 	public String getCountry() {
-		return country;
+		if(country==null)
+			country="";
+		return country.toUpperCase();
 	}
 
 	public void setCountry(String country) {

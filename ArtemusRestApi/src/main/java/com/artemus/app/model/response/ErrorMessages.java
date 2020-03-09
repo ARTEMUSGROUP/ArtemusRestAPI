@@ -1,12 +1,10 @@
 package com.artemus.app.model.response;
 
 public enum ErrorMessages {
-
-	
-    AUTHENTICATION_FAILED("Authentication failed"),
-    INTERNAL_SERVER_ERROR("Internal server error");
+    AUTHENTICATION_FAILED("Authentication failed please check Authorization"),
+    INTERNAL_SERVER_ERROR("Internal server processing error"),
+    MISSING_REQUIRED_FIELD("Missing required field. Please check documentation for required fields");
    
-	
 	private String errorMessage;
 
 	private ErrorMessages(String errorMessage) {

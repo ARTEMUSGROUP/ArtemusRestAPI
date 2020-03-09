@@ -1,11 +1,11 @@
 package com.artemus.app.model.request;
+
 import java.util.ArrayList;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class BillHeader {
-
 	private String billOfLading;
 	private String billType;
 	private String hblScac;
@@ -39,8 +39,26 @@ public class BillHeader {
 	// Bill Update
 	private boolean isBillUpdate;
 
+	private String loginScac;
+	// --------------------------
+	public int billLadingId;
+
+	public String getLoginScac() {
+		if (loginScac == null)
+			return loginScac;
+		else
+			return loginScac.toUpperCase();
+	}
+
+	public void setLoginScac(String loginScac) {
+		this.loginScac = loginScac;
+	}
+
 	public String getBillOfLading() {
-		return billOfLading;
+		if (billOfLading == null)
+			return billOfLading;
+		else
+			return billOfLading.toUpperCase();
 	}
 
 	public void setBillOfLading(String billOfLading) {
@@ -48,7 +66,10 @@ public class BillHeader {
 	}
 
 	public String getBillType() {
-		return billType;
+		if (billType == null)
+			return billType;
+		else
+			return billType.toUpperCase();
 	}
 
 	public void setBillType(String billType) {
@@ -56,7 +77,11 @@ public class BillHeader {
 	}
 
 	public String getHblScac() {
-		return hblScac;
+		if (hblScac == null) {
+			return hblScac;
+		} else {
+			return hblScac.toUpperCase();
+		}
 	}
 
 	public void setHblScac(String hblScac) {
@@ -64,7 +89,10 @@ public class BillHeader {
 	}
 
 	public String getNvoType() {
-		return nvoType;
+		if (nvoType == null)
+			return nvoType;
+		else
+			return nvoType.toUpperCase();
 	}
 
 	public void setNvoType(String nvoType) {
@@ -72,7 +100,10 @@ public class BillHeader {
 	}
 
 	public String getNvoBill() {
-		return nvoBill;
+		if (nvoBill == null)
+			return nvoBill;
+		else
+			return nvoBill.toUpperCase();
 	}
 
 	public void setNvoBill(String nvoBill) {
@@ -80,7 +111,10 @@ public class BillHeader {
 	}
 
 	public String getScacBill() {
-		return scacBill;
+		if (scacBill == null)
+			return scacBill;
+		else
+			return scacBill.toUpperCase();
 	}
 
 	public void setScacBill(String scacBill) {
@@ -88,7 +122,10 @@ public class BillHeader {
 	}
 
 	public String getMasterBill() {
-		return masterBill;
+		if (masterBill == null)
+			return masterBill;
+		else
+			return masterBill.toUpperCase();
 	}
 
 	public void setMasterBill(String masterBill) {
@@ -207,6 +244,14 @@ public class BillHeader {
 		this.isBillUpdate = isBillUpdate;
 	}
 
+	public int getBillLadingId() {
+		return billLadingId;
+	}
+
+	public void setBillLadingId(int billLadingId) {
+		this.billLadingId = billLadingId;
+	}
+
 	@Override
 	public String toString() {
 		return "BillHeader [billOfLading=" + billOfLading + ", billType=" + billType + ", hblScac=" + hblScac
@@ -215,8 +260,8 @@ public class BillHeader {
 				+ ", consolidator=" + consolidator + ", stuffer=" + stuffer + ", consignee=" + consignee + ", notify="
 				+ notify + ", importer=" + importer + ", buyer=" + buyer + ", shipTo=" + shipTo + ", notifyParties="
 				+ notifyParties + ", vesselSchedule=" + vesselSchedule + ", equipments=" + equipments
-				+ ", isBillUpdate=" + isBillUpdate + "]";
+				+ ", isBillUpdate=" + isBillUpdate + ", loginScac=" + loginScac + ", billLadingId=" + billLadingId
+				+ "]";
 	}
 
-	
 }

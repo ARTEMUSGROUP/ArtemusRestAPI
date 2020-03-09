@@ -4,7 +4,7 @@ public class Package {
 
 	private String packageType;
 	private String marks;
-	private int pieces;
+	private String pieces;
 	private ValueUnit weight;
 	private ValueUnit volume;
 	private ValueUnit length;
@@ -17,7 +17,10 @@ public class Package {
 	private ValueUnit drainage;
 
 	public String getPackageType() {
-		return packageType;
+		if(packageType==null)
+			return packageType;	
+		else	
+		return packageType.toUpperCase();
 	}
 
 	public void setPackageType(String packageType) {
@@ -25,22 +28,30 @@ public class Package {
 	}
 
 	public String getMarks() {
-		return marks;
+		if (marks == null) {
+			marks = "NO MARKS";
+		}
+		return marks.toUpperCase();
 	}
 
 	public void setMarks(String marks) {
 		this.marks = marks;
 	}
 
-	public int getPieces() {
-		return pieces;
+	public String getPieces() {
+		if(pieces==null)
+			return pieces;
+		else
+		return pieces.toUpperCase();
 	}
 
-	public void setPieces(int pieces) {
+	public void setPieces(String pieces) {
 		this.pieces = pieces;
 	}
 
 	public ValueUnit getWeight() {
+		if (weight == null)
+			weight = new ValueUnit();
 		return weight;
 	}
 
@@ -49,6 +60,8 @@ public class Package {
 	}
 
 	public ValueUnit getVolume() {
+		if (volume == null)
+			volume = new ValueUnit();
 		return volume;
 	}
 
@@ -57,6 +70,8 @@ public class Package {
 	}
 
 	public ValueUnit getLength() {
+		if (length == null)
+			length = new ValueUnit();
 		return length;
 	}
 
@@ -65,6 +80,8 @@ public class Package {
 	}
 
 	public ValueUnit getWidth() {
+		if (width == null)
+			width = new ValueUnit();
 		return width;
 	}
 
@@ -73,6 +90,8 @@ public class Package {
 	}
 
 	public ValueUnit getHeight() {
+		if (height == null)
+			height = new ValueUnit();
 		return height;
 	}
 
@@ -81,6 +100,8 @@ public class Package {
 	}
 
 	public ValueUnit getSet() {
+		if (set == null)
+			set = new ValueUnit();
 		return set;
 	}
 
@@ -89,6 +110,8 @@ public class Package {
 	}
 
 	public ValueUnit getMin() {
+		if (min == null)
+			min = new ValueUnit();
 		return min;
 	}
 
@@ -97,6 +120,8 @@ public class Package {
 	}
 
 	public ValueUnit getMax() {
+		if (max == null)
+			max = new ValueUnit();
 		return max;
 	}
 
@@ -105,6 +130,8 @@ public class Package {
 	}
 
 	public ValueUnit getVents() {
+		if (vents == null)
+			vents = new ValueUnit();
 		return vents;
 	}
 
@@ -113,11 +140,58 @@ public class Package {
 	}
 
 	public ValueUnit getDrainage() {
+		if (drainage == null)
+			drainage = new ValueUnit();
 		return drainage;
 	}
 
 	public void setDrainage(ValueUnit drainage) {
 		this.drainage = drainage;
+	}
+
+	public StringBuffer validatePackage() {
+		StringBuffer objString = new StringBuffer();
+		if (packageType == null || packageType.isEmpty()) {
+			if (objString.length() > 0) {
+				objString.append(",");
+			}
+			objString.append("packageType");
+		}
+		
+		if (pieces != null) {
+			if (Integer.parseInt(pieces)<=0) {
+				if (objString.length() > 0) {
+					objString.append(",");
+				}
+				objString.append(" pieces: must be greater than 0 ");
+			}
+		}else {
+			objString.append(" pieces: must be greater than 0 ");
+		}
+		
+		
+		if (weight == null) {
+			if (objString.length() > 0) {
+				objString.append(",");
+			}
+			objString.append("weight");
+		}else {
+			StringBuffer objWeightMsg = weight.validateValueUnit();
+			if(weight.getUnit()!=null) {
+				if(weight.getUnit().equalsIgnoreCase("LBS")||weight.getUnit().equalsIgnoreCase("KGS")||weight.getUnit().equalsIgnoreCase("MT")) {
+				}else {
+					if (objWeightMsg.length()>0) {
+						objWeightMsg.append(",");
+					}
+					objWeightMsg.append(" unit: must be LBS,KGS,MT ");
+					if (objString.length() > 0) {
+						objString.append(",");
+					}
+					objString.append("weight:{ " + objWeightMsg + " }");
+				}
+			}
+		}
+		return objString;
 	}
 
 }
