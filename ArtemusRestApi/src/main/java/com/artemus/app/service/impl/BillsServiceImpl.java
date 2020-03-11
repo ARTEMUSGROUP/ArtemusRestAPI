@@ -18,7 +18,7 @@ import com.artemus.app.utils.BillHeaderUtils;
 public class BillsServiceImpl implements BillsService {
 	static Logger logger = LogManager.getLogger();
 	BillHeaderUtils objUtils = new BillHeaderUtils();
-	StringBuffer errorMessage = new StringBuffer("");
+	StringBuilder errorMessage = new StringBuilder("");
 	boolean isError;
 
 	public void createBill(BillHeader objBillHeader) {
@@ -30,12 +30,16 @@ public class BillsServiceImpl implements BillsService {
 			customerProfileDao.validateBillHeaderParties(objBillHeader);
 			System.out.println(objBillHeader.toString());			
 			validateVesselVoyage(objBillHeader);
+		
 			System.out.println(errorMessage);
 			if (errorMessage.length() > 0) {
 				throw new ErrorResponseException(errorMessage.toString());
 			} else {
 				try {
 					processBill(objBillHeader, customerProfileDao.getConnection());
+					if (errorMessage.length() > 0) {
+						throw new ErrorResponseException(errorMessage.toString().replaceAll("<br>", ""));
+					}
 				}catch (ErrorResponseException e) {
 					throw e;
 				} catch (Exception e) {
@@ -143,14 +147,59 @@ public class BillsServiceImpl implements BillsService {
 			objDao.insertIntoConsigneeShipperDetails(objBillHeader.getShipTo(), "shipTo", billLadingId);
 			// Adding insertIntoNotifyPartyDetails
 			objDao.insertIntoNotifyPartyDetails(objBillHeader.getNotifyParties(), billLadingId);
+			//Setting ISF Type
+			objDao.isFROBBill(objBillHeader);
 			// Adding Equipments
 			addEquipments(objBillHeader, billLadingId, objDao);
+			//Setting ISF Error
+			String isferrormsg=new String("");
+			isferrormsg=objBillHeader.getIsfType()+":"+objDao.getErrorMessage().toString();
+			System.out.println(isferrormsg);
+			errorMessage.append(isferrormsg);
+			System.out.println(errorMessage);
+			
+			if(objBillHeader.getIsfType()=="ISF-5")
+			{
+				if(objBillHeader.getShipTo() ==null)
+				{
+					errorMessage.append("<br>Ship To information is not entered.");
+				}
+				if(objBillHeader.getBookingParty() ==null)
+				{
+					errorMessage.append("<br>Booking Party information is not entered.");
+				}
+			}else if(objBillHeader.getIsfType()=="ISF-10"){
+				if(objBillHeader.getShipTo() ==null)
+				{
+					errorMessage.append("<br>Ship To information is not entered.");
+				}
+				else if(objBillHeader.getSeller() ==null)
+				{
+					errorMessage.append("<br>Seller information is not entered.");
+				}
+				else if(objBillHeader.getBuyer() ==null)
+				{
+					errorMessage.append("<br>Buyer information is not entered.");
+				}
+				else if(objBillHeader.getStuffer()==null) {
+					errorMessage.append("<br>Stuffer information is not entered.");
+				}
+				else if(objBillHeader.getConsolidator()==null) {
+					errorMessage.append("<br>Consolidator information is not entered.");
+				}
+				else if(objBillHeader.getImporter()==null) {
+					errorMessage.append("<br>Importer information is not entered.");
+				}
+			
+			}
+			//Setting ISF errorDescription
+			objBillHeader.setIsfErrorDescription(errorMessage.toString());
 			// Adding into billDetailStatus if all Adding Equipments is succeeds
 			objDao.insertIntoBillDetailStatus(objBillHeader, billLadingId);
 			// Adding into voyagePortDetails
 			objDao.insertIntoVoyagePortDetails(objBillHeader, "");
 			// Checking isFROBBill
-			if (objDao.isFROBBill(objBillHeader.getVesselSchedule().getPortOfDischarge())) {
+			if (objDao.isFROBBill(objBillHeader)) {
 				String firstUsDischargePort = objDao.getDistrictPortForFROB(
 						objBillHeader.getVesselSchedule().getVoyageId(), objBillHeader.getLoginScac());
 				objDao.insertIntoVoyagePortDetails(objBillHeader, firstUsDischargePort);
@@ -197,7 +246,7 @@ public class BillsServiceImpl implements BillsService {
 				// Adding into voyagePortDetails
 				objDao.insertIntoVoyagePortDetails(objBillHeader, "");
 				// Checking isFROBBill
-				if (objDao.isFROBBill(objBillHeader.getVesselSchedule().getPortOfDischarge())) {
+				if (objDao.isFROBBill(objBillHeader)) {
 					String firstUsDischargePort = objDao.getDistrictPortForFROB(
 							objBillHeader.getVesselSchedule().getVoyageId(), objBillHeader.getLoginScac());
 					objDao.insertIntoVoyagePortDetails(objBillHeader, firstUsDischargePort);

@@ -46,6 +46,14 @@ public class BillHeader {
 	private String loginScac;
 	// --------------------------
 	public int billLadingId;
+	
+	//ISF
+	private String transmissionType;
+	private String shipmentType;
+	private String isfType;
+	
+	//-----------------------------
+	private String isfErrorDescription;
 
 	public String getLoginScac() {
 		if (loginScac == null)
@@ -268,4 +276,38 @@ public class BillHeader {
 		this.billLadingId = billLadingId;
 	}
 
+	public String getTransmissionType() {
+		return transmissionType;
+	}
+
+	public void setTransmissionType(String transmissionType) {
+		this.transmissionType = transmissionType;
+	}
+
+	public String getShipmentType() {
+		return shipmentType;
+	}
+
+	public void setShipmentType(String shipmentType) {
+		this.shipmentType = shipmentType;
+	}
+
+	public String getIsfType() {
+		return isfType;
+	}
+
+	public void setIsfType(String isfType) {
+		this.isfType = isfType;
+	}
+
+	public String getIsfErrorDescription() {
+		return isfErrorDescription;
+	}
+
+	public void setIsfErrorDescription(String isfErrorDescription) {
+		this.isfErrorDescription = isfErrorDescription;
+	}
+
+	
+	
 }

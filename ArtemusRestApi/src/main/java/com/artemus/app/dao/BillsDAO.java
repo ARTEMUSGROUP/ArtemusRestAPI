@@ -22,6 +22,7 @@ public class BillsDAO {
 	private java.sql.PreparedStatement stmt1 = null, MIstmt = null;
 	private ResultSet rs = null, MIrs = null;
 	static Logger logger = LogManager.getLogger();
+	StringBuffer errorMessage = new StringBuffer("");
 
 	public BillsDAO(Connection connection) {
 		try {
@@ -104,8 +105,16 @@ public class BillsDAO {
 			stmt.setString(19, "admin");
 			stmt.setString(20, "");
 			stmt.setString(21, "");
-			stmt.setString(22, "");
-			stmt.setString(23, "");
+			if (objBillHeader.getShipmentType() == null || objBillHeader.getShipmentType().isEmpty()) {
+				stmt.setString(22, "01");
+			} else {
+				stmt.setString(22, objBillHeader.getShipmentType());
+			}
+			if (objBillHeader.getTransmissionType() == null || objBillHeader.getTransmissionType().isEmpty()) {
+				stmt.setString(23, "CT");
+			} else {
+				stmt.setString(23, objBillHeader.getTransmissionType());
+			}
 			stmt.setString(24, "");
 
 			stmt.setString(25, "");
@@ -135,58 +144,58 @@ public class BillsDAO {
 
 	public boolean updateBillHeader(BillHeader objBillHeader) throws SQLException {
 		boolean isUpdated = false;
-			stmt = con.prepareStatement("Update bill_header set bill_status=?, bill_type=?,"
-					+ " hbl_scac=?, nvo_type=?, nvo_bl=?, scac_bill=?, master_bill=?, "
-					+ " master_carrier_scac=?,voyage_number=?,voyage_id=?, load_port=?, discharge_port=?,"
-					+ " country_of_origin= ?, place_of_receipt= ?, place_of_delivery= ?,"
-					+ " move_type= ?, split_bill_number=?, shipment_type=?,transmission_type=?, "
-					+ " carnet_number=?, carnet_country=?, shipment_sub_type=?, estimated_value=?, estimated_quantity=?, "
-					+ " unit_of_measure=?, estimated_weight=?, weight_qualifier=?,canada_carrier_office=? "
-					+ " where bill_lading_id=? and login_scac=?");
+		stmt = con.prepareStatement("Update bill_header set bill_status=?, bill_type=?,"
+				+ " hbl_scac=?, nvo_type=?, nvo_bl=?, scac_bill=?, master_bill=?, "
+				+ " master_carrier_scac=?,voyage_number=?,voyage_id=?, load_port=?, discharge_port=?,"
+				+ " country_of_origin= ?, place_of_receipt= ?, place_of_delivery= ?,"
+				+ " move_type= ?, split_bill_number=?, shipment_type=?,transmission_type=?, "
+				+ " carnet_number=?, carnet_country=?, shipment_sub_type=?, estimated_value=?, estimated_quantity=?, "
+				+ " unit_of_measure=?, estimated_weight=?, weight_qualifier=?,canada_carrier_office=? "
+				+ " where bill_lading_id=? and login_scac=?");
 
-			stmt.setString(1, "COMPLETE");
-			stmt.setString(2, objBillHeader.getBillType());
-			stmt.setString(3, objBillHeader.getHblScac());
-			if (objBillHeader.getNvoType().length() > 16) {
-				stmt.setString(4, objBillHeader.getNvoType().substring(0, 16));
-			} else {
-				stmt.setString(4, objBillHeader.getNvoType());
-			}
-			stmt.setString(5, objBillHeader.getNvoBill());
-			stmt.setString(6, objBillHeader.getMasterBillScac());
-			stmt.setString(7, objBillHeader.getMasterBill());
-			stmt.setString(8, objBillHeader.getVesselSchedule().getVesselScac());
+		stmt.setString(1, "COMPLETE");
+		stmt.setString(2, objBillHeader.getBillType());
+		stmt.setString(3, objBillHeader.getHblScac());
+		if (objBillHeader.getNvoType().length() > 16) {
+			stmt.setString(4, objBillHeader.getNvoType().substring(0, 16));
+		} else {
+			stmt.setString(4, objBillHeader.getNvoType());
+		}
+		stmt.setString(5, objBillHeader.getNvoBill());
+		stmt.setString(6, objBillHeader.getMasterBillScac());
+		stmt.setString(7, objBillHeader.getMasterBill());
+		stmt.setString(8, objBillHeader.getVesselSchedule().getVesselScac());
 
-			stmt.setString(9, objBillHeader.getVesselSchedule().getVoyageNumber());
-			stmt.setInt(10, objBillHeader.getVesselSchedule().getVoyageId());
-			stmt.setString(11, objBillHeader.getVesselSchedule().getPortOfLoading());
-			stmt.setString(12, objBillHeader.getVesselSchedule().getPortOfDischarge());
-			stmt.setString(13, objBillHeader.getVesselSchedule().getCountryOfOrigin());
-			stmt.setString(14, objBillHeader.getVesselSchedule().getPlaceOfReceipt());
-			stmt.setString(15, objBillHeader.getVesselSchedule().getPlaceOfDelivery());
-			stmt.setString(16, objBillHeader.getVesselSchedule().getMoveType());
+		stmt.setString(9, objBillHeader.getVesselSchedule().getVoyageNumber());
+		stmt.setInt(10, objBillHeader.getVesselSchedule().getVoyageId());
+		stmt.setString(11, objBillHeader.getVesselSchedule().getPortOfLoading());
+		stmt.setString(12, objBillHeader.getVesselSchedule().getPortOfDischarge());
+		stmt.setString(13, objBillHeader.getVesselSchedule().getCountryOfOrigin());
+		stmt.setString(14, objBillHeader.getVesselSchedule().getPlaceOfReceipt());
+		stmt.setString(15, objBillHeader.getVesselSchedule().getPlaceOfDelivery());
+		stmt.setString(16, objBillHeader.getVesselSchedule().getMoveType());
 
-			stmt.setString(17, "");
-			stmt.setString(18, "");
-			stmt.setString(19, "");
-			stmt.setString(20, "");
-			stmt.setString(21, "");
-			stmt.setString(22, "");
-			stmt.setInt(23, 0);
-			stmt.setInt(24, 0);
-			stmt.setString(25, "");
-			stmt.setInt(26, 0);
-			stmt.setString(27, "");
-			stmt.setString(28, "");
+		stmt.setString(17, "");
+		stmt.setString(18, "");
+		stmt.setString(19, "");
+		stmt.setString(20, "");
+		stmt.setString(21, "");
+		stmt.setString(22, "");
+		stmt.setInt(23, 0);
+		stmt.setInt(24, 0);
+		stmt.setString(25, "");
+		stmt.setInt(26, 0);
+		stmt.setString(27, "");
+		stmt.setString(28, "");
 
-			stmt.setInt(29, objBillHeader.getBillLadingId());
-			stmt.setString(30, objBillHeader.getLoginScac());
-			System.out.println(stmt);
-			if (stmt.executeUpdate() != 1) {
-				isUpdated = false;
-			} else {
-				isUpdated = true;
-			}
+		stmt.setInt(29, objBillHeader.getBillLadingId());
+		stmt.setString(30, objBillHeader.getLoginScac());
+		System.out.println(stmt);
+		if (stmt.executeUpdate() != 1) {
+			isUpdated = false;
+		} else {
+			isUpdated = true;
+		}
 
 		return isUpdated;
 	}
@@ -426,7 +435,6 @@ public class BillsDAO {
 	public int addCargos(Equipment objEquipment, int billLadingId, int cargoIndex) {
 		// TODO Auto-generated method stub
 		try {
-			System.out.println(objEquipment.getCargos());
 			if (objEquipment.getCargos() != null) {
 				stmt = con.prepareStatement("Insert into cargo "
 						+ " (bill_lading_id, cargo_id, equipment_number, description, harmonize_code, "
@@ -446,6 +454,15 @@ public class BillsDAO {
 						if (stmt.executeUpdate() != 1) {
 							return -1;
 						}
+						System.out.println("Inside CArgos" + objCargo);
+						if (objCargo.getCountry().isEmpty()
+								|| objCargo.getCountry() == null && objCargo.getHarmonizeCode().isEmpty()
+								|| objCargo.getHarmonizeCode() == null) {
+							errorMessage.append("<br>Country is not selected for Manufacturer.").append(objCargo.getManufacturer()).append("<br>Harmonized Code entry is missing.");
+						} else if (objCargo.getHarmonizeCode().isEmpty() || objCargo.getHarmonizeCode() == null) {
+							errorMessage.append("<br>Harmonized Code entry is missing.");
+						}
+
 					}
 					++cargoIndex;
 				}
@@ -484,9 +501,13 @@ public class BillsDAO {
 		stmt.setString(6, "");
 		stmt.setString(7, "");
 		stmt.setString(8, "");
-		stmt.setString(9, "");
+		stmt.setString(9, objBillHeader.getIsfErrorDescription());
 		stmt.setBoolean(10, false);
-		stmt.setBoolean(11, false);
+		if (objBillHeader.getIsfErrorDescription().length() > 7) {
+			stmt.setBoolean(11, true);
+		} else {
+			stmt.setBoolean(11, false);
+		}
 		stmt.setBoolean(12, false);
 		System.out.println(stmt);
 
@@ -494,19 +515,19 @@ public class BillsDAO {
 			throw new SQLException();
 		}
 	}
-	
+
 	public void updateBillDetailStatus(BillHeader objBillHeader, int billLadingId) throws SQLException {
-		stmt = con.prepareStatement("Update bill_detail_status " +
-				" set is_readonly=?, error_description=?, isf_error_description=?, is_manifest_error=?, is_isf_error=?, is_ams_sent=? " +
-				" where bill_lading_id=? and login_scac=?");
-		stmt.setBoolean(1,false);
-		stmt.setString(2,"");
-		stmt.setString(3,"");
-		stmt.setBoolean(4,false);
-		stmt.setBoolean(5,false);
-		stmt.setBoolean(6,false);			
+		stmt = con.prepareStatement("Update bill_detail_status "
+				+ " set is_readonly=?, error_description=?, isf_error_description=?, is_manifest_error=?, is_isf_error=?, is_ams_sent=? "
+				+ " where bill_lading_id=? and login_scac=?");
+		stmt.setBoolean(1, false);
+		stmt.setString(2, "");
+		stmt.setString(3, "");
+		stmt.setBoolean(4, false);
+		stmt.setBoolean(5, false);
+		stmt.setBoolean(6, false);
 		stmt.setInt(7, billLadingId);
-		stmt.setString(8,objBillHeader.getLoginScac());
+		stmt.setString(8, objBillHeader.getLoginScac());
 		stmt.executeUpdate();
 		logger.info(stmt);
 		stmt.executeUpdate();
@@ -568,15 +589,19 @@ public class BillsDAO {
 		return result;
 	}
 
-	public boolean isFROBBill(String portOfDischarge) {
+	public boolean isFROBBill(BillHeader objBillHeader) {
 		// TODO Auto-generated method stub
 		boolean isFROB = false;
 		try {
 			stmt = con.prepareStatement("select port_code from foreign_port where port_code=?");
-			stmt.setString(1, portOfDischarge);
-			if (stmt.executeQuery().next())
+			stmt.setString(1, objBillHeader.getVesselSchedule().getPortOfDischarge());
+			if (stmt.executeQuery().next()) {
 				isFROB = true;
-			System.out.println(stmt);
+				objBillHeader.setIsfType("ISF-5");
+				System.out.println(stmt);
+			} else {
+				objBillHeader.setIsfType("ISF-10");
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -610,7 +635,7 @@ public class BillsDAO {
 					"select bill_lading_id from bill_header where login_scac=? and bill_lading_number = ?");
 			stmt.setString(1, objBillHeader.getLoginScac());
 			stmt.setString(2, objBillHeader.getBillOfLading());
-			rs= stmt.executeQuery();
+			rs = stmt.executeQuery();
 			if (rs.next()) {
 				objBillHeader.setBillLadingId(rs.getInt("bill_lading_id"));
 				isExist = true;
@@ -620,6 +645,11 @@ public class BillsDAO {
 			e.printStackTrace();
 		}
 		return isExist;
+	}
+
+	public StringBuffer getErrorMessage() {
+		return errorMessage;
+
 	}
 
 }
