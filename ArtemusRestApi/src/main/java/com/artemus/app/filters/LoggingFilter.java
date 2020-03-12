@@ -24,8 +24,7 @@ import org.apache.logging.log4j.Logger;
 
 @Provider
 public class LoggingFilter implements ContainerRequestFilter, ContainerResponseFilter {
-	static Logger logger = LogManager.getLogger();
-
+	private static Logger logger = LogManager.getLogger();
 	@Override
 	public void filter(ContainerRequestContext requestContext) {
 		StringBuilder sb = new StringBuilder();
@@ -36,7 +35,7 @@ public class LoggingFilter implements ContainerRequestFilter, ContainerResponseF
 			sb.append("URI : " + requestContext.getUriInfo().getAbsolutePath()+" - ");
 			sb.append("HEADERS : " + " Authorization : " + requestContext.getHeaderString("Authorization"));
 			sb.append("\n REQUEST BODY : " + bodyStr);
-			logger.warn("HTTP REQUEST :" + sb.toString());
+			logger.debug("HTTP REQUEST :" + sb.toString());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -48,6 +47,6 @@ public class LoggingFilter implements ContainerRequestFilter, ContainerResponseF
 		StringBuilder sb = new StringBuilder();
 		sb.append("HEADERs : ").append(responseContext.getHeaders()+" - ");
 		sb.append("Entity : ").append(responseContext.getEntity().toString());
-		logger.warn("HTTP RESPONSE : " + sb.toString());
+		logger.debug("HTTP RESPONSE : " + sb.toString());
 	}
 }

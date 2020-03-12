@@ -3,6 +3,7 @@ package com.artemus.app;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
@@ -34,6 +35,22 @@ public class JPBillsEntryPoint {
 		objResponse.setCode(200);
 		objResponse.setStatus(Response.Status.OK);
 		objResponse.setMessage("Bill Created...");
+		return objResponse;
+	}
+
+	@Secured
+	@PUT
+	public ResponseMessage updateBill(BillHeader requestObj, @HeaderParam("Authorization") String authorization) {
+		System.out.println(requestObj.toString());
+		String scacCode = authorization.substring(0, 4);
+		requestObj.setLoginScac(scacCode);
+		JPBillsService billsService = new JPBillsServiceImpl();
+		billsService.updateBill(requestObj);
+
+		ResponseMessage objResponse = new ResponseMessage();
+		objResponse.setCode(200);
+		objResponse.setStatus(Response.Status.OK);
+		objResponse.setMessage("Bill Updated...");
 		return objResponse;
 	}
 }

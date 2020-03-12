@@ -45,6 +45,35 @@ public class JPBillsServiceImpl implements JPBillsService {
 		} finally {
 			jpcustomerProfileDao.closeAll();
 		}
+	}
+
+	@Override
+	public void updateBill(BillHeader objBillHeader) {
+		// Validate JSON
+		objUtils.validateRequiredFields(objBillHeader);
+		// Call for DAO
+		JPCustomerProfileDAO jpcustomerProfileDao = new JPCustomerProfileDAO();
+		try {
+			validateBillHeaderParties(objBillHeader, jpcustomerProfileDao);
+			System.out.println(objBillHeader.toString());
+			validateVesselVoyage(objBillHeader);
+			System.out.println(errorMessage);
+			if (errorMessage.length() > 0) {
+				throw new ErrorResponseException(errorMessage.toString());
+			} else {
+				try {
+					processBillForUpdate(objBillHeader, jpcustomerProfileDao.getConnection());
+				} catch (ErrorResponseException e) {
+					e.printStackTrace();
+					throw e;
+				} catch (Exception e) {
+					e.printStackTrace();
+					throw new ErrorResponseException("Internal Bill Processing Error");
+				}
+			}
+		} finally {
+			jpcustomerProfileDao.closeAll();
+		}
 
 	}
 
@@ -131,6 +160,52 @@ public class JPBillsServiceImpl implements JPBillsService {
 			objDao.closeAll();
 		}
 
+	}
+
+	private void processBillForUpdate(BillHeader objBillHeader, Connection conn)
+			throws SQLException, ErrorResponseException {
+		System.out.println("processBillForUpdate :: ");
+		JPBillsDAO objDao = new JPBillsDAO(conn);
+		try {
+			if (objDao.validateBillExist(objBillHeader)) {
+				int billLadingId = objBillHeader.getBillLadingId();
+				// Updating BillHeader
+				objDao.updateBillHeader(objBillHeader);
+				// Deleting
+				objDao.deleteFromConsigneeShipperDetails(billLadingId);
+				objDao.deleteFromEquipment(billLadingId);
+				objDao.deleteFromNotifyPartyDetails(billLadingId);
+				objDao.deleteFromSeal(billLadingId);
+				objDao.deleteFromPackages(billLadingId);
+				objDao.deleteFromCargo(billLadingId);
+				// Adding insertIntoConsigneeShipperDetails
+				objDao.insertIntoConsigneeShipperDetails(objBillHeader.getShipper(), "shipper", billLadingId);
+				objDao.insertIntoConsigneeShipperDetails(objBillHeader.getConsignee(), "consignee", billLadingId);
+				objDao.insertIntoConsigneeShipperDetails(objBillHeader.getNotify(), "notify", billLadingId);
+
+				// Adding insertIntoNotifyPartyDetails
+				// objDao.insertIntoNotifyPartyDetails(objBillHeader.getNotifyParties(),
+				// billLadingId);
+
+				// Adding Equipments
+				addEquipments(objBillHeader, billLadingId, objDao);
+				// Update billDetailStatus if all Adding Equipments is succeeds
+				objDao.updateBillDetailStatus(objBillHeader, billLadingId);
+				// Adding into voyagePortDetails
+				objDao.insertIntoVoyagePortDetails(objBillHeader, "");
+				// Checking isFROBBill
+				if (objDao.isFROBBill(objBillHeader.getVesselSchedule().getPortOfDischarge())) {
+					String firstUsDischargePort = objDao.getDistrictPortForFROB(
+							objBillHeader.getVesselSchedule().getVoyageId(), objBillHeader.getLoginScac());
+					objDao.insertIntoVoyagePortDetails(objBillHeader, firstUsDischargePort);
+				}
+				objDao.commit();
+			} else {
+				throw new ErrorResponseException("Bill number does not exist");
+			}
+		} finally {
+			objDao.closeAll();
+		}
 	}
 
 	public boolean validateBillHeaderParties(BillHeader objBillHeader, JPCustomerProfileDAO objCustomerProfiledao) {
