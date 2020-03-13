@@ -51,6 +51,8 @@ public class BillHeader {
 	private String transmissionType;
 	private String shipmentType;
 	private String isfType;
+	private Carnet carnet;
+	private Informal informal;
 	
 	//-----------------------------
 	private String isfErrorDescription;
@@ -306,6 +308,22 @@ public class BillHeader {
 
 	public void setIsfErrorDescription(String isfErrorDescription) {
 		this.isfErrorDescription = isfErrorDescription;
+	}
+
+	public Carnet getCarnet() {
+		return carnet;
+	}
+
+	public void setCarnet(Carnet carnet) {
+		this.carnet = carnet;
+	}
+
+	public Informal getInformal() {
+		return informal;
+	}
+
+	public void setInformal(Informal informal) {
+		this.informal = informal;
 	}
 
 	

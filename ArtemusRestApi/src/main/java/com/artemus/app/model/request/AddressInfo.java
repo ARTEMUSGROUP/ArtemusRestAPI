@@ -1,5 +1,7 @@
 package com.artemus.app.model.request;
 
+import java.sql.Date;
+
 public class AddressInfo {
 	private String addressType;
 	private String addressLine1;
@@ -10,10 +12,11 @@ public class AddressInfo {
 	private String zipCode;
 	private String phoneNo;
 	private String faxNo;
-	// -------------------
-	private int addressId;
 	private String entityType;
 	private String entityNumber;
+	// -------------------
+	private int addressId;
+
 	private String createdUser;
 	private String createdDate;
 	private String dob;
@@ -32,7 +35,7 @@ public class AddressInfo {
 
 	public String getEntityNumber() {
 		if (entityNumber == null)
-			return entityNumber;
+			return "";
 		else
 			return entityNumber.toUpperCase();
 	}
@@ -62,21 +65,22 @@ public class AddressInfo {
 	public void setCreatedDate(String createdDate) {
 		this.createdDate = createdDate;
 	}
-
-	public String getDob() {
-		if (dob == null)
-			return dob;
-		else
-			return dob.toUpperCase();
-	}
-
-	public void setDob(String dob) {
-		this.dob = dob;
-	}
+  
+	  public String getDob() { 
+		  if (dob == null) 
+			  return ""; 
+		  else 
+			  return dob; 
+		  }
+	  
+	  public void setDob(String dob) { 
+		  this.dob = dob; 
+		  }
+	 
 
 	public String getCountryOfIssuance() {
-		if(countryOfIssuance==null)
-			return countryOfIssuance;
+		if (countryOfIssuance == null)
+			return "";
 		else
 			return countryOfIssuance.toUpperCase();
 	}
@@ -94,10 +98,10 @@ public class AddressInfo {
 	}
 
 	public String getAddressType() {
-		if(addressType==null)
-return addressType;
+		if (addressType == null)
+			return addressType;
 		else
-		return addressType.toUpperCase();
+			return addressType.toUpperCase();
 	}
 
 	public void setAddressType(String addressType) {
@@ -105,10 +109,10 @@ return addressType;
 	}
 
 	public String getAddressLine1() {
-		if(addressLine1==null)
+		if (addressLine1 == null)
 			return addressLine1;
 		else
-		return addressLine1.toUpperCase();
+			return addressLine1.toUpperCase();
 	}
 
 	public void setAddressLine1(String addressLine1) {
@@ -116,10 +120,10 @@ return addressType;
 	}
 
 	public String getAddressLine2() {
-		if(addressLine2==null)
+		if (addressLine2 == null)
 			return addressLine2;
 		else
-		return addressLine2.toUpperCase();
+			return addressLine2.toUpperCase();
 	}
 
 	public void setAddressLine2(String addressLine2) {
@@ -127,10 +131,10 @@ return addressType;
 	}
 
 	public String getCity() {
-		if(city==null)
+		if (city == null)
 			return city;
-		else	
-		return city.toUpperCase();
+		else
+			return city.toUpperCase();
 	}
 
 	public void setCity(String city) {
@@ -138,10 +142,10 @@ return addressType;
 	}
 
 	public String getCountry() {
-		if(country==null)
-			return country;
-		else	
-		return country.toUpperCase();
+		if (country == null)
+			return "";
+		else
+			return country.toUpperCase();
 	}
 
 	public void setCountry(String country) {
@@ -149,10 +153,10 @@ return addressType;
 	}
 
 	public String getState() {
-		if(state==null)
+		if (state == null)
 			return state;
-			else	
-		return state.toUpperCase();
+		else
+			return state.toUpperCase();
 	}
 
 	public void setState(String state) {
@@ -160,10 +164,10 @@ return addressType;
 	}
 
 	public String getZipCode() {
-		if(zipCode==null)
+		if (zipCode == null)
 			return zipCode;
-			else	
-		return zipCode.toUpperCase();
+		else
+			return zipCode.toUpperCase();
 	}
 
 	public void setZipCode(String zipCode) {
@@ -171,11 +175,11 @@ return addressType;
 	}
 
 	public String getPhoneNo() {
-		if(phoneNo==null || phoneNo.isEmpty()) {
-			phoneNo="";
+		if (phoneNo == null || phoneNo.isEmpty()) {
+			phoneNo = "";
 			return phoneNo;
 		}
-		
+
 		return phoneNo;
 	}
 
@@ -184,10 +188,10 @@ return addressType;
 	}
 
 	public String getFaxNo() {
-		if(faxNo==null)
+		if (faxNo == null)
 			return faxNo;
-		else	
-		return faxNo.toUpperCase();
+		else
+			return faxNo.toUpperCase();
 	}
 
 	public void setFaxNo(String faxNo) {

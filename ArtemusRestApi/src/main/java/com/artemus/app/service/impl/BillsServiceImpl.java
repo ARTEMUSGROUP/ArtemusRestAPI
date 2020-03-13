@@ -11,7 +11,9 @@ import com.artemus.app.dao.CustomerProfileDAO;
 import com.artemus.app.dao.VesselVoyageDAO;
 import com.artemus.app.exceptions.ErrorResponseException;
 import com.artemus.app.model.request.BillHeader;
+import com.artemus.app.model.request.Carnet;
 import com.artemus.app.model.request.Equipment;
+import com.artemus.app.model.request.Informal;
 import com.artemus.app.service.BillsService;
 import com.artemus.app.utils.BillHeaderUtils;
 
@@ -19,6 +21,7 @@ public class BillsServiceImpl implements BillsService {
 	static Logger logger = LogManager.getLogger();
 	BillHeaderUtils objUtils = new BillHeaderUtils();
 	StringBuilder errorMessage = new StringBuilder("");
+	StringBuilder entityErrorMessage = new StringBuilder("");
 	boolean isError;
 
 	public void createBill(BillHeader objBillHeader) {
@@ -28,10 +31,17 @@ public class BillsServiceImpl implements BillsService {
 		CustomerProfileDAO customerProfileDao = new CustomerProfileDAO();
 		try {
 			customerProfileDao.validateBillHeaderParties(objBillHeader);
+			//getting error messages for entity number and type
+			String entityerrormsg=new String("");
+			entityerrormsg=""+customerProfileDao.getErrorMessage().toString();
+			System.out.println("Entity message"+entityerrormsg);
+			entityErrorMessage.append(entityerrormsg);
+			if (entityErrorMessage.length() > 0) {
+				throw new ErrorResponseException(entityErrorMessage.toString());
+			}
 			System.out.println(objBillHeader.toString());			
 			validateVesselVoyage(objBillHeader);
-		
-			System.out.println(errorMessage);
+			validateShipmentType(objBillHeader);
 			if (errorMessage.length() > 0) {
 				throw new ErrorResponseException(errorMessage.toString());
 			} else {
@@ -43,7 +53,9 @@ public class BillsServiceImpl implements BillsService {
 				}catch (ErrorResponseException e) {
 					throw e;
 				} catch (Exception e) {
+					e.printStackTrace();
 					throw new ErrorResponseException("Internal Bill Processing Error");
+					
 				}
 			}
 		} finally {
@@ -51,6 +63,49 @@ public class BillsServiceImpl implements BillsService {
 		}
 	}
 	
+	private void validateShipmentType(BillHeader objBillHeader) {
+		Carnet objcarnet=new Carnet();
+		Informal objinformal=new Informal();
+		if(objBillHeader.getShipmentType().equalsIgnoreCase("11")) {
+			System.out.println("setting Informal fields");
+			if(objBillHeader.getInformal()==null) {
+				errorMessage.append("Informal is required :");
+			}else {
+				objcarnet.setCarnetCountry("");
+				objcarnet.setCarnetNumber("");
+				objBillHeader.setCarnet(objcarnet);
+			}
+		}else if(objBillHeader.getShipmentType().equalsIgnoreCase("06")) {
+			if(objBillHeader.getCarnet()==null) {
+				errorMessage.append("Carnet is required :");
+			}else {
+				System.out.println("setting Carnel fields");
+				if(objBillHeader.getInformal()==null) {
+					
+					objinformal.setShipmentSubType("");
+					objinformal.setEstimatedValue(0);
+					objinformal.setEstimatedQuantity(0);
+					objinformal.setUnitOfMeasure("");
+					objinformal.setEstimatedWeight(0);
+					objBillHeader.setInformal(objinformal);
+				}
+			}
+		}else {
+			System.out.println("Setting non CI fields");
+			
+			objcarnet.setCarnetNumber("");
+			objcarnet.setCarnetCountry("");
+			objinformal.setShipmentSubType("");
+			objinformal.setEstimatedValue(0);
+			objinformal.setEstimatedQuantity(0);
+			objinformal.setUnitOfMeasure("");
+			objinformal.setEstimatedWeight(0);
+			objBillHeader.setCarnet(objcarnet);
+			objBillHeader.setInformal(objinformal);
+		}
+		
+	}
+
 	public void updateBill(BillHeader objBillHeader) {
 		// Validate JSON
 		objUtils.validateRequiredFields(objBillHeader);
@@ -118,6 +173,32 @@ public class BillsServiceImpl implements BillsService {
 				errorMessage.append("vesselName does not exists.");
 
 			}
+			if(objBillHeader.getShipmentType().equalsIgnoreCase("06") ||objBillHeader.getShipmentType().equalsIgnoreCase("6")) {
+				if(objBillHeader.getCarnet()!=null) {
+				if(objBillHeader.getCarnet().getCarnetNumber()=="" ) {
+					errorMessage.append("Carnet Number is Mandatory for shipment type Carnet.");
+				}else if(objBillHeader.getCarnet().getCarnetCountry()=="") {
+					errorMessage.append("Carnet Country is Mandatory for shipment type Carnet.");
+				}
+				}else {
+					errorMessage.append("Carnet is Mandatory for shipment type Carnet.");
+				}
+			}else if(objBillHeader.getShipmentType().equalsIgnoreCase("11")) {
+				if(objBillHeader.getInformal()!=null) {
+				if(objBillHeader.getInformal().getShipmentSubType()=="" ) {
+					errorMessage.append("ShipmentSubType is Mandatory for shipment type Informal.");
+				}else if(objBillHeader.getInformal().getUnitOfMeasure()=="") {
+					errorMessage.append("UnitOfMeasure is Mandatory for shipment type Informal.");
+				}
+				if(objBillHeader.getInformal().getEstimatedWeight()==0) {
+					errorMessage.append("EstimatedWeight is Mandatory for shipment type Informal.");
+				}else {
+					objBillHeader.getInformal().setUnit("K");
+				}
+				}else {
+					errorMessage.append("Informal is Mandatory for shipment type Informal.");
+				}
+			}
 		} finally {
 			objDao.closeAll();
 		}
@@ -125,11 +206,12 @@ public class BillsServiceImpl implements BillsService {
 
 	private void processBill(BillHeader objBillHeader, Connection conn) throws SQLException,ErrorResponseException {
 		System.out.println("processBill :: ");
+		String isferrormsg=new String("");
 		BillsDAO objDao = new BillsDAO(conn);
 		try {
 			if(objDao.validateBillExist(objBillHeader)) {
 				throw new ErrorResponseException("Bill Number Already Exist");
-			};
+			}
 			int billLadingId = objDao.insertIntoBillHeader(objBillHeader);
 			if (billLadingId == 0) {
 				throw new SQLException();
@@ -152,48 +234,48 @@ public class BillsServiceImpl implements BillsService {
 			// Adding Equipments
 			addEquipments(objBillHeader, billLadingId, objDao);
 			//Setting ISF Error
-			String isferrormsg=new String("");
+			
 			isferrormsg=objBillHeader.getIsfType()+":"+objDao.getErrorMessage().toString();
 			System.out.println(isferrormsg);
-			errorMessage.append(isferrormsg);
-			System.out.println(errorMessage);
+			entityErrorMessage.append(isferrormsg);
+			System.out.println(entityErrorMessage);
 			
 			if(objBillHeader.getIsfType()=="ISF-5")
 			{
 				if(objBillHeader.getShipTo() ==null)
 				{
-					errorMessage.append("<br>Ship To information is not entered.");
+					entityErrorMessage.append("<br>Ship To information is not entered.");
 				}
 				if(objBillHeader.getBookingParty() ==null)
 				{
-					errorMessage.append("<br>Booking Party information is not entered.");
+					entityErrorMessage.append("<br>Booking Party information is not entered.");
 				}
 			}else if(objBillHeader.getIsfType()=="ISF-10"){
 				if(objBillHeader.getShipTo() ==null)
 				{
-					errorMessage.append("<br>Ship To information is not entered.");
+					entityErrorMessage.append("<br>Ship To information is not entered.");
 				}
 				else if(objBillHeader.getSeller() ==null)
 				{
-					errorMessage.append("<br>Seller information is not entered.");
+					entityErrorMessage.append("<br>Seller information is not entered.");
 				}
 				else if(objBillHeader.getBuyer() ==null)
 				{
-					errorMessage.append("<br>Buyer information is not entered.");
+					entityErrorMessage.append("<br>Buyer information is not entered.");
 				}
 				else if(objBillHeader.getStuffer()==null) {
-					errorMessage.append("<br>Stuffer information is not entered.");
+					entityErrorMessage.append("<br>Stuffer information is not entered.");
 				}
 				else if(objBillHeader.getConsolidator()==null) {
-					errorMessage.append("<br>Consolidator information is not entered.");
+					entityErrorMessage.append("<br>Consolidator information is not entered.");
 				}
 				else if(objBillHeader.getImporter()==null) {
-					errorMessage.append("<br>Importer information is not entered.");
+					entityErrorMessage.append("<br>Importer information is not entered.");
 				}
 			
 			}
 			//Setting ISF errorDescription
-			objBillHeader.setIsfErrorDescription(errorMessage.toString());
+			objBillHeader.setIsfErrorDescription(entityErrorMessage.toString());
 			// Adding into billDetailStatus if all Adding Equipments is succeeds
 			objDao.insertIntoBillDetailStatus(objBillHeader, billLadingId);
 			// Adding into voyagePortDetails

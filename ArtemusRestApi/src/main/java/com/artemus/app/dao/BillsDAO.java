@@ -67,6 +67,7 @@ public class BillsDAO {
 
 	public int insertIntoBillHeader(BillHeader objBillHeader) {
 		int billLadingId = 0;
+		System.out.println("Inside Insert BillHeader");
 		try {
 			stmt = con.prepareStatement("Insert into bill_header "
 					+ "(login_scac, bill_lading_number, bill_status, bill_type, hbl_scac,"
@@ -104,26 +105,27 @@ public class BillsDAO {
 			stmt.setString(18, objBillHeader.getVesselSchedule().getMoveType());
 			stmt.setString(19, "admin");
 			stmt.setString(20, "");
-			stmt.setString(21, "");
 			if (objBillHeader.getShipmentType() == null || objBillHeader.getShipmentType().isEmpty()) {
-				stmt.setString(22, "01");
+				stmt.setString(21, "01");
 			} else {
-				stmt.setString(22, objBillHeader.getShipmentType());
+				stmt.setString(21, objBillHeader.getShipmentType());
 			}
 			if (objBillHeader.getTransmissionType() == null || objBillHeader.getTransmissionType().isEmpty()) {
-				stmt.setString(23, "CT");
+				stmt.setString(22, "CT");
 			} else {
-				stmt.setString(23, objBillHeader.getTransmissionType());
+				stmt.setString(22, objBillHeader.getTransmissionType());
 			}
-			stmt.setString(24, "");
 
-			stmt.setString(25, "");
-			stmt.setInt(26, 0);
-			stmt.setInt(27, 0);
-			stmt.setString(28, "");
-			stmt.setInt(29, 0);
-			stmt.setString(30, "");
-
+			stmt.setString(23, objBillHeader.getCarnet().getCarnetNumber());
+			stmt.setString(24, objBillHeader.getCarnet().getCarnetCountry());
+			stmt.setString(25, objBillHeader.getInformal().getShipmentSubType());
+			stmt.setInt(26, objBillHeader.getInformal().getEstimatedValue());
+			stmt.setInt(27, objBillHeader.getInformal().getEstimatedQuantity());
+			stmt.setString(28, objBillHeader.getInformal().getUnitOfMeasure());
+			stmt.setInt(29, objBillHeader.getInformal().getEstimatedWeight());
+			stmt.setString(30, "K");
+			System.out.println("Informal Shipment " + objBillHeader.getInformal().toString());
+			System.out.println(stmt);
 			if (stmt.executeUpdate() != 1) {
 				billLadingId = 0;
 			} else {
@@ -458,7 +460,8 @@ public class BillsDAO {
 						if (objCargo.getCountry().isEmpty()
 								|| objCargo.getCountry() == null && objCargo.getHarmonizeCode().isEmpty()
 								|| objCargo.getHarmonizeCode() == null) {
-							errorMessage.append("<br>Country is not selected for Manufacturer.").append(objCargo.getManufacturer()).append("<br>Harmonized Code entry is missing.");
+							errorMessage.append("<br>Country is not selected for Manufacturer.")
+									.append(objCargo.getManufacturer()).append("<br>Harmonized Code entry is missing.");
 						} else if (objCargo.getHarmonizeCode().isEmpty() || objCargo.getHarmonizeCode() == null) {
 							errorMessage.append("<br>Harmonized Code entry is missing.");
 						}
