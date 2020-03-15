@@ -18,7 +18,7 @@ import com.artemus.app.model.request.Party;
 public class CustomerProfileDAO {
 
 	private Connection con;
-	private java.sql.PreparedStatement stmt = null,stmt1=null;
+	private java.sql.PreparedStatement stmt = null, stmt1 = null;
 	private ResultSet rs = null;
 	StringBuilder custErrorMessage = new StringBuilder("");
 
@@ -59,7 +59,9 @@ public class CustomerProfileDAO {
 	}
 
 	public boolean validateBillHeaderParties(BillHeader objBillHeader) {
+
 		String name = "";
+
 		System.out.println("validateBillHeaderParties ::");
 		validateCustomer(objBillHeader.getShipper(), objBillHeader.getLoginScac());
 		validateCustomer(objBillHeader.getBookingParty(), objBillHeader.getLoginScac());
@@ -96,10 +98,10 @@ public class CustomerProfileDAO {
 		if (objParty != null) {
 			if (isCustomerExists(objParty, loginScac)) {
 				customerGen = true;
-				if(isEntityNumberExists(objParty,loginScac,objBillHeader)) {
+				if (isEntityNumberExists(objParty, loginScac, objBillHeader)) {
 					System.out.println("Entity Number Exists");
 				}
-					
+
 			} else {
 				setEntityTypeNumber(objParty);
 				customerGen = addCustomer(objParty, loginScac);
@@ -133,8 +135,8 @@ public class CustomerProfileDAO {
 					System.out.print("Entity Number Exist");
 				}
 				return true;
-			}else {
-				custErrorMessage.append("<br>Entity Number is required for "+objParty.getName());
+			} else {
+				custErrorMessage.append("<br>Entity Number is required for " + objParty.getName());
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -214,7 +216,7 @@ public class CustomerProfileDAO {
 			Matcher m2 = p2.matcher(partyBean.getAddressInfo().getEntityNumber());
 			if (m2.matches()) {
 				System.out.println("SSN matches");
-			}else {
+			} else {
 				custErrorMessage.append("Invalid SSN. Use the format NNN-NN-NNNN for Party ");
 			}
 		}
@@ -282,13 +284,14 @@ public class CustomerProfileDAO {
 			stmt.setString(12, partyBean.getAddressInfo().getEntityType());
 			stmt.setString(13, partyBean.getAddressInfo().getEntityNumber());
 			stmt.setString(14, partyBean.getAddressInfo().getCreatedUser());
+
 			if (partyBean.getAddressInfo().getDob() == "") {
 				stmt.setDate(15, null);
 			} else {
 				java.util.Date date2;
 				try {
 					SimpleDateFormat sdf = new SimpleDateFormat("yyyy/mm/dd");
-					date2=sdf.parse(partyBean.getAddressInfo().getDob());
+					date2 = sdf.parse(partyBean.getAddressInfo().getDob());
 					java.sql.Date sqlDate = new java.sql.Date(date2.getTime());
 					stmt.setDate(15, sqlDate);
 				} catch (ParseException e) {
@@ -297,6 +300,12 @@ public class CustomerProfileDAO {
 				}
 
 			}
+
+			if (partyBean.getAddressInfo().getDob().equals(""))
+				stmt.setString(15, null);
+			else
+				stmt.setString(15, partyBean.getAddressInfo().getDob());
+
 			stmt.setString(16, partyBean.getAddressInfo().getCountryOfIssuance());
 
 			stmt.executeUpdate();
@@ -337,7 +346,6 @@ public class CustomerProfileDAO {
 
 				if (partyBean.getCustomerId() != 0) {
 					System.out.print("Customer Exist");
-					
 				}
 				return true;
 			}
@@ -350,7 +358,26 @@ public class CustomerProfileDAO {
 
 	public StringBuilder getErrorMessage() {
 		return custErrorMessage;
+	}
 
+	public String getScacUserType(String loginScac) {
+		String userType = "";
+		try {
+			stmt = con.prepareStatement(
+					"SELECT group_type,if(group_type=1,'master','nvocc') scac_user_type FROM login_scac where scac_code = ?;");
+			stmt.setString(1, loginScac);
+			System.out.println(stmt.toString());
+			rs = stmt.executeQuery();
+			// Set Customer ID
+			if (rs.next()) {
+				userType = rs.getString("scac_user_type");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			userType = "";
+
+		}
+		return userType;
 	}
 
 }

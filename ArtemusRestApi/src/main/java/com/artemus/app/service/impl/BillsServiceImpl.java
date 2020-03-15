@@ -41,7 +41,12 @@ public class BillsServiceImpl implements BillsService {
 			}
 			System.out.println(objBillHeader.toString());			
 			validateVesselVoyage(objBillHeader);
+
 			validateShipmentType(objBillHeader);
+
+			validateScacUser(objBillHeader,customerProfileDao);
+			System.out.println(errorMessage);
+
 			if (errorMessage.length() > 0) {
 				throw new ErrorResponseException(errorMessage.toString());
 			} else {
@@ -63,6 +68,7 @@ public class BillsServiceImpl implements BillsService {
 		}
 	}
 	
+
 	private void validateShipmentType(BillHeader objBillHeader) {
 		Carnet objcarnet=new Carnet();
 		Informal objinformal=new Informal();
@@ -103,7 +109,16 @@ public class BillsServiceImpl implements BillsService {
 			objBillHeader.setCarnet(objcarnet);
 			objBillHeader.setInformal(objinformal);
 		}
-		
+	}
+	private void validateScacUser(BillHeader objBillHeader,CustomerProfileDAO customerProfileDao) {
+		String scacUserType = customerProfileDao.getScacUserType(objBillHeader.getLoginScac());
+		if (scacUserType.equalsIgnoreCase("master")) {
+		}else {
+			if(objBillHeader.getNvoType().equalsIgnoreCase("automated NVO")){
+			}else {
+				errorMessage.append("Only nvoType:automated NVO is acceptable for scac "+objBillHeader.getLoginScac());
+			}
+		}
 	}
 
 	public void updateBill(BillHeader objBillHeader) {
@@ -115,6 +130,7 @@ public class BillsServiceImpl implements BillsService {
 					customerProfileDao.validateBillHeaderParties(objBillHeader);
 					System.out.println(objBillHeader.toString());			
 					validateVesselVoyage(objBillHeader);
+					validateScacUser(objBillHeader,customerProfileDao);
 					System.out.println(errorMessage);
 					if (errorMessage.length() > 0) {
 						throw new ErrorResponseException(errorMessage.toString());
