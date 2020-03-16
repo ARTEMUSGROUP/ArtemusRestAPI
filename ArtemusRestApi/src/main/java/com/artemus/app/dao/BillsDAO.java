@@ -178,16 +178,16 @@ public class BillsDAO {
 		stmt.setString(16, objBillHeader.getVesselSchedule().getMoveType());
 
 		stmt.setString(17, "");
-		stmt.setString(18, "");
-		stmt.setString(19, "");
-		stmt.setString(20, "");
-		stmt.setString(21, "");
-		stmt.setString(22, "");
-		stmt.setInt(23, 0);
-		stmt.setInt(24, 0);
-		stmt.setString(25, "");
-		stmt.setInt(26, 0);
-		stmt.setString(27, "");
+		stmt.setString(18, objBillHeader.getShipmentType());
+		stmt.setString(19, objBillHeader.getTransmissionType());
+		stmt.setString(20, objBillHeader.getCarnet().getCarnetNumber());
+		stmt.setString(21, objBillHeader.getCarnet().getCarnetCountry());
+		stmt.setString(22, objBillHeader.getInformal().getShipmentSubType());
+		stmt.setInt(23, objBillHeader.getInformal().getEstimatedValue());
+		stmt.setInt(24, objBillHeader.getInformal().getEstimatedQuantity());
+		stmt.setString(25, objBillHeader.getInformal().getUnitOfMeasure());
+		stmt.setInt(26, objBillHeader.getInformal().getEstimatedWeight());
+		stmt.setString(27, objBillHeader.getInformal().getUnit());
 		stmt.setString(28, "");
 
 		stmt.setInt(29, objBillHeader.getBillLadingId());
@@ -525,10 +525,14 @@ public class BillsDAO {
 				+ " where bill_lading_id=? and login_scac=?");
 		stmt.setBoolean(1, false);
 		stmt.setString(2, "");
-		stmt.setString(3, "");
+		stmt.setString(3, objBillHeader.getIsfErrorDescription());
 		stmt.setBoolean(4, false);
+		if (objBillHeader.getIsfErrorDescription().length() > 7) {
+			stmt.setBoolean(5, true);
+		} else {
+			stmt.setBoolean(5, false);
+		}
 		stmt.setBoolean(5, false);
-		stmt.setBoolean(6, false);
 		stmt.setInt(7, billLadingId);
 		stmt.setString(8, objBillHeader.getLoginScac());
 		stmt.executeUpdate();

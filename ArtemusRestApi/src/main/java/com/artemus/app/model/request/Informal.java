@@ -37,7 +37,7 @@ public class Informal {
 		this.estimatedQuantity = estimatedQuantity;
 	}
 	public String getUnitOfMeasure() {
-		return unitOfMeasure;
+		return unitOfMeasure.toUpperCase();
 	}
 	public void setUnitOfMeasure(String unitOfMeasure) {
 		this.unitOfMeasure = unitOfMeasure;

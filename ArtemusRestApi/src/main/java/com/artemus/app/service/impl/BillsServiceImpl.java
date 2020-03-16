@@ -130,6 +130,7 @@ public class BillsServiceImpl implements BillsService {
 					customerProfileDao.validateBillHeaderParties(objBillHeader);
 					System.out.println(objBillHeader.toString());			
 					validateVesselVoyage(objBillHeader);
+					validateShipmentType(objBillHeader);
 					validateScacUser(objBillHeader,customerProfileDao);
 					System.out.println(errorMessage);
 					if (errorMessage.length() > 0) {
@@ -311,6 +312,7 @@ public class BillsServiceImpl implements BillsService {
 	
 	private void processBillForUpdate(BillHeader objBillHeader, Connection conn) throws SQLException,ErrorResponseException {
 		logger.info("processBillForUpdate :: ");
+		String isferrormsg=new String("");
 		BillsDAO objDao = new BillsDAO(conn);
 		try {
 			if(objDao.validateBillExist(objBillHeader)) {
@@ -337,9 +339,54 @@ public class BillsServiceImpl implements BillsService {
 				objDao.insertIntoConsigneeShipperDetails(objBillHeader.getShipTo(), "shipTo", billLadingId);
 				// Adding insertIntoNotifyPartyDetails
 				objDao.insertIntoNotifyPartyDetails(objBillHeader.getNotifyParties(), billLadingId);
+				//Setting ISF Type
+				objDao.isFROBBill(objBillHeader);
 				// Adding Equipments
 				addEquipments(objBillHeader, billLadingId, objDao);
 				// Updating into billDetailStatus if all Adding Equipments is succeeds
+				//Setting ISF Error
+				
+				isferrormsg=objBillHeader.getIsfType()+":"+objDao.getErrorMessage().toString();
+				System.out.println(isferrormsg);
+				entityErrorMessage.append(isferrormsg);
+				System.out.println(entityErrorMessage);
+				
+				if(objBillHeader.getIsfType()=="ISF-5")
+				{
+					if(objBillHeader.getShipTo() ==null)
+					{
+						entityErrorMessage.append("<br>Ship To information is not entered.");
+					}
+					if(objBillHeader.getBookingParty() ==null)
+					{
+						entityErrorMessage.append("<br>Booking Party information is not entered.");
+					}
+				}else if(objBillHeader.getIsfType()=="ISF-10"){
+					if(objBillHeader.getShipTo() ==null)
+					{
+						entityErrorMessage.append("<br>Ship To information is not entered.");
+					}
+					else if(objBillHeader.getSeller() ==null)
+					{
+						entityErrorMessage.append("<br>Seller information is not entered.");
+					}
+					else if(objBillHeader.getBuyer() ==null)
+					{
+						entityErrorMessage.append("<br>Buyer information is not entered.");
+					}
+					else if(objBillHeader.getStuffer()==null) {
+						entityErrorMessage.append("<br>Stuffer information is not entered.");
+					}
+					else if(objBillHeader.getConsolidator()==null) {
+						entityErrorMessage.append("<br>Consolidator information is not entered.");
+					}
+					else if(objBillHeader.getImporter()==null) {
+						entityErrorMessage.append("<br>Importer information is not entered.");
+					}
+				
+				}
+				//Setting ISF errorDescription
+				objBillHeader.setIsfErrorDescription(entityErrorMessage.toString());
 				objDao.updateBillDetailStatus(objBillHeader, billLadingId);
 				// Adding into voyagePortDetails
 				objDao.insertIntoVoyagePortDetails(objBillHeader, "");
