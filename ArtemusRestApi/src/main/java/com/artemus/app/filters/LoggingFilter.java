@@ -45,8 +45,9 @@ public class LoggingFilter implements ContainerRequestFilter, ContainerResponseF
 	public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext)
 			throws IOException {
 		StringBuilder sb = new StringBuilder();
-		sb.append("HEADERs : ").append(responseContext.getHeaders()+" - ");
-		sb.append("Entity : ").append(responseContext.getEntity().toString());
+		if (responseContext.hasEntity()) {
+			sb.append("Entity : ").append(responseContext.getEntity());
+		}
 		logger.debug("HTTP RESPONSE : " + sb.toString());
 	}
 }

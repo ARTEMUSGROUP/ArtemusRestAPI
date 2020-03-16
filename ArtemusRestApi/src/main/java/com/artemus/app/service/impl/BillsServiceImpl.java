@@ -39,11 +39,9 @@ public class BillsServiceImpl implements BillsService {
 			if (entityErrorMessage.length() > 0) {
 				throw new ErrorResponseException(entityErrorMessage.toString());
 			}
-			System.out.println(objBillHeader.toString());			
-			validateVesselVoyage(objBillHeader);
-
+			System.out.println(objBillHeader.toString());		
 			validateShipmentType(objBillHeader);
-
+			validateVesselVoyage(objBillHeader);
 			validateScacUser(objBillHeader,customerProfileDao);
 			System.out.println(errorMessage);
 
@@ -72,6 +70,12 @@ public class BillsServiceImpl implements BillsService {
 	private void validateShipmentType(BillHeader objBillHeader) {
 		Carnet objcarnet=new Carnet();
 		Informal objinformal=new Informal();
+		if(objBillHeader.getShipmentType()==null || objBillHeader.getShipmentType().isEmpty()) {
+			objBillHeader.setShipmentType("01");
+		}
+		if(objBillHeader.getTransmissionType()==null || objBillHeader.getTransmissionType().isEmpty()) {
+			objBillHeader.setShipmentType("CT");
+		}
 		if(objBillHeader.getShipmentType().equalsIgnoreCase("11")) {
 			System.out.println("setting Informal fields");
 			if(objBillHeader.getInformal()==null) {
@@ -128,9 +132,9 @@ public class BillsServiceImpl implements BillsService {
 				CustomerProfileDAO customerProfileDao = new CustomerProfileDAO();
 				try {
 					customerProfileDao.validateBillHeaderParties(objBillHeader);
-					System.out.println(objBillHeader.toString());			
-					validateVesselVoyage(objBillHeader);
+					System.out.println(objBillHeader.toString());	
 					validateShipmentType(objBillHeader);
+					validateVesselVoyage(objBillHeader);
 					validateScacUser(objBillHeader,customerProfileDao);
 					System.out.println(errorMessage);
 					if (errorMessage.length() > 0) {
