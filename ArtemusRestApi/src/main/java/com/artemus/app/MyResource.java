@@ -6,6 +6,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.artemus.app.annotations.Secured;
 import com.artemus.app.dao.DemoDAO;
 import com.artemus.app.model.response.ResponseMessage;
 
@@ -18,6 +19,8 @@ import org.apache.logging.log4j.Logger;
 @Path("myresource")
 public class MyResource {
 	static Logger logger = LogManager.getLogger();
+	
+	@Secured
     @GET
     @Produces({MediaType.APPLICATION_JSON})
     public ResponseMessage getIt() {

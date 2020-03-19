@@ -124,7 +124,6 @@ public class BillsDAO {
 			stmt.setString(28, objBillHeader.getInformal().getUnitOfMeasure());
 			stmt.setInt(29, objBillHeader.getInformal().getEstimatedWeight());
 			stmt.setString(30, "K");
-			System.out.println("Informal Shipment " + objBillHeader.getInformal().toString());
 			System.out.println(stmt);
 			if (stmt.executeUpdate() != 1) {
 				billLadingId = 0;
@@ -450,9 +449,23 @@ public class BillsDAO {
 						stmt.setString(4, objCargo.getDescriptionsOfGoods());
 						stmt.setString(5, objCargo.getHarmonizeCode());
 						stmt.setString(6, objCargo.getHazardCode());
-						stmt.setString(7, objCargo.getManufacturer());
+						if(objCargo.getManufacturer()!=null || !objCargo.getManufacturer().getName().isEmpty()) {
+							if(objCargo.getManufacturer().getName()==null ||objCargo.getManufacturer().getName().isEmpty() ) {
+								stmt.setString(7, "");
+							}else {
+								stmt.setString(7, objCargo.getManufacturer().getName());
+							}
+						}else {
+							stmt.setString(7, "");
+						}
+						if(objCargo.getManufacturer().getName()==null ||objCargo.getManufacturer().getName().isEmpty() ) {
+							stmt.setString(7, "");
+						}else {
+							stmt.setString(7, objCargo.getManufacturer().getName());
+						}
+						
 						stmt.setString(8, objCargo.getCountry());
-						stmt.setInt(9, 0);// Field cannot get
+						stmt.setInt(9, objCargo.getManufacturer().getCustomerId());// Field cannot get
 						if (stmt.executeUpdate() != 1) {
 							return -1;
 						}
@@ -460,8 +473,8 @@ public class BillsDAO {
 						if (objCargo.getCountry().isEmpty()
 								|| objCargo.getCountry() == null && objCargo.getHarmonizeCode().isEmpty()
 								|| objCargo.getHarmonizeCode() == null) {
-							errorMessage.append("<br>Country is not selected for Manufacturer.")
-									.append(objCargo.getManufacturer()).append("<br>Harmonized Code entry is missing.");
+							errorMessage.append("<br>Country is missing for Manufacturer.")
+									.append("<br>Harmonized Code entry is missing.");
 						} else if (objCargo.getHarmonizeCode().isEmpty() || objCargo.getHarmonizeCode() == null) {
 							errorMessage.append("<br>Harmonized Code entry is missing.");
 						}
@@ -533,6 +546,7 @@ public class BillsDAO {
 			stmt.setBoolean(5, false);
 		}
 		stmt.setBoolean(5, false);
+		stmt.setBoolean(6, false);
 		stmt.setInt(7, billLadingId);
 		stmt.setString(8, objBillHeader.getLoginScac());
 		stmt.executeUpdate();

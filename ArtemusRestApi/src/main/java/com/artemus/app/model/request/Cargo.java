@@ -5,8 +5,9 @@ public class Cargo {
 	private String descriptionsOfGoods;
 	private String harmonizeCode;
 	private String hazardCode;
-	private String manufacturer;
+	//private String manufacturer;
 	private String country;
+	private Party manufacturer;
 
 	public String getDescriptionsOfGoods() {
 		if (descriptionsOfGoods==null)
@@ -38,13 +39,12 @@ public class Cargo {
 		this.hazardCode = hazardCode;
 	}
 
-	public String getManufacturer() {
-		if(manufacturer==null)
-			manufacturer="";
-		return manufacturer.toUpperCase();
+	public Party getManufacturer() {
+		
+		return manufacturer;
 	}
 
-	public void setManufacturer(String manufacturer) {
+	public void setManufacturer(Party manufacturer) {
 		this.manufacturer = manufacturer;
 	}
 
@@ -58,4 +58,7 @@ public class Cargo {
 		this.country = country;
 	}
 
+	
+	
+	
 }

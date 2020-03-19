@@ -60,8 +60,6 @@ public class CustomerProfileDAO {
 
 	public boolean validateBillHeaderParties(BillHeader objBillHeader) {
 
-		String name = "";
-
 		System.out.println("validateBillHeaderParties ::");
 		validateCustomer(objBillHeader.getShipper(), objBillHeader.getLoginScac());
 		validateCustomer(objBillHeader.getBookingParty(), objBillHeader.getLoginScac());
@@ -96,47 +94,46 @@ public class CustomerProfileDAO {
 		boolean customerGen = false;
 
 		if (objParty != null) {
+			if (!isEntityNumberExists(objParty, loginScac, objBillHeader)) {
+				System.out.println("Entity Number Exists");
+			
 			if (isCustomerExists(objParty, loginScac)) {
 				customerGen = true;
-				if (isEntityNumberExists(objParty, loginScac, objBillHeader)) {
-					System.out.println("Entity Number Exists");
+				if(objParty.getAddressInfo().getEntityNumber()!=null || !objParty.getAddressInfo().getEntityNumber().isEmpty()) {
+					setEntityTypeNumber(objParty);
+					customerGen = updateCustomer(objParty, loginScac);
+				}else {
+					custErrorMessage.append("Entity number is required for consignee and importer party");
 				}
 
 			} else {
 				setEntityTypeNumber(objParty);
 				customerGen = addCustomer(objParty, loginScac);
 			}
+			}
 		}
 
 	}
 
 	private boolean isEntityNumberExists(Party objParty, String loginScac, BillHeader objBillHeader) {
+		setEntityTypeNumber(objParty);
 		try {
 			stmt = con.prepareStatement("select entity_number " + " from customer "
-					+ " where login_scac_code=? and customer_name=? and address1=? and address2=? and country=? and state=? and city=? and zip_code=? and entity_number=?");
+					+ " where login_scac_code=? and customer_name=? and entity_number=? and entity_type");
 			stmt.setString(1, loginScac);
 			stmt.setString(2, objParty.getName());
-			stmt.setString(3, objParty.getAddressInfo().getAddressLine1());
-			stmt.setString(4, objParty.getAddressInfo().getAddressLine2());
-			stmt.setString(5, objParty.getAddressInfo().getCountry());
-			stmt.setString(6, objParty.getAddressInfo().getState());
-			stmt.setString(7, objParty.getAddressInfo().getCity());
-			stmt.setString(8, objParty.getAddressInfo().getZipCode());
-			stmt.setString(9, objParty.getAddressInfo().getEntityNumber());
+			stmt.setString(3, objParty.getAddressInfo().getEntityNumber());
 
 			System.out.println(stmt.toString());
 			rs = stmt.executeQuery();
 
 			// Set Customer ID
 			if (rs.next()) {
-				objParty.getAddressInfo().setEntityNumber(rs.getString(1));
 
 				if (objParty.getAddressInfo().getEntityNumber() != "") {
 					System.out.print("Entity Number Exist");
 				}
 				return true;
-			} else {
-				custErrorMessage.append("<br>Entity Number is required for " + objParty.getName());
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -151,9 +148,13 @@ public class CustomerProfileDAO {
 		}
 		partyBean.getAddressInfo().setAddressType("main");
 		partyBean.getAddressInfo().setCountryOfIssuance("");
-		partyBean.getAddressInfo().setPhoneNo("");
+		if (partyBean.getAddressInfo().getPhoneNo() == null || partyBean.getAddressInfo().getPhoneNo().isEmpty()) {
+			partyBean.getAddressInfo().setPhoneNo("");
+		}
 		partyBean.getAddressInfo().setFaxNo("");
-		partyBean.getAddressInfo().setDob(null);
+		if (partyBean.getAddressInfo().getPhoneNo() == null || partyBean.getAddressInfo().getPhoneNo().isEmpty()) {
+			partyBean.getAddressInfo().setDob(null);
+		}
 		if (partyBean.getAddressInfo().getEntityType() == null
 				|| partyBean.getAddressInfo().getEntityType().isEmpty()) {
 			partyBean.getAddressInfo().setEntityType("");
@@ -174,12 +175,23 @@ public class CustomerProfileDAO {
 
 		Pattern p = null;
 		Matcher m = null;
+		
 		if (partyBean.getAddressInfo() == null) {
 			partyBean.setAddressInfo(new AddressInfo());
 		}
 		partyBean.getAddressInfo().setAddressType("main");
-		partyBean.getAddressInfo().setPhoneNo("");
+		if (partyBean.getAddressInfo().getPhoneNo() == null || partyBean.getAddressInfo().getPhoneNo().isEmpty()) {
+			partyBean.getAddressInfo().setPhoneNo("");
+		}
+
 		partyBean.getAddressInfo().setFaxNo("");
+		
+		if(partyBean.getAddressInfo().getEntityType().equalsIgnoreCase("SSN") || partyBean.getAddressInfo().getEntityType().equalsIgnoreCase("Passport") 
+				|| partyBean.getAddressInfo().getEntityType().equalsIgnoreCase("Employee ID") || partyBean.getAddressInfo().getEntityType().equalsIgnoreCase("CBP Encrypted Consignee ID")
+				 || partyBean.getAddressInfo().getEntityType().equalsIgnoreCase("Importer/Consignee") ||
+				 partyBean.getAddressInfo().getEntityType().equalsIgnoreCase("DUNS") || partyBean.getAddressInfo().getEntityType().equalsIgnoreCase("DUNS 4"))
+		{
+		
 
 		if (partyBean.getAddressInfo().getEntityType().equalsIgnoreCase("SSN")
 				&& partyBean.getAddressInfo().getDob() == "") {
@@ -187,7 +199,7 @@ public class CustomerProfileDAO {
 		}
 		if (partyBean.getAddressInfo().getEntityType().equalsIgnoreCase("Passport")
 				&& partyBean.getAddressInfo().getDob() == "") {
-			custErrorMessage.append("Date of birth not enteredfor party " + partyBean.getName());
+			custErrorMessage.append("Date of birth not entered for party " + partyBean.getName());
 		}
 		if (partyBean.getAddressInfo().getEntityType().equalsIgnoreCase("Passport")
 				&& partyBean.getAddressInfo().getCountry() == "") {
@@ -256,9 +268,83 @@ public class CustomerProfileDAO {
 			}
 		}
 
+		
+		}else {
+			custErrorMessage.append("Invalid Entity Type.Please enter correct format:SSN,Passport,CBP Encrypted Consignee ID,Importer/Consignee,DUNS,DUNS 4");
+		}
+
 		partyBean.getAddressInfo().setCreatedUser("admin");
 		partyBean.getAddressInfo().setCreatedDate("");
+	}
+	
+	private boolean updateCustomer(Party partyBean, String loginScac) {
+		// TODO Auto-generated method stub
 
+		try {
+			stmt = con.prepareStatement("update customer " + "set login_scac_code=?,customer_name=?, address_type=?,"
+					+ " address1=?, address2=?, country=?, state=?, city=?,zip_code=?,phone_number=?, fax_number=?, "
+					+ " entity_type=?, entity_number=?,created_user=?,created_date=now(),dob=?,country_of_issuance=? where customer_name=?");
+
+			stmt.setString(1, loginScac);
+			stmt.setString(2, partyBean.getName());
+			stmt.setString(3, partyBean.getAddressInfo().getAddressType());
+			stmt.setString(4, partyBean.getAddressInfo().getAddressLine1());
+			stmt.setString(5, partyBean.getAddressInfo().getAddressLine2());
+			stmt.setString(6, partyBean.getAddressInfo().getCountry());
+			stmt.setString(7, partyBean.getAddressInfo().getState());
+			stmt.setString(8, partyBean.getAddressInfo().getCity());
+			stmt.setString(9, partyBean.getAddressInfo().getZipCode());
+			stmt.setString(10, partyBean.getAddressInfo().getPhoneNo());
+			stmt.setString(11, partyBean.getAddressInfo().getFaxNo());
+			stmt.setString(12, partyBean.getAddressInfo().getEntityType());
+			stmt.setString(13, partyBean.getAddressInfo().getEntityNumber());
+			stmt.setString(14, partyBean.getAddressInfo().getCreatedUser());
+
+			if (partyBean.getAddressInfo().getDob() == "") {
+				stmt.setDate(15, null);
+			} else {
+				java.util.Date date2;
+				try {
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy/mm/dd");
+					date2 = sdf.parse(partyBean.getAddressInfo().getDob());
+					java.sql.Date sqlDate = new java.sql.Date(date2.getTime());
+					stmt.setDate(15, sqlDate);
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			}
+
+			stmt.setString(16, partyBean.getAddressInfo().getCountryOfIssuance());
+			stmt.setString(17, partyBean.getName());
+			stmt.executeUpdate();
+			/*
+			 * rs = stmt.getGeneratedKeys(); if (rs.next())
+			 * partyBean.setCustomerId(rs.getInt(1));
+			 */
+
+			stmt1=con.prepareStatement("select customer_id where login_scac_code=? and customer_name=? and entity_type=?, entity_number=?");
+			
+			stmt1.setString(1, loginScac);
+			stmt1.setString(2, partyBean.getName());
+			stmt1.setString(3, partyBean.getAddressInfo().getEntityType());
+			stmt1.setString(4, partyBean.getAddressInfo().getEntityNumber());
+			
+			rs=stmt1.executeQuery();
+			if (rs.next()) {
+				partyBean.setCustomerId(rs.getInt(1));
+			}
+			
+			System.out.println(stmt.toString());
+
+			return true;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return false;
 	}
 
 	private boolean addCustomer(Party partyBean, String loginScac) {
@@ -326,16 +412,10 @@ public class CustomerProfileDAO {
 
 	public boolean isCustomerExists(Party partyBean, String loginScac) {
 		try {
-			stmt = con.prepareStatement("select * " + " from customer "
-					+ " where login_scac_code=? and customer_name=? and address1=? and address2=? and country=? and state=? and city=? and zip_code=? ");
+			stmt = con
+					.prepareStatement("select * " + " from customer " + " where login_scac_code=? and customer_name=?");
 			stmt.setString(1, loginScac);
 			stmt.setString(2, partyBean.getName());
-			stmt.setString(3, partyBean.getAddressInfo().getAddressLine1());
-			stmt.setString(4, partyBean.getAddressInfo().getAddressLine2());
-			stmt.setString(5, partyBean.getAddressInfo().getCountry());
-			stmt.setString(6, partyBean.getAddressInfo().getState());
-			stmt.setString(7, partyBean.getAddressInfo().getCity());
-			stmt.setString(8, partyBean.getAddressInfo().getZipCode());
 
 			System.out.println(stmt.toString());
 			rs = stmt.executeQuery();
