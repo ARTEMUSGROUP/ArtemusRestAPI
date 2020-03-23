@@ -94,22 +94,29 @@ public class CustomerProfileDAO {
 		boolean customerGen = false;
 
 		if (objParty != null) {
-			if (!isEntityNumberExists(objParty, loginScac, objBillHeader)) {
-				System.out.println("Entity Number Exists");
-			
-			if (isCustomerExists(objParty, loginScac)) {
-				customerGen = true;
-				if(objParty.getAddressInfo().getEntityNumber()!=null || !objParty.getAddressInfo().getEntityNumber().isEmpty()) {
-					setEntityTypeNumber(objParty);
-					customerGen = updateCustomer(objParty, loginScac);
-				}else {
-					custErrorMessage.append("Entity number is required for consignee and importer party");
-				}
 
-			} else {
-				setEntityTypeNumber(objParty);
-				customerGen = addCustomer(objParty, loginScac);
+			if (objParty.getAddressInfo().getEntityType() == null || objParty.getAddressInfo().getEntityType() == "") {
+				custErrorMessage.append(
+						"Entity Type is required for consignee and importer party.Please check if you have entered or not...");
 			}
+
+			if (objParty.getAddressInfo().getEntityNumber() == null
+					|| objParty.getAddressInfo().getEntityNumber() == "") {
+				custErrorMessage.append(
+						"Entity number is required for consignee and importer party.Please check if you have entered or not...");
+			} else {
+
+				if (!isEntityNumberExists(objParty, loginScac, objBillHeader)) {
+					System.out.println("Entity Number Exists");
+
+					if (isCustomerExists(objParty, loginScac)) {
+						customerGen = true;
+						customerGen = updateCustomer(objParty, loginScac);
+
+					} else {
+						customerGen = addCustomer(objParty, loginScac);
+					}
+				}
 			}
 		}
 
@@ -175,7 +182,7 @@ public class CustomerProfileDAO {
 
 		Pattern p = null;
 		Matcher m = null;
-		
+
 		if (partyBean.getAddressInfo() == null) {
 			partyBean.setAddressInfo(new AddressInfo());
 		}
@@ -185,29 +192,25 @@ public class CustomerProfileDAO {
 		}
 
 		partyBean.getAddressInfo().setFaxNo("");
-		
-		if(partyBean.getAddressInfo().getEntityType().equalsIgnoreCase("SSN") || partyBean.getAddressInfo().getEntityType().equalsIgnoreCase("Passport") 
-				|| partyBean.getAddressInfo().getEntityType().equalsIgnoreCase("Employee ID") || partyBean.getAddressInfo().getEntityType().equalsIgnoreCase("CBP Encrypted Consignee ID")
-				 || partyBean.getAddressInfo().getEntityType().equalsIgnoreCase("Importer/Consignee") ||
-				 partyBean.getAddressInfo().getEntityType().equalsIgnoreCase("DUNS") || partyBean.getAddressInfo().getEntityType().equalsIgnoreCase("DUNS 4"))
-		{
-		
 
 		if (partyBean.getAddressInfo().getEntityType().equalsIgnoreCase("SSN")
-				&& partyBean.getAddressInfo().getDob() == "") {
-			custErrorMessage.append("Date of birth not entered for party " + partyBean.getName());
-		}
-		if (partyBean.getAddressInfo().getEntityType().equalsIgnoreCase("Passport")
-				&& partyBean.getAddressInfo().getDob() == "") {
-			custErrorMessage.append("Date of birth not entered for party " + partyBean.getName());
-		}
-		if (partyBean.getAddressInfo().getEntityType().equalsIgnoreCase("Passport")
-				&& partyBean.getAddressInfo().getCountry() == "") {
-			custErrorMessage.append("Please select country of issuance for party " + partyBean.getName());
-		}
-		if (partyBean.getAddressInfo().getEntityType().equalsIgnoreCase("Employee ID")) {
-			if (partyBean.getAddressInfo().getEntityNumber() != null
-					|| !partyBean.getAddressInfo().getEntityNumber().isEmpty()) {
+				|| partyBean.getAddressInfo().getEntityType().equalsIgnoreCase("Passport")
+				|| partyBean.getAddressInfo().getEntityType().equalsIgnoreCase("Employee ID")
+				|| partyBean.getAddressInfo().getEntityType().equalsIgnoreCase("CBP Encrypted Consignee ID")
+				|| partyBean.getAddressInfo().getEntityType().equalsIgnoreCase("Importer/Consignee")
+				|| partyBean.getAddressInfo().getEntityType().equalsIgnoreCase("DUNS")
+				|| partyBean.getAddressInfo().getEntityType().equalsIgnoreCase("DUNS 4")) {
+
+			if (partyBean.getAddressInfo().getEntityType().equalsIgnoreCase("SSN")
+					&& partyBean.getAddressInfo().getDob() == "") {
+				custErrorMessage.append("Date of birth not entered for party " + partyBean.getName());
+			} else if (partyBean.getAddressInfo().getEntityType().equalsIgnoreCase("Passport")
+					&& partyBean.getAddressInfo().getDob() == "") {
+				custErrorMessage.append("Date of birth not entered for party " + partyBean.getName());
+			} else if (partyBean.getAddressInfo().getEntityType().equalsIgnoreCase("Passport")
+					&& partyBean.getAddressInfo().getCountry() == "") {
+				custErrorMessage.append("Please select country of issuance for party " + partyBean.getName());
+			} else if (partyBean.getAddressInfo().getEntityType().equalsIgnoreCase("Employee ID")) {
 				p = Pattern.compile("^[0-9]{2}-[0-9]{7}[A-Z]{2}$"); // the pattern to search for
 				Pattern p1 = Pattern.compile("\\d{2}-\\d{7}$");
 				m = p.matcher(partyBean.getAddressInfo().getEntityNumber());
@@ -218,65 +221,61 @@ public class CustomerProfileDAO {
 					// alert("Invalid Employee ID. Use the format NN-NNNNNNNXX OR NN-NNNNNNN");
 					custErrorMessage.append("Invalid Employee ID. Use the format NN-NNNNNNNXX OR NN-NNNNNNN.");
 				}
-			} else {
-				custErrorMessage.append("Entity number is mandatory for Consignee and Importer Party ");
 			}
-		}
 
-		if (partyBean.getAddressInfo().getEntityType().equalsIgnoreCase("SSN")) {
-			Pattern p2 = Pattern.compile("^[0-9]{3}-[0-9]{2}-[0-9]{4}$");
-			Matcher m2 = p2.matcher(partyBean.getAddressInfo().getEntityNumber());
-			if (m2.matches()) {
-				System.out.println("SSN matches");
-			} else {
-				custErrorMessage.append("Invalid SSN. Use the format NNN-NN-NNNN for Party ");
-			}
-		}
-		if (partyBean.getAddressInfo().getEntityType().equalsIgnoreCase("Passport")) {
-			p = Pattern.compile("^[A-Z]{5,15}$");
-			m = p.matcher(partyBean.getAddressInfo().getEntityNumber());
-			if (!m.matches()) {
-				custErrorMessage.append("Invalid Passport Number. Use the format XXXXXXXXXXXXXXX");
-			}
-		}
-		if (partyBean.getAddressInfo().getEntityType().equalsIgnoreCase("CBP Encrypted Consignee ID")) {
-			p = Pattern.compile("-.{11}$/");
-			m = p.matcher(partyBean.getAddressInfo().getEntityNumber());
-			if (!m.matches()) {
-				custErrorMessage.append("Invalid CBP Encrypted Consignee ID. Use the format -CCCCCCCCCCC");
-			}
-		}
-		if (partyBean.getAddressInfo().getEntityType().equalsIgnoreCase("Importer/Consignee")) {
-			p = Pattern.compile("^[0-9]{2}[[A-Z]]{4}-[0-9]{5}$");
-			m = p.matcher(partyBean.getAddressInfo().getEntityNumber());
-			if (!m.matches()) {
-				custErrorMessage.append("Invalid Importer/Consignee. Use the format YYDDPP-NNNNN");
-			}
-		}
-		if (partyBean.getAddressInfo().getEntityType().equalsIgnoreCase("DUNS")) {
-			p = Pattern.compile("^[0-9]{9}$");
-			m = p.matcher(partyBean.getAddressInfo().getEntityNumber());
-			if (!m.matches()) {
-				custErrorMessage.append("Invalid DUNS Number. Use the format NNNNNNNNN");
-			}
-		}
-		if (partyBean.getAddressInfo().getEntityType().equalsIgnoreCase("DUNS 4")) {
-			p = Pattern.compile("^[0-9]{13}$");
-			m = p.matcher(partyBean.getAddressInfo().getEntityNumber());
-			if (!m.matches()) {
-				custErrorMessage.append("Invalid DUNS Number. Use the format NNNNNNNNNNNNN");
-			}
-		}
+			if (partyBean.getAddressInfo().getEntityType().equalsIgnoreCase("SSN")) {
+				Pattern p2 = Pattern.compile("^[0-9]{3}-[0-9]{2}-[0-9]{4}$");
+				Matcher m2 = p2.matcher(partyBean.getAddressInfo().getEntityNumber());
+				if (m2.matches()) {
+					System.out.println("SSN matches");
+				} else {
+					custErrorMessage.append("Invalid SSN. Use the format NNN-NN-NNNN for Party ");
+				}
+			} else if (partyBean.getAddressInfo().getEntityType().equalsIgnoreCase("Passport")) {
+				p = Pattern.compile("^[0-9]{5,15}$$");
+				m = p.matcher(partyBean.getAddressInfo().getEntityNumber());
+				if (!m.matches()) {
+					custErrorMessage.append(
+							"Invalid Passport Number. Use the format XXXXXXXXXXXXXXX(minumun 5 to max 15 digit number is allowed) ");
+				}
+			} else if (partyBean.getAddressInfo().getEntityType().equalsIgnoreCase("CBP Encrypted Consignee ID")) {
 
-		
-		}else {
-			custErrorMessage.append("Invalid Entity Type.Please enter correct format:SSN,Passport,CBP Encrypted Consignee ID,Importer/Consignee,DUNS,DUNS 4");
+				p = Pattern.compile("^[-][0-9]{11}$");
+				m = p.matcher(partyBean.getAddressInfo().getEntityNumber());
+				if (!m.matches()) {
+					custErrorMessage.append(
+							"Invalid CBP Encrypted Consignee ID. Use the format -CCCCCCCCCCC.max 11 numbers required. ");
+				}
+			} else if (partyBean.getAddressInfo().getEntityType().equalsIgnoreCase("Importer/Consignee")) {
+				p = Pattern.compile("^[0-9]{2}[a-z]{4}-[0-9]{5}$");
+				m = p.matcher(partyBean.getAddressInfo().getEntityNumber());
+				if (!m.matches()) {
+					custErrorMessage
+							.append("Invalid Importer/Consignee. Use the format YYDDPP-NNNNN. for e.x '22qwer-12345'");
+				}
+			} else if (partyBean.getAddressInfo().getEntityType().equalsIgnoreCase("DUNS")) {
+				p = Pattern.compile("^[0-9]{9}$");
+				m = p.matcher(partyBean.getAddressInfo().getEntityNumber());
+				if (!m.matches()) {
+					custErrorMessage.append("Invalid DUNS Number. Use the format NNNNNNNNN");
+				}
+			} else if (partyBean.getAddressInfo().getEntityType().equalsIgnoreCase("DUNS 4")) {
+				p = Pattern.compile("^[0-9]{13}$");
+				m = p.matcher(partyBean.getAddressInfo().getEntityNumber());
+				if (!m.matches()) {
+					custErrorMessage.append("Invalid DUNS Number. Use the format NNNNNNNNNNNNN");
+				}
+			}
+
+		} else {
+			custErrorMessage.append(
+					"Invalid Entity Type.Please enter correct format:SSN,Passport,CBP Encrypted Consignee ID,Importer/Consignee,DUNS,DUNS 4");
 		}
 
 		partyBean.getAddressInfo().setCreatedUser("admin");
 		partyBean.getAddressInfo().setCreatedDate("");
 	}
-	
+
 	private boolean updateCustomer(Party partyBean, String loginScac) {
 		// TODO Auto-generated method stub
 
@@ -324,18 +323,19 @@ public class CustomerProfileDAO {
 			 * partyBean.setCustomerId(rs.getInt(1));
 			 */
 
-			stmt1=con.prepareStatement("select customer_id where login_scac_code=? and customer_name=? and entity_type=?, entity_number=?");
-			
+			stmt1 = con.prepareStatement(
+					"select customer_id from customer where login_scac_code=? and customer_name=? and entity_type=? and entity_number=?");
+
 			stmt1.setString(1, loginScac);
 			stmt1.setString(2, partyBean.getName());
 			stmt1.setString(3, partyBean.getAddressInfo().getEntityType());
 			stmt1.setString(4, partyBean.getAddressInfo().getEntityNumber());
-			
-			rs=stmt1.executeQuery();
+
+			rs = stmt1.executeQuery();
 			if (rs.next()) {
 				partyBean.setCustomerId(rs.getInt(1));
 			}
-			
+
 			System.out.println(stmt.toString());
 
 			return true;

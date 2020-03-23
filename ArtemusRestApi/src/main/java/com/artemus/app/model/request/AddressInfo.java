@@ -24,9 +24,9 @@ public class AddressInfo {
 
 	public String getEntityType() {
 		if (entityType == null)
-			return entityType;
+			return "";
 		else
-			return entityType.toUpperCase();
+			return entityType;
 	}
 
 	public void setEntityType(String entityType) {
@@ -34,10 +34,8 @@ public class AddressInfo {
 	}
 
 	public String getEntityNumber() {
-		if (entityNumber == null)
-			return "";
-		else
-			return entityNumber.toUpperCase();
+
+			return entityNumber;
 	}
 
 	public void setEntityNumber(String entityNumber) {
@@ -59,7 +57,7 @@ public class AddressInfo {
 		if (createdDate == null)
 			return createdDate;
 		else
-			return createdDate.toUpperCase();
+			return createdDate;
 	}
 
 	public void setCreatedDate(String createdDate) {
