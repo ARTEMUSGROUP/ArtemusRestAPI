@@ -2,6 +2,7 @@ package com.artemus.app.model.request;
 
 import java.sql.Date;
 
+
 public class AddressInfo {
 	private String addressType;
 	private String addressLine1;
@@ -34,7 +35,9 @@ public class AddressInfo {
 	}
 
 	public String getEntityNumber() {
-
+		if (entityNumber == null)
+			return "";
+		else
 			return entityNumber;
 	}
 

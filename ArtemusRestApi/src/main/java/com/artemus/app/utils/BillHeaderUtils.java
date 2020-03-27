@@ -120,6 +120,13 @@ public class BillHeaderUtils {
 			}
 		}
 
+		if (objBillHeader.getHblScac().length()>4) {
+			if (objMessage.length() > 0) {
+				objMessage.append(",");
+			}
+			objMessage.append("hblScac: { " + objBillHeader.getHblScac() + " } must be 4 letters only.");
+		}
+		
 		if (objBillHeader.getVesselSchedule() == null) {
 			if (objMessage.length() > 0) {
 				objMessage.append(",");

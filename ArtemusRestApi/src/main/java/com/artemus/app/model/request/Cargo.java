@@ -1,5 +1,6 @@
 package com.artemus.app.model.request;
 
+
 public class Cargo {
 
 	private String descriptionsOfGoods;

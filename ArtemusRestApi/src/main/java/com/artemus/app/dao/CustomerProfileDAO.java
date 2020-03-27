@@ -21,6 +21,7 @@ public class CustomerProfileDAO {
 	private java.sql.PreparedStatement stmt = null, stmt1 = null;
 	private ResultSet rs = null;
 	StringBuilder custErrorMessage = new StringBuilder("");
+	StringBuilder custIsfErrorMessage = new StringBuilder("");
 
 	public CustomerProfileDAO() {
 
@@ -66,9 +67,9 @@ public class CustomerProfileDAO {
 		validateCustomer(objBillHeader.getSeller(), objBillHeader.getLoginScac());
 		validateCustomer(objBillHeader.getConsolidator(), objBillHeader.getLoginScac());
 		validateCustomer(objBillHeader.getStuffer(), objBillHeader.getLoginScac());
-		validateCustomer(objBillHeader.getConsignee(), objBillHeader.getLoginScac(), objBillHeader);
+		validateCustomer(objBillHeader.getConsignee(), objBillHeader.getLoginScac(), objBillHeader,true);
 		validateCustomer(objBillHeader.getNotify(), objBillHeader.getLoginScac());
-		validateCustomer(objBillHeader.getImporter(), objBillHeader.getLoginScac(), objBillHeader);
+		validateCustomer(objBillHeader.getImporter(), objBillHeader.getLoginScac(), objBillHeader,false);
 		validateCustomer(objBillHeader.getBuyer(), objBillHeader.getLoginScac());
 		validateCustomer(objBillHeader.getShipTo(), objBillHeader.getLoginScac());
 
@@ -90,21 +91,33 @@ public class CustomerProfileDAO {
 
 	}
 
-	public void validateCustomer(Party objParty, String loginScac, BillHeader objBillHeader) {
+	public void validateCustomer(Party objParty, String loginScac, BillHeader objBillHeader,Boolean isConsignee) {
 		boolean customerGen = false;
-
+        String parytname="";
+        if(isConsignee.equals(true)) {
+        	parytname="Consignee";
+        }else {
+        	parytname="Importer";
+        }
+		
 		if (objParty != null) {
 
 			if (objParty.getAddressInfo().getEntityType() == null || objParty.getAddressInfo().getEntityType() == "") {
-				custErrorMessage.append(
-						"Entity Type is required for consignee and importer party.Please check if you have entered or not...");
+				custIsfErrorMessage.append(
+						"<br>Entity Type is required for "+parytname);
 			}
 
 			if (objParty.getAddressInfo().getEntityNumber() == null
 					|| objParty.getAddressInfo().getEntityNumber() == "") {
-				custErrorMessage.append(
-						"Entity number is required for consignee and importer party.Please check if you have entered or not...");
-			} else {
+				custIsfErrorMessage.append(
+						"<br>Entity number is required for "+parytname);
+			} 
+			
+			if(objParty.getAddressInfo().getEntityNumber()=="" || objParty.getAddressInfo().getEntityType() == "") {
+				setAddressInfo(objParty);
+			}else {
+				setEntityTypeNumber(objParty);
+			}
 
 				if (!isEntityNumberExists(objParty, loginScac, objBillHeader)) {
 					System.out.println("Entity Number Exists");
@@ -117,16 +130,16 @@ public class CustomerProfileDAO {
 						customerGen = addCustomer(objParty, loginScac);
 					}
 				}
-			}
+			
 		}
 
 	}
 
 	private boolean isEntityNumberExists(Party objParty, String loginScac, BillHeader objBillHeader) {
-		setEntityTypeNumber(objParty);
+		
 		try {
 			stmt = con.prepareStatement("select entity_number " + " from customer "
-					+ " where login_scac_code=? and customer_name=? and entity_number=? and entity_type");
+					+ " where login_scac_code=? and customer_name=? and entity_number=?");
 			stmt.setString(1, loginScac);
 			stmt.setString(2, objParty.getName());
 			stmt.setString(3, objParty.getAddressInfo().getEntityNumber());
@@ -438,6 +451,10 @@ public class CustomerProfileDAO {
 
 	public StringBuilder getErrorMessage() {
 		return custErrorMessage;
+	}
+	
+	public StringBuilder getIsfErrorMessage() {
+		return custIsfErrorMessage;
 	}
 
 	public String getScacUserType(String loginScac) {

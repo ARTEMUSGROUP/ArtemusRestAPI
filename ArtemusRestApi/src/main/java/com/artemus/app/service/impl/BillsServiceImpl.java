@@ -293,6 +293,8 @@ public class BillsServiceImpl implements BillsService {
 				}
 
 			}
+			//Setting Entity Error
+			entityErrorMessage.append(objCustomerProfiledao.getIsfErrorMessage());
 			// Setting ISF errorDescription
 			objBillHeader.setIsfErrorDescription(entityErrorMessage.toString());
 			// Adding into billDetailStatus if all Adding Equipments is succeeds
@@ -377,6 +379,8 @@ public class BillsServiceImpl implements BillsService {
 					}
 
 				}
+				//Setting Entity Error
+				entityErrorMessage.append(objCustomerProfiledao.getIsfErrorMessage());
 				// Setting ISF errorDescription
 				objBillHeader.setIsfErrorDescription(entityErrorMessage.toString());
 				objDao.updateBillDetailStatus(objBillHeader, billLadingId);

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+
 @XmlRootElement
 public class BillHeader {
 	private String billOfLading;
@@ -231,7 +232,11 @@ public class BillHeader {
 	}
 
 	public ArrayList<String> getNotifyParties() {
-		return notifyParties;
+		if(notifyParties==null) {
+			return new ArrayList<String>();
+		}else {
+			return notifyParties;
+		}	
 	}
 
 	public void setNotifyParties(ArrayList<String> notifyParties) {
