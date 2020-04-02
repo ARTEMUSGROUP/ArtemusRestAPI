@@ -16,6 +16,7 @@ import com.artemus.app.model.response.ResponseMessage;
 import com.artemus.app.service.VoyageScheduleService;
 import com.artemus.app.service.impl.VoyageScheduleServiceImpl;
 
+
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces({ MediaType.APPLICATION_JSON })
 @Path("voyages")

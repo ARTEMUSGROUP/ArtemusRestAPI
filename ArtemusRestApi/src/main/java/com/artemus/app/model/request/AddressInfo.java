@@ -122,7 +122,7 @@ public class AddressInfo {
 
 	public String getAddressLine2() {
 		if (addressLine2 == null)
-			return addressLine2;
+			return "";
 		else
 			return addressLine2.toUpperCase();
 	}

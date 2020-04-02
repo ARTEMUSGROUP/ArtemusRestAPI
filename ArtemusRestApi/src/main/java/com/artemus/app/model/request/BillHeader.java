@@ -4,8 +4,12 @@ import java.util.ArrayList;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement
+//@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaJerseyServerCodegen", date = "2020-03-31T08:50:03.994Z[GMT]")
 public class BillHeader {
 	private String billOfLading;
 	private String billType;
@@ -47,15 +51,15 @@ public class BillHeader {
 	private String loginScac;
 	// --------------------------
 	public int billLadingId;
-	
-	//ISF
+
+	// ISF
 	private String transmissionType;
 	private String shipmentType;
 	private String isfType;
 	private Carnet carnet;
 	private Informal informal;
-	
-	//-----------------------------
+
+	// -----------------------------
 	private String isfErrorDescription;
 
 	public String getLoginScac() {
@@ -80,6 +84,8 @@ public class BillHeader {
 		this.billOfLading = billOfLading;
 	}
 
+	 //@JsonProperty("billType")
+	 //@Schema(required = true, description = "The type of bill being transmitted.  Accepted values include: way bill, empty, Original")
 	public String getBillType() {
 		if (billType == null)
 			return billType;
@@ -114,6 +120,8 @@ public class BillHeader {
 		this.nvoType = nvoType;
 	}
 
+	//@JsonProperty("nvoBill")
+	//@Schema(description = "The type of bill being transmitted.  Accepted values include: Master,House")
 	public String getNvoBill() {
 		if (nvoBill == null)
 			return nvoBill;
@@ -232,11 +240,11 @@ public class BillHeader {
 	}
 
 	public ArrayList<String> getNotifyParties() {
-		if(notifyParties==null) {
+		if (notifyParties == null) {
 			return new ArrayList<String>();
-		}else {
+		} else {
 			return notifyParties;
-		}	
+		}
 	}
 
 	public void setNotifyParties(ArrayList<String> notifyParties) {
@@ -331,6 +339,4 @@ public class BillHeader {
 		this.informal = informal;
 	}
 
-	
-	
 }

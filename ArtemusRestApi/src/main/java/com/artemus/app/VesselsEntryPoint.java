@@ -15,10 +15,17 @@ import com.artemus.app.model.response.ResponseMessage;
 import com.artemus.app.service.VesselScheduleService;
 import com.artemus.app.service.impl.VesselScheduleServiceImpl;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.SwaggerDefinition;
+import io.swagger.annotations.Tag;
+
+
 
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces({ MediaType.APPLICATION_JSON })
 @Path("vessel")
+@Api("Vessel Service")
+@SwaggerDefinition(tags= {@Tag(name="Vessel Service",description="Rest Endpoint for Vessel Service")})
 public class VesselsEntryPoint {
 
 	@Secured

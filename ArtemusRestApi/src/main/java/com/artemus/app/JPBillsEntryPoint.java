@@ -17,6 +17,7 @@ import com.artemus.app.service.JPBillsService;
 import com.artemus.app.service.impl.BillsServiceImpl;
 import com.artemus.app.service.impl.JPBillsServiceImpl;
 
+
 @Path("/jp/bills")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces({ MediaType.APPLICATION_JSON })

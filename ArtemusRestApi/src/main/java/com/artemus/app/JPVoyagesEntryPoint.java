@@ -15,6 +15,7 @@ import com.artemus.app.service.JPVoyageScheduleService;
 import com.artemus.app.service.impl.JPVoyageScheduleServiceImpl;
 
 
+
 @Path("/jp/voyages")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces({ MediaType.APPLICATION_JSON })

@@ -15,13 +15,23 @@ import com.artemus.app.model.response.ResponseMessage;
 import com.artemus.app.service.BillsService;
 import com.artemus.app.service.impl.BillsServiceImpl;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.SwaggerDefinition;
+import io.swagger.annotations.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+
+
 @Path("/bills")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces({MediaType.APPLICATION_JSON})
+@Api("Bill Service")
+@SwaggerDefinition(tags= {@Tag(name="Bill Service",description="Rest Endpoint for Bill Service")})
+//@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaJerseyServerCodegen", date = "2020-03-31T08:50:03.994Z[GMT]")
 public class BillsEntryPoint {
 
 	@Secured
 	@POST
+	//@Operation(summary = "Create Bill", description = "", tags={ "Bill Service" })
 	public ResponseMessage createBill(BillHeader requestObj,@HeaderParam("Authorization") String authorization) {
 		System.out.println(requestObj.toString());
 		String scacCode = authorization.substring(0,4)  ;
@@ -38,6 +48,7 @@ public class BillsEntryPoint {
 	
 	@Secured
 	@PUT
+	//@Operation(summary = "Update Bill", description = "", tags={ "Bill Service" })
 	public ResponseMessage updateBill(BillHeader requestObj,@HeaderParam("Authorization") String authorization) {
 		System.out.println(requestObj.toString());
 		String scacCode = authorization.substring(0,4)  ;

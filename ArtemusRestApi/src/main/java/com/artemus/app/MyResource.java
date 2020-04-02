@@ -16,11 +16,12 @@ import org.apache.logging.log4j.Logger;
 /**
  * Root resource (exposed at "myresource" path)
  */
+
 @Path("myresource")
 public class MyResource {
 	static Logger logger = LogManager.getLogger();
 	
-	@Secured
+	//@Secured
     @GET
     @Produces({MediaType.APPLICATION_JSON})
     public ResponseMessage getIt() {
