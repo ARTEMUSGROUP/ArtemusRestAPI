@@ -10,12 +10,14 @@ import com.artemus.app.dao.BillsDAO;
 import com.artemus.app.dao.CustomerProfileDAO;
 import com.artemus.app.dao.VesselVoyageDAO;
 import com.artemus.app.exceptions.ErrorResponseException;
+import com.artemus.app.exceptions.MissingRequiredFieldException;
 import com.artemus.app.model.request.BillHeader;
 import com.artemus.app.model.request.Carnet;
 import com.artemus.app.model.request.Equipment;
 import com.artemus.app.model.request.Informal;
 import com.artemus.app.service.BillsService;
 import com.artemus.app.utils.BillHeaderUtils;
+import com.artemus.app.utils.ValidateBeanUtil;
 
 public class BillsServiceImpl implements BillsService {
 	static Logger logger = LogManager.getLogger();
@@ -26,6 +28,12 @@ public class BillsServiceImpl implements BillsService {
 
 	public void createBill(BillHeader objBillHeader) {
 		// Validate JSON
+		logger.debug(objBillHeader.toString());
+				ValidateBeanUtil.buildDefaultValidatorFactory();
+				StringBuffer invalidJsonMsg = ValidateBeanUtil.getConstraintViolationMsgForVoyage(objBillHeader);
+				if (invalidJsonMsg.length() > 0) {
+					throw new MissingRequiredFieldException(invalidJsonMsg.toString());
+				}
 		objUtils.validateRequiredFields(objBillHeader);
 		// Call for DAO
 		CustomerProfileDAO customerProfileDao = new CustomerProfileDAO();
@@ -127,7 +135,13 @@ public class BillsServiceImpl implements BillsService {
 	}
 
 	public void updateBill(BillHeader objBillHeader) {
+		logger.debug(objBillHeader.toString());
 		// Validate JSON
+		ValidateBeanUtil.buildDefaultValidatorFactory();
+		StringBuffer invalidJsonMsg = ValidateBeanUtil.getConstraintViolationMsgForVoyage(objBillHeader);
+		if (invalidJsonMsg.length() > 0) {
+			throw new MissingRequiredFieldException(invalidJsonMsg.toString());
+		}
 		objUtils.validateRequiredFields(objBillHeader);
 		// Call for DAO
 		CustomerProfileDAO customerProfileDao = new CustomerProfileDAO();

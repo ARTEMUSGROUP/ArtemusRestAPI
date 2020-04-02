@@ -2,9 +2,17 @@ package com.artemus.app.model.request;
 
 import java.util.ArrayList;
 
-public class JPEquipment {
+import org.hibernate.validator.constraints.NotEmpty;
 
+import com.github.reinert.jjschema.Attributes;
+
+public class JPEquipment {
+	
+	@Attributes(required = true, description = "The equipmentNo.")
+	@NotEmpty(message = "equipmentNo cannot be blank")
 	private String equipmentNo;
+	@Attributes(required = true, description = "The equipmentType.")
+	@NotEmpty(message = "equipmentType cannot be blank")
 	private String equipmentType;
 	private String serviceType;
 	private String containerOwnership;

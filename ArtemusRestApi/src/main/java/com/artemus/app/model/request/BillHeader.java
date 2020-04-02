@@ -2,12 +2,25 @@ package com.artemus.app.model.request;
 
 import java.util.ArrayList;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.NotEmpty;
+
+import com.github.reinert.jjschema.Attributes;
 
 
 @XmlRootElement
 public class BillHeader {
+	@Attributes(required = true, description = "The billOfLading.")
+	@NotEmpty(message = "billOfLading cannot be blank")
+	@Size(max = 20, message = "The billOfLading must be max 20 letters only")
 	private String billOfLading;
+	@Attributes(required = true, description = "The billType.")
+	@NotEmpty(message = "billType cannot be blank")
+	@Size(max = 8, message = "The billType must be max 8 letters only")
 	private String billType;
 	private String hblScac;
 	private String nvoType;
@@ -24,6 +37,8 @@ public class BillHeader {
 	private Party stuffer;
 
 	// Recipient Info
+	@Attributes(required = true, description = "The consignee.")
+	@NotNull(message = "consignee cannot be blank")
 	private Party consignee;
 	private Party notify;
 	private Party importer;
@@ -34,6 +49,8 @@ public class BillHeader {
 	private ArrayList<String> notifyParties;
 
 	// Vessel Schedule
+	@Attributes(required = true, description = "The vesselSchedule.")
+	@NotNull(message = "vesselSchedule cannot be blank")
 	private VesselSchedule vesselSchedule;
 
 	private ArrayList<Equipment> equipments;
