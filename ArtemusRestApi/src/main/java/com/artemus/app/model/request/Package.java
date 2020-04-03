@@ -1,7 +1,13 @@
 package com.artemus.app.model.request;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
+import com.github.reinert.jjschema.Attributes;
+
 public class Package {
 
+	@Attributes(required = true, description = "The packageType.")
+	@NotEmpty(message = "packageType cannot be blank")
 	private String packageType;
 	private String marks;
 	private String pieces;

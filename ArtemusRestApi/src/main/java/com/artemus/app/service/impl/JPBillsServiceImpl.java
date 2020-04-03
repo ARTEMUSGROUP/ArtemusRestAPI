@@ -4,18 +4,24 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.artemus.app.dao.JPBillsDAO;
 import com.artemus.app.dao.JPCustomerProfileDAO;
 import com.artemus.app.dao.JPVesselVoyageDAO;
 import com.artemus.app.exceptions.ErrorResponseException;
+import com.artemus.app.exceptions.MissingRequiredFieldException;
 import com.artemus.app.model.request.BillHeader;
 import com.artemus.app.model.request.JPEquipment;
 import com.artemus.app.model.request.Party;
 import com.artemus.app.service.JPBillsService;
 import com.artemus.app.utils.JPBillHeaderUtils;
+import com.artemus.app.utils.ValidateBeanUtil;
 
 public class JPBillsServiceImpl implements JPBillsService {
 
+	static Logger logger = LogManager.getLogger();
 	JPBillHeaderUtils objUtils = new JPBillHeaderUtils();
 	StringBuffer errorMessage = new StringBuffer("");
 	boolean isError;
@@ -23,6 +29,12 @@ public class JPBillsServiceImpl implements JPBillsService {
 	@Override
 	public void createBill(BillHeader objBillHeader) {
 		// Validate JSON
+		logger.debug(objBillHeader.toString());
+		ValidateBeanUtil.buildDefaultValidatorFactory();
+		StringBuffer invalidJsonMsg = ValidateBeanUtil.getConstraintViolationMsgForVoyage(objBillHeader);
+		if (invalidJsonMsg.length() > 0) {
+			throw new MissingRequiredFieldException(invalidJsonMsg.toString());
+		}
 		objUtils.validateRequiredFields(objBillHeader);
 		// Call for DAO
 		JPCustomerProfileDAO jpcustomerProfileDao = new JPCustomerProfileDAO();
@@ -50,6 +62,12 @@ public class JPBillsServiceImpl implements JPBillsService {
 	@Override
 	public void updateBill(BillHeader objBillHeader) {
 		// Validate JSON
+		logger.debug(objBillHeader.toString());
+		ValidateBeanUtil.buildDefaultValidatorFactory();
+		StringBuffer invalidJsonMsg = ValidateBeanUtil.getConstraintViolationMsgForVoyage(objBillHeader);
+		if (invalidJsonMsg.length() > 0) {
+			throw new MissingRequiredFieldException(invalidJsonMsg.toString());
+		}
 		objUtils.validateRequiredFields(objBillHeader);
 		// Call for DAO
 		JPCustomerProfileDAO jpcustomerProfileDao = new JPCustomerProfileDAO();

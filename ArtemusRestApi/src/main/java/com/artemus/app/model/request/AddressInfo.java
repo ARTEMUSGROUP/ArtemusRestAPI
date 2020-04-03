@@ -2,9 +2,15 @@ package com.artemus.app.model.request;
 
 import java.sql.Date;
 
+import org.hibernate.validator.constraints.NotBlank;
+
+import com.github.reinert.jjschema.Attributes;
+
 
 public class AddressInfo {
 	private String addressType;
+	@Attributes(required = true, description = "The addressLine1.")
+	@NotBlank(message = "addressLine1 cannot be blank")
 	private String addressLine1;
 	private String addressLine2;
 	private String city;
@@ -47,7 +53,7 @@ public class AddressInfo {
 
 	public String getCreatedUser() {
 		if (createdUser == null)
-			return createdUser;
+			return "";
 		else
 			return createdUser.toUpperCase();
 	}
@@ -58,7 +64,7 @@ public class AddressInfo {
 
 	public String getCreatedDate() {
 		if (createdDate == null)
-			return createdDate;
+			return "";
 		else
 			return createdDate;
 	}
@@ -100,7 +106,7 @@ public class AddressInfo {
 
 	public String getAddressType() {
 		if (addressType == null)
-			return addressType;
+			return "";
 		else
 			return addressType.toUpperCase();
 	}
@@ -111,7 +117,7 @@ public class AddressInfo {
 
 	public String getAddressLine1() {
 		if (addressLine1 == null)
-			return addressLine1;
+			return "";
 		else
 			return addressLine1.toUpperCase();
 	}
@@ -133,7 +139,7 @@ public class AddressInfo {
 
 	public String getCity() {
 		if (city == null)
-			return city;
+			return "";
 		else
 			return city.toUpperCase();
 	}
@@ -155,7 +161,7 @@ public class AddressInfo {
 
 	public String getState() {
 		if (state == null)
-			return state;
+			return "";
 		else
 			return state.toUpperCase();
 	}
@@ -166,7 +172,7 @@ public class AddressInfo {
 
 	public String getZipCode() {
 		if (zipCode == null)
-			return zipCode;
+			return "";
 		else
 			return zipCode.toUpperCase();
 	}
@@ -190,7 +196,7 @@ public class AddressInfo {
 
 	public String getFaxNo() {
 		if (faxNo == null)
-			return faxNo;
+			return "";
 		else
 			return faxNo.toUpperCase();
 	}

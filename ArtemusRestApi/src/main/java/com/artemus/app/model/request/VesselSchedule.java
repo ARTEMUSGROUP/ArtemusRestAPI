@@ -1,13 +1,30 @@
 package com.artemus.app.model.request;
 
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.NotEmpty;
+
+import com.github.reinert.jjschema.Attributes;
+
 public class VesselSchedule {
 
+	@Attributes(required = true, description = "The vesselName")
+	@NotEmpty(message = "vesselName is required")
 	private String vesselName;
+	@Attributes(required = true, description = "The voyageNumber")
+	@NotEmpty(message = "voyageNumber cannot be blank")
 	private String voyageNumber;
 
 	private String countryOfOrigin;
 	private String placeOfReceipt;
+	
+	@Attributes(required = true, description = "The portOfLoading")
+	@NotEmpty(message = "portOfLoading cannot be blank")
 	private String portOfLoading;
+	
+	@Attributes(required = true, description = "The portOfDischarge")
+	@NotEmpty(message = "portOfDischarge cannot be blank")
 	private String portOfDischarge;
 	private String placeOfDelivery;
 	private String canadaCustomsOffice;
