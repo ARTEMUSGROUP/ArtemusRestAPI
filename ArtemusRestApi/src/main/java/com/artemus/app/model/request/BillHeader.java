@@ -9,7 +9,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement
-//@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaJerseyServerCodegen", date = "2020-03-31T08:50:03.994Z[GMT]")
 public class BillHeader {
 	private String billOfLading;
 	private String billType;

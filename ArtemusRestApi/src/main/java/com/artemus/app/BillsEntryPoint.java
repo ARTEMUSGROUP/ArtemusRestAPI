@@ -26,12 +26,10 @@ import io.swagger.v3.oas.annotations.Operation;
 @Produces({MediaType.APPLICATION_JSON})
 @Api("Bill Service")
 @SwaggerDefinition(tags= {@Tag(name="Bill Service",description="Rest Endpoint for Bill Service")})
-//@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaJerseyServerCodegen", date = "2020-03-31T08:50:03.994Z[GMT]")
 public class BillsEntryPoint {
 
 	@Secured
 	@POST
-	//@Operation(summary = "Create Bill", description = "", tags={ "Bill Service" })
 	public ResponseMessage createBill(BillHeader requestObj,@HeaderParam("Authorization") String authorization) {
 		System.out.println(requestObj.toString());
 		String scacCode = authorization.substring(0,4)  ;
@@ -48,7 +46,6 @@ public class BillsEntryPoint {
 	
 	@Secured
 	@PUT
-	//@Operation(summary = "Update Bill", description = "", tags={ "Bill Service" })
 	public ResponseMessage updateBill(BillHeader requestObj,@HeaderParam("Authorization") String authorization) {
 		System.out.println(requestObj.toString());
 		String scacCode = authorization.substring(0,4)  ;
