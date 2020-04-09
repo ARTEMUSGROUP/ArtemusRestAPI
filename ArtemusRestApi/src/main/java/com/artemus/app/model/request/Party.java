@@ -2,12 +2,11 @@ package com.artemus.app.model.request;
 
 import javax.xml.bind.annotation.XmlTransient;
 
-import io.swagger.annotations.ApiModelProperty;
 
 public class Party {
-	@ApiModelProperty(value = "Name of the Party",required = true,example="string")
+	
 	private String name;
-	@ApiModelProperty(value = "Address Information of the Party",required = true)
+	
 	private AddressInfo addressInfo;
 
 	// -----------------------

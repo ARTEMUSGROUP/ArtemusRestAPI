@@ -9,41 +9,40 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.hibernate.validator.constraints.NotBlank;
 
 import com.github.reinert.jjschema.Attributes;
-import io.swagger.annotations.ApiModelProperty;
 
 public class Location {
 
 	
-	@ApiModelProperty(value = "The name of this location. If the location already exists in our system, this are the only required attributes.",required = true)
+	
 	@Attributes(required = true, description = "The name of this location.  If the location already exists in our system, this and an index are the only required attributes.")
 	@NotBlank(message = "location cannot be blank")
 	private String location;
 
-	@ApiModelProperty(value = "The location’s three letter country code, as defined by ISO 3166-1 alpha-3. If this location does not already exist in our database, this field is required.",required = false)
+	
 	@Attributes(required = false, description = "The location’s three letter country code, as defined by ISO 3166-1 alpha-3.  If this location does not already exist in our database, this field is required.T")
 	@Size(max = 3, message = "country must be 3 letter country code of location")
 	private String country;
 
-	@ApiModelProperty(value = "The providence for this location. For U.S. locations, use the two letter state abbreviation.",required = false)
+	
 	@Attributes(required = false, description = "The providence for this location.  For U.S. locations, use the two letter state abbreviation.")
 	@Size(min = 2, max = 2, message = "providence must be 2 letter state abbreviation")
 	private String providence;
 
-	@ApiModelProperty(value = "This can be either “inland” or “marine”, indicating whether this location is a sea port.",required = false,example="marine")
+	
 	@Attributes(required = false, description = "This can be either “inland” or “marine”, indicating whether this location is a sea port.")
 	@Pattern(regexp = "inland|marine", flags = Pattern.Flag.CASE_INSENSITIVE)
 	private String locationType;
 
-	@ApiModelProperty(value = "Canada customs office code for this location. Only valid for Canada locations.",required = false,example=" ")
+	
 	@Attributes(required = false, description = "Canada customs office code for this location.  Only valid for Canada locations.")
 	private String canadaCustomCode;
 
-	@ApiModelProperty(value = "United Nations location code (UN/LOCCODE) for this location.",required = false)
+	
 	@Attributes(required = false, description = "United Nations location code (UN/LOCCODE) for this location.")
 	@Valid
 	private String unlocode;
 
-	@ApiModelProperty(value = "“Schedule K” port code for this location.",required = false)
+	
 	@Attributes(required = false, description = "“Schedule K” port code for this location.")
 	@Valid
 	private String customCode;

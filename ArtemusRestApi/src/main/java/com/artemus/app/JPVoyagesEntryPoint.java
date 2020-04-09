@@ -14,17 +14,13 @@ import com.artemus.app.model.response.ResponseMessage;
 import com.artemus.app.service.JPVoyageScheduleService;
 import com.artemus.app.service.impl.JPVoyageScheduleServiceImpl;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.SwaggerDefinition;
-import io.swagger.annotations.Tag;
+
 
 
 
 @Path("/jp/voyages")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces({ MediaType.APPLICATION_JSON })
-@Api("Japan Voyage Service")
-@SwaggerDefinition(tags= {@Tag(name="Japan Voyage Service",description="To create Voyage")})
 public class JPVoyagesEntryPoint {
 
 	

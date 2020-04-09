@@ -18,22 +18,15 @@ import com.artemus.app.service.JPBillsService;
 import com.artemus.app.service.impl.BillsServiceImpl;
 import com.artemus.app.service.impl.JPBillsServiceImpl;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.SwaggerDefinition;
-import io.swagger.annotations.Tag;
 
 
 @Path("/jp/bills")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces({ MediaType.APPLICATION_JSON })
-@Api("Japan Bill Service")
-@SwaggerDefinition(tags= {@Tag(name="Japan Bill Service",description="To Create and Update Bill")})
 public class JPBillsEntryPoint {
 
 	@Secured
 	@POST
-	@ApiOperation(value = "API for Bill Creation")
 	public ResponseMessage createBill(JPBillHeader requestObj, @HeaderParam("Authorization") String authorization) {
 		System.out.println(requestObj.toString());
 		String scacCode = authorization.substring(0, 4);
@@ -50,7 +43,6 @@ public class JPBillsEntryPoint {
 
 	@Secured
 	@PUT
-	@ApiOperation(value = "API for Bill Update")
 	public ResponseMessage updateBill(JPBillHeader requestObj, @HeaderParam("Authorization") String authorization) {
 		System.out.println(requestObj.toString());
 		String scacCode = authorization.substring(0, 4);

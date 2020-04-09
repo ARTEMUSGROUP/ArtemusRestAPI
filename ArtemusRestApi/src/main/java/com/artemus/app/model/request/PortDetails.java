@@ -8,37 +8,36 @@ import org.hibernate.validator.constraints.NotBlank;
 
 import com.github.reinert.jjschema.Attributes;
 
-import io.swagger.annotations.ApiModelProperty;
 
 public class PortDetails {
 
 
-	@ApiModelProperty(value = "If the port call is a loading port, indicates whether or not this is the last loading port for the voyage. Valid values are “true” and “false”.",required = true)
+	
 	@Attributes(required = false, description = "If the port call is a loading port, indicates whether or not this is the last loading port for the voyage.  Valid values are “true” and “false”.")
 	private Boolean lastLoadPort;
 
-	@ApiModelProperty(value = "The date on which the vessel will leave this location.Date format is YYYY-MM-DD.",required = true)
+	
 	@Attributes(required = false, description = "The date on which the vessel will leave this location.Date format is YYYY-MM-DD.")
 	private String sailingDate;
 
-	@ApiModelProperty(value = "The date on which the vessel will arrive at this location.",required = true)
+	
 	@Attributes(required = true, description = "The date on which the vessel will arrive at this location.")
 	@NotBlank(message = "arrivalDate : cannot be blank")
 	private String arrivalDate;
 
-	@ApiModelProperty(value = "Indicates whether or not cargo will be loaded at this port.  Valid values are “true” and “false”.",required = true)
+	
 	@Attributes(required = true, description = "Indicates whether or not cargo will be loaded at this port.  Valid values are “true” and “false”.")
 	private Boolean load;
 
-	@ApiModelProperty(value = "Indicates whether or not cargo will be discharged at this port.  Valid values are “true” and “false”.",required = true)
+	
 	@Attributes(required = false, description = "Indicates whether or not cargo will be discharged at this port.  Valid values are “true” and “false”.")
 	private Boolean discharge;
 
-	@ApiModelProperty(value = "",required = false,example=" ")
+	
 	@Attributes(required = false, description = "")
 	private String terminal;
 
-	@ApiModelProperty(value = "",required = true)
+	
 	@NotNull(message = "location : cannot be blank")
 	private Location location;
 
