@@ -8,6 +8,7 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 
 import com.artemus.app.model.request.BillHeader;
+import com.artemus.app.model.request.JPBillHeader;
 import com.artemus.app.model.request.Vessel;
 import com.artemus.app.model.request.Voyage;
 
@@ -44,6 +45,21 @@ public class ValidateBeanUtil {
 		// Step 3
 		StringBuffer objString = new StringBuffer();
 		for (ConstraintViolation<BillHeader> violation : violations) {
+			if (objString.length()>0) {
+				objString.append(" , ");
+			}
+			objString.append(violation.getMessage());
+		}
+		
+		return objString;
+	}
+	
+	public static StringBuffer getConstraintViolationMsgForVoyage(JPBillHeader objBillHeader) {
+		// Step 2
+		Set<ConstraintViolation<JPBillHeader>> violations = validator.validate(objBillHeader);
+		// Step 3
+		StringBuffer objString = new StringBuffer();
+		for (ConstraintViolation<JPBillHeader> violation : violations) {
 			if (objString.length()>0) {
 				objString.append(" , ");
 			}

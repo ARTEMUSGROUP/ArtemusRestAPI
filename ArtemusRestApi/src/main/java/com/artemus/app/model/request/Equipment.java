@@ -5,16 +5,29 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import com.github.reinert.jjschema.Attributes;
 
-public class Equipment {
+import io.swagger.annotations.ApiModelProperty;
 
+public class Equipment {
+	
+	@ApiModelProperty(value = "The equipment identifier for this piece of equipment.",required = true)
 	@Attributes(required = true, description = "The equipmentNo.")
 	@NotEmpty(message = "equipmentNo cannot be blank")
 	private String equipmentNo;
+	
 	@Attributes(required = true, description = "The equipmentType.")
 	@NotEmpty(message = "equipmentType cannot be blank")
+	@ApiModelProperty(value = "The size and type code for this piece of equipment. See Appendix A for the standard list of equipment types. "
+			+ "Additional types can be added to customer databases.",required = true)
 	private String equipmentType;
+	
+	@ApiModelProperty(value = "A comma-separated list of seal numbers for this piece of equipment.",required = true)
 	private ArrayList<String> seals;
+	
+	@ApiModelProperty(value = "Defines packaging for bill cargo. Packages my be in a single piece of equipment. Many cargo items may be in a package.",required = true)
 	private ArrayList<Package> packages;
+	
+	@ApiModelProperty(value = "Describes the cargo found on this bill of lading. Cargo items must reference a package. "
+			+ "The text of the Cargo element is the description of good for this cargo. Use a CDATA tag when needed.",required = true)
 	private ArrayList<Cargo> cargos;
 
 	public String getEquipmentNo() {

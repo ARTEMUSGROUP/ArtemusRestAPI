@@ -52,6 +52,15 @@ public class LocationDAO {
 			if (rs.next()) {
 				result = rs.getString(1);
 				return result;
+			} else {
+				stmt2 = con.prepareStatement("SELECT location_code FROM artemus.location where unlocode=?");
+				stmt2.setString(1, Unlocode);
+				rs = stmt2.executeQuery();
+				logger.info(stmt2);
+				if (rs.next()) {
+					result = rs.getString(1);
+					return result;
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -238,17 +247,17 @@ public class LocationDAO {
 				stmt.setString(3, loginScac);
 				stmt.setString(4, locationbean.getLocation());
 				stmt.executeUpdate();
-				logger.info(stmt);	
+				logger.info(stmt);
 				stmt2 = con.prepareStatement(
 						"update location set hold_at_lp=?,location_type=? where location_id=? and login_scac=?");
 				stmt2.setString(1, locationbean.getHoldAtLp());
 				stmt2.setString(2, locationbean.getLocationType());
 				stmt2.setInt(3, locationbean.getLocationId());
 				stmt2.setString(4, loginScac);
-				logger.info(stmt2);	
+				logger.info(stmt2);
 				if (stmt2.executeUpdate() < 0)
 					flag = false;
-				
+
 			} else {
 				stmt = con.prepareStatement("INSERT INTO location (location_code,"
 						+ "  login_scac, location_name,country, state, location_type, "
@@ -261,7 +270,7 @@ public class LocationDAO {
 				stmt.setString(5, locationbean.getProvidence());
 				stmt.setString(6, locationbean.getLocationType());
 				stmt.setString(7, locationbean.getHoldAtLp());
-				stmt.setBoolean(8, locationbean.isIsVoyageCreated());
+				stmt.setBoolean(8, locationbean.isVoyageCreated());
 				stmt.setString(9, locationbean.getCreatedUser());
 				stmt.setBoolean(10, locationbean.isCustomForeign());
 				stmt.setString(11, locationbean.getUnlocode());
@@ -320,7 +329,7 @@ public class LocationDAO {
 			locationbean.setProvidence("");
 		else
 			locationbean.setProvidence(locationbean.getProvidence());
-		locationbean.setIsVoyageCreated(false);
+		locationbean.setVoyageCreated(false);
 		locationbean.setHoldAtLp("");
 		locationbean.setCreatedUser("admin");
 		// locationbean.setCreatedDate("");

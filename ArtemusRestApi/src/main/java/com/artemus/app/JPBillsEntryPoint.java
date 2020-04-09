@@ -11,21 +11,30 @@ import javax.ws.rs.core.Response;
 
 import com.artemus.app.annotations.Secured;
 import com.artemus.app.model.request.BillHeader;
+import com.artemus.app.model.request.JPBillHeader;
 import com.artemus.app.model.response.ResponseMessage;
 import com.artemus.app.service.BillsService;
 import com.artemus.app.service.JPBillsService;
 import com.artemus.app.service.impl.BillsServiceImpl;
 import com.artemus.app.service.impl.JPBillsServiceImpl;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.SwaggerDefinition;
+import io.swagger.annotations.Tag;
+
 
 @Path("/jp/bills")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces({ MediaType.APPLICATION_JSON })
+@Api("Japan Bill Service")
+@SwaggerDefinition(tags= {@Tag(name="Japan Bill Service",description="To Create and Update Bill")})
 public class JPBillsEntryPoint {
 
 	@Secured
 	@POST
-	public ResponseMessage createBill(BillHeader requestObj, @HeaderParam("Authorization") String authorization) {
+	@ApiOperation(value = "API for Bill Creation")
+	public ResponseMessage createBill(JPBillHeader requestObj, @HeaderParam("Authorization") String authorization) {
 		System.out.println(requestObj.toString());
 		String scacCode = authorization.substring(0, 4);
 		requestObj.setLoginScac(scacCode);
@@ -41,7 +50,8 @@ public class JPBillsEntryPoint {
 
 	@Secured
 	@PUT
-	public ResponseMessage updateBill(BillHeader requestObj, @HeaderParam("Authorization") String authorization) {
+	@ApiOperation(value = "API for Bill Update")
+	public ResponseMessage updateBill(JPBillHeader requestObj, @HeaderParam("Authorization") String authorization) {
 		System.out.println(requestObj.toString());
 		String scacCode = authorization.substring(0, 4);
 		requestObj.setLoginScac(scacCode);

@@ -22,7 +22,7 @@
 	<servlet>
 		<servlet-name>Swagger configuration</servlet-name>
 		<servlet-class>com.artemus.app.servlet.SwaggerConfigServlet</servlet-class>
-		<load-on-startup>1</load-on-startup>
+		<load-on-startup>2</load-on-startup>
 	</servlet>
 
 	<display-name>ArtemusApi</display-name>

@@ -5,7 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import com.artemus.app.connection.DBConnectionFactory;
-import com.artemus.app.model.request.BillHeader;
+import com.artemus.app.model.request.JPBillHeader;
 
 public class JPVesselVoyageDAO {
 
@@ -55,7 +55,7 @@ public class JPVesselVoyageDAO {
 		return 0;
 	}
 
-	public int validateVoyage(BillHeader objBillHeader, int VesselId) {
+	public int validateVoyage(JPBillHeader objBillHeader, int VesselId) {
 		ResultSet rs = null;
 		try {
 			stmt = con.prepareStatement("Select voyage_id,vessel_scac from jp_voyage where login_scac=? and vessel_id=? and voyage_number=?");
@@ -75,7 +75,7 @@ public class JPVesselVoyageDAO {
 
 	}
 
-	public boolean validateDischargePort(BillHeader objBillHeader) {
+	public boolean validateDischargePort(JPBillHeader objBillHeader) {
 		boolean isValid = false;
 		try {
 			stmt = con.prepareStatement(
@@ -105,7 +105,7 @@ public class JPVesselVoyageDAO {
 		return isValid;
 	}
 
-	public boolean validateLoadPort(BillHeader objBillHeader) {
+	public boolean validateLoadPort(JPBillHeader objBillHeader) {
 		boolean isValid = false;
 		try {
 			stmt = con.prepareStatement(

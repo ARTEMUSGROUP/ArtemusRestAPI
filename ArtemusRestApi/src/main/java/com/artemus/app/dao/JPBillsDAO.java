@@ -10,8 +10,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.artemus.app.connection.DBConnectionFactory;
-import com.artemus.app.model.request.BillHeader;
 import com.artemus.app.model.request.Cargo;
+import com.artemus.app.model.request.JPBillHeader;
 import com.artemus.app.model.request.JPEquipment;
 import com.artemus.app.model.request.Package;
 import com.artemus.app.model.request.Party;
@@ -66,7 +66,7 @@ public class JPBillsDAO {
 	}
 	
 	
-	public int insertIntoBillHeader(BillHeader objBillHeader) {
+	public int insertIntoBillHeader(JPBillHeader objBillHeader) {
 		int billLadingId = 0;
 		try {
 			stmt = con.prepareStatement("Insert into jp_bill_header "
@@ -347,7 +347,7 @@ public class JPBillsDAO {
 		return cargoIndex;
 	}
 
-	public void insertIntoBillDetailStatus(BillHeader objBillHeader, int billLadingId) throws SQLException {
+	public void insertIntoBillDetailStatus(JPBillHeader objBillHeader, int billLadingId) throws SQLException {
 		stmt = con.prepareStatement(
 				"Insert into jp_bill_detail_status (login_scac, bill_lading_id, is_ams_sent, is_isf_sent, is_readonly, "
 						+ "error_code, isf_error_code, error_description, isf_error_description, is_manifest_error, is_isf_error, is_ams_error, "
@@ -372,7 +372,7 @@ public class JPBillsDAO {
 		}
 	}
 	
-	public void updateBillDetailStatus(BillHeader objBillHeader, int billLadingId) throws SQLException {
+	public void updateBillDetailStatus(JPBillHeader objBillHeader, int billLadingId) throws SQLException {
 		stmt = con.prepareStatement("Update jp_bill_detail_status " +
 				" set is_readonly=?, error_description=?, isf_error_description=?, is_manifest_error=?, is_isf_error=?, is_ams_sent=? " +
 				"where bill_lading_id=? and login_scac=?");
@@ -389,7 +389,7 @@ public class JPBillsDAO {
 		stmt.executeUpdate();
 	}
 
-	public void insertIntoVoyagePortDetails(BillHeader objBillHeader, String dischargePort) {
+	public void insertIntoVoyagePortDetails(JPBillHeader objBillHeader, String dischargePort) {
 		if (dischargePort.equals(""))
 			dischargePort = objBillHeader.getVesselSchedule().getPortOfDischarge();
 		try {
@@ -481,7 +481,7 @@ public class JPBillsDAO {
 		return districtPort;
 	}
 
-	public boolean validateBillExist(BillHeader objBillHeader) {
+	public boolean validateBillExist(JPBillHeader objBillHeader) {
 		boolean isExist = false;
 		try {
 			stmt = con.prepareStatement(
@@ -501,7 +501,7 @@ public class JPBillsDAO {
 		return isExist;
 	}
 
-	public boolean updateBillHeader(BillHeader objBillHeader) throws SQLException {
+	public boolean updateBillHeader(JPBillHeader objBillHeader) throws SQLException {
 		boolean isUpdated = false;
 		stmt = con.prepareStatement("Update jp_bill_header set bill_status=?, bill_type=?," +
 				" hbl_scac=?, nvo_type=?, nvo_bl=?, scac_bill=?, master_bill=?, " +

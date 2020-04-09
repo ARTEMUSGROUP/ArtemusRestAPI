@@ -1,12 +1,12 @@
 package com.artemus.app.utils;
 
 import com.artemus.app.exceptions.MissingRequiredFieldException;
-import com.artemus.app.model.request.BillHeader;
+import com.artemus.app.model.request.JPBillHeader;
 import com.artemus.app.model.request.JPEquipment;
 
 public class JPBillHeaderUtils {
 
-	public void validateRequiredFields(BillHeader objBillHeader) throws MissingRequiredFieldException {
+	public void validateRequiredFields(JPBillHeader objBillHeader) throws MissingRequiredFieldException {
 		System.out.println("validateRequiredFields :: ");
 		StringBuffer objMessage = new StringBuffer();
 
@@ -141,7 +141,7 @@ public class JPBillHeaderUtils {
 			if (objMessage.length() > 0) {
 				objMessage.append(",");
 			}
-			objMessage.append("equipments");
+			objMessage.append("jpequipments");
 		} else {
 			StringBuffer objEquipmentsMessage = new StringBuffer();
 			int equipmentCount = 0;

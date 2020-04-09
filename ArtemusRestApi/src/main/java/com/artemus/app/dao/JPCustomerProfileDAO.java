@@ -7,7 +7,6 @@ import java.sql.Statement;
 
 import com.artemus.app.connection.DBConnectionFactory;
 import com.artemus.app.model.request.AddressInfo;
-import com.artemus.app.model.request.BillHeader;
 import com.artemus.app.model.request.Party;
 
 public class JPCustomerProfileDAO {

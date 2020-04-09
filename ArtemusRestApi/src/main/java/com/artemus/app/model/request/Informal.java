@@ -1,15 +1,26 @@
 package com.artemus.app.model.request;
 
+import javax.xml.bind.annotation.XmlTransient;
+
+import io.swagger.annotations.ApiModelProperty;
+
 public class Informal {
 	
+	@ApiModelProperty(value = "Accepted values are: 01,02,03. 01-Sectin 321 Shipments, 02-Informal Shipments, "
+			+ "03-General Note 3(e) Shipments.",required = false,example=" ")
 	private String shipmentSubType;
+	@ApiModelProperty(value = "The estimated value",required = false)
 	private int estimatedValue;
+	@ApiModelProperty(value = "The estimated quantity",required = false)
 	private int estimatedQuantity;
+	@ApiModelProperty(value = "A description of the package type.See Appendix C for a list of valid entries",required = false,example=" ")
 	private String unitOfMeasure;
 	//private estimatedWeight Weight;
+	@ApiModelProperty(value = "Weight in Kilograms",required = false)
 	private int estimatedWeight;
 	
 	//------------------
+	@XmlTransient
 	private String unit;
 	
 	public Informal() {

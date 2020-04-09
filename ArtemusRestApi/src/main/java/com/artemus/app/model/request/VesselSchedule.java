@@ -1,39 +1,60 @@
 package com.artemus.app.model.request;
 
 import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import com.github.reinert.jjschema.Attributes;
 
+import io.swagger.annotations.ApiModelProperty;
+
 public class VesselSchedule {
 
+	@ApiModelProperty(value = "The vessel name",required = true)
 	@Attributes(required = true, description = "The vesselName")
 	@NotEmpty(message = "vesselName is required")
 	private String vesselName;
+	
+	@ApiModelProperty(value = "The voyage number",required = true)
 	@Attributes(required = true, description = "The voyageNumber")
 	@NotEmpty(message = "voyageNumber cannot be blank")
 	private String voyageNumber;
 
+	@ApiModelProperty(value = "The indicates of country Of Origin",required = true)
 	private String countryOfOrigin;
+	
+	@ApiModelProperty(value = "The place of receipt",required = false,example=" ")
 	private String placeOfReceipt;
 	
+	@ApiModelProperty(value = "Indicates the port of loading.",required = true)
 	@Attributes(required = true, description = "The portOfLoading")
 	@NotEmpty(message = "portOfLoading cannot be blank")
 	private String portOfLoading;
 	
+	@ApiModelProperty(value = "Indicates the port of Discharge.",required = true)
 	@Attributes(required = true, description = "The portOfDischarge")
 	@NotEmpty(message = "portOfDischarge cannot be blank")
 	private String portOfDischarge;
+	
+	@ApiModelProperty(value = "The place of delivery.",required = false,example=" ")
 	private String placeOfDelivery;
+	
+	@ApiModelProperty(value = "Canada customs office code for this location. Only valid for Canada locations",required = false,example=" ")
 	private String canadaCustomsOffice;
+	
+	@ApiModelProperty(value = "Type of move, sometimes referred to as type of shipment. Acceptable values:FCL/FCL,FCL/LCL,LCL/FCL,LCL/LCL,PIER/HOUSE,PIER/PIER,BBK/BBK",required = false,example=" ")
 	private String moveType;
 
 	// -------------------------------
+	@XmlTransient
 	private int vesselId;
+	@XmlTransient
 	private int voyageId;
+	@XmlTransient
 	private String lloydsCode;
+	@XmlTransient
 	private String vesselScac;
 
 	public String getVesselName() {

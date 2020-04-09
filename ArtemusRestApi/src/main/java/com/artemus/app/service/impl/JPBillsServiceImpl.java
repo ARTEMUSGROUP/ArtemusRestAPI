@@ -12,7 +12,7 @@ import com.artemus.app.dao.JPCustomerProfileDAO;
 import com.artemus.app.dao.JPVesselVoyageDAO;
 import com.artemus.app.exceptions.ErrorResponseException;
 import com.artemus.app.exceptions.MissingRequiredFieldException;
-import com.artemus.app.model.request.BillHeader;
+import com.artemus.app.model.request.JPBillHeader;
 import com.artemus.app.model.request.JPEquipment;
 import com.artemus.app.model.request.Party;
 import com.artemus.app.service.JPBillsService;
@@ -27,7 +27,7 @@ public class JPBillsServiceImpl implements JPBillsService {
 	boolean isError;
 
 	@Override
-	public void createBill(BillHeader objBillHeader) {
+	public void createBill(JPBillHeader objBillHeader) {
 		// Validate JSON
 		logger.debug(objBillHeader.toString());
 		ValidateBeanUtil.buildDefaultValidatorFactory();
@@ -60,7 +60,7 @@ public class JPBillsServiceImpl implements JPBillsService {
 	}
 
 	@Override
-	public void updateBill(BillHeader objBillHeader) {
+	public void updateBill(JPBillHeader objBillHeader) {
 		// Validate JSON
 		logger.debug(objBillHeader.toString());
 		ValidateBeanUtil.buildDefaultValidatorFactory();
@@ -95,7 +95,7 @@ public class JPBillsServiceImpl implements JPBillsService {
 
 	}
 
-	private void validateVesselVoyage(BillHeader objBillHeader) {
+	private void validateVesselVoyage(JPBillHeader objBillHeader) {
 		System.out.println("validateVesselVoyage ::");
 		int vesselID, voyageID;
 		JPVesselVoyageDAO objDao = new JPVesselVoyageDAO();
@@ -140,7 +140,7 @@ public class JPBillsServiceImpl implements JPBillsService {
 		}
 	}
 
-	private void processBill(BillHeader objBillHeader, Connection conn) throws SQLException, ErrorResponseException {
+	private void processBill(JPBillHeader objBillHeader, Connection conn) throws SQLException, ErrorResponseException {
 		System.out.println("processBill :: ");
 		JPBillsDAO objDao = new JPBillsDAO(conn);
 		try {
@@ -180,7 +180,7 @@ public class JPBillsServiceImpl implements JPBillsService {
 
 	}
 
-	private void processBillForUpdate(BillHeader objBillHeader, Connection conn)
+	private void processBillForUpdate(JPBillHeader objBillHeader, Connection conn)
 			throws SQLException, ErrorResponseException {
 		System.out.println("processBillForUpdate :: ");
 		JPBillsDAO objDao = new JPBillsDAO(conn);
@@ -226,7 +226,7 @@ public class JPBillsServiceImpl implements JPBillsService {
 		}
 	}
 
-	public boolean validateBillHeaderParties(BillHeader objBillHeader, JPCustomerProfileDAO objCustomerProfiledao) {
+	public boolean validateBillHeaderParties(JPBillHeader objBillHeader, JPCustomerProfileDAO objCustomerProfiledao) {
 		System.out.println("validateBillHeaderParties ::");
 		validateCustomer(objBillHeader.getShipper(), objBillHeader.getLoginScac(), objCustomerProfiledao);
 		validateCustomer(objBillHeader.getConsignee(), objBillHeader.getLoginScac(), objCustomerProfiledao);
@@ -262,7 +262,7 @@ public class JPBillsServiceImpl implements JPBillsService {
 
 	}
 
-	private void addEquipments(BillHeader objBillHeader, int billLadingId, JPBillsDAO objBillsDao) throws SQLException {
+	private void addEquipments(JPBillHeader objBillHeader, int billLadingId, JPBillsDAO objBillsDao) throws SQLException {
 		boolean returnedVal = true;
 		int packageIndex = 0;
 		int cargoIndex = 0;

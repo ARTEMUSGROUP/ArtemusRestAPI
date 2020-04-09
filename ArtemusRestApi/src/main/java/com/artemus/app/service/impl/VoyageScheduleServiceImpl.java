@@ -15,7 +15,6 @@ import com.artemus.app.dao.VoyageDAO;
 import com.artemus.app.exceptions.ErrorResponseException;
 import com.artemus.app.exceptions.MissingRequiredFieldException;
 import com.artemus.app.model.request.Location;
-import com.artemus.app.model.request.PortCall;
 import com.artemus.app.model.request.PortDetails;
 import com.artemus.app.model.request.Voyage;
 import com.artemus.app.model.response.ErrorMessages;

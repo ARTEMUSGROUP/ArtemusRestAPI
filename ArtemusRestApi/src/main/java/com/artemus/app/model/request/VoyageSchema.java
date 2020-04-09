@@ -1,5 +1,7 @@
 package com.artemus.app.model.request;
 
+import java.io.IOException;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -32,7 +34,7 @@ public class VoyageSchema {
 	    @Path("schema")
 	    //(MediaType.APPLICATION_JSON)
 	    @Produces(MediaType.APPLICATION_JSON)
-	    public Response  JJSchema() {
+	    public Response  JJSchema() throws IOException {
 	    	
 	    	// get the draft 4 schema builder
 	        JsonSchemaGenerator v4generator = SchemaGeneratorBuilder.draftV4Schema().build();
