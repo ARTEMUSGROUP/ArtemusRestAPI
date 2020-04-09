@@ -151,7 +151,7 @@ public class BillHeader {
 
 	public String getHblScac() {
 		if (hblScac == null) {
-			return hblScac;
+			return "";
 		} else {
 			return hblScac.toUpperCase();
 		}
@@ -337,6 +337,9 @@ public class BillHeader {
 	}
 
 	public String getTransmissionType() {
+		if(transmissionType==null){
+			return "CT";
+		}
 		return transmissionType.trim();
 	}
 
@@ -345,6 +348,9 @@ public class BillHeader {
 	}
 
 	public String getShipmentType() {
+		if(shipmentType==null) {
+			return "01";
+		}
 		return shipmentType.trim();
 	}
 

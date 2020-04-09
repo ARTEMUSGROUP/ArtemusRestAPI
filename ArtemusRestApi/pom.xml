@@ -102,43 +102,53 @@
 			<artifactId>commons-io</artifactId>
 			<version>2.6</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/io.swagger.core.v3/swagger-annotations -->
+		<!-- https://mvnrepository.com/artifact/io.swagger/swagger-annotations -->
 		<dependency>
-			<groupId>io.swagger.core.v3</groupId>
+			<groupId>io.swagger</groupId>
 			<artifactId>swagger-annotations</artifactId>
-			<version>2.1.1</version>
+			<version>1.5.3</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.module/jackson-module-jaxb-annotations -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.module</groupId>
+			<artifactId>jackson-module-jaxb-annotations</artifactId>
+			<version>2.9.5</version>
+		</dependency>
+
 
 
 		<!-- https://mvnrepository.com/artifact/io.swagger/swagger-jaxrs -->
 		<dependency>
 			<groupId>io.swagger</groupId>
 			<artifactId>swagger-jaxrs</artifactId>
-			<version>1.6.0</version>
+			<version>1.5.3</version>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/io.swagger.core.v3/swagger-jaxrs2 -->
+		<!-- https://mvnrepository.com/artifact/io.swagger/swagger-jaxrs -->
 		<dependency>
-			<groupId>io.swagger.core.v3</groupId>
-			<artifactId>swagger-jaxrs2</artifactId>
-			<version>2.1.1</version>
+			<groupId>io.swagger</groupId>
+			<artifactId>swagger-jaxrs</artifactId>
+			<version>1.5.3</version>
 		</dependency>
 
 
-		<!-- https://mvnrepository.com/artifact/io.swagger.core.v3/swagger-core -->
+
+		<!-- https://mvnrepository.com/artifact/io.swagger/swagger-core -->
 		<dependency>
-			<groupId>io.swagger.core.v3</groupId>
+			<groupId>io.swagger</groupId>
 			<artifactId>swagger-core</artifactId>
-			<version>2.1.1</version>
+			<version>1.5.3</version>
 		</dependency>
 
 
-		<!-- https://mvnrepository.com/artifact/io.swagger.core.v3/swagger-models -->
+
+		<!-- https://mvnrepository.com/artifact/io.swagger/swagger-models -->
 		<dependency>
-			<groupId>io.swagger.core.v3</groupId>
+			<groupId>io.swagger</groupId>
 			<artifactId>swagger-models</artifactId>
-			<version>2.1.1</version>
+			<version>1.5.3</version>
 		</dependency>
+
 
 		<dependency>
 			<groupId>javax.servlet</groupId>

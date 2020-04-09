@@ -109,7 +109,7 @@ public class JPBillHeader {
 
 	public String getHblScac() {
 		if (hblScac == null) {
-			return hblScac;
+			return "";
 		} else {
 			return hblScac.toUpperCase();
 		}
