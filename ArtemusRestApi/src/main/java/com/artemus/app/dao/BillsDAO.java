@@ -449,7 +449,8 @@ public class BillsDAO {
 						stmt.setString(4, objCargo.getDescriptionsOfGoods());
 						stmt.setString(5, objCargo.getHarmonizeCode());
 						stmt.setString(6, objCargo.getHazardCode());
-						if(objCargo.getManufacturer()!=null || !objCargo.getManufacturer().getName().isEmpty()) {
+						if(objCargo.getManufacturer()!=null) {
+							stmt.setInt(9, objCargo.getManufacturer().getCustomerId());// Field cannot get
 							if(objCargo.getManufacturer().getName()==null ||objCargo.getManufacturer().getName().isEmpty() ) {
 								stmt.setString(7, "");
 							}else {
@@ -457,15 +458,11 @@ public class BillsDAO {
 							}
 						}else {
 							stmt.setString(7, "");
-						}
-						if(objCargo.getManufacturer().getName()==null ||objCargo.getManufacturer().getName().isEmpty() ) {
-							stmt.setString(7, "");
-						}else {
-							stmt.setString(7, objCargo.getManufacturer().getName());
+							stmt.setInt(9, 0);// Field cannot get
+							errorMessage.append("<br>Manufacturer entry is missing.");
 						}
 						
 						stmt.setString(8, objCargo.getCountry());
-						stmt.setInt(9, objCargo.getManufacturer().getCustomerId());// Field cannot get
 						if (stmt.executeUpdate() != 1) {
 							return -1;
 						}

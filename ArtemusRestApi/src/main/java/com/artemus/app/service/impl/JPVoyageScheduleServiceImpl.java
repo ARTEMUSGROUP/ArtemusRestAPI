@@ -465,6 +465,19 @@ public class JPVoyageScheduleServiceImpl implements JPVoyageScheduleService {
 				}
 
 				if (locationbean.getCustomCode() != null && !locationbean.getCustomCode().isEmpty()) {
+					
+					int locationIdfromUNCode = objLocationdao.getLocationIdfromUnlocode(locationbean.getCustomCode(),
+							loginScac);
+					int locationIdfromLocation = objLocationdao.getLocationId(locationbean.getLocation(), loginScac);
+					if(locationIdfromLocation!=0) {
+						if (locationIdfromUNCode != locationIdfromLocation) {
+							errorMessage.append("Unlocode: " + locationbean.getUnlocode()
+							+ " entered is same for multiple Locations in AMS system.");
+						}
+					}else {
+						objLocationdao.insert(locationbean, loginScac);
+					}
+					
 					if (objLocationdao.isDisctrictPort(locationbean.getCustomCode())) {
 						locationbean.setCustomForeign(false);
 					} else if (objLocationdao.isForeignPort(locationbean.getCustomCode())) {

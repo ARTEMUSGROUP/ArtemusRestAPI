@@ -150,6 +150,28 @@ public class JpLocationDAO {
 		return result;
 	}
 
+	public int getLocationIdfromUnlocode(String Custcode, String loginScac) {
+		// setting Location Code/Custom Code
+		ResultSet rs = null;
+		int result = 1;
+		try {
+			stmt2 = con.prepareStatement("SELECT location_id FROM artemus.location where location_code=? and login_scac=?");
+			stmt2.setString(1, Custcode);
+			stmt2.setString(2, loginScac);
+			rs = stmt2.executeQuery();
+			logger.info(stmt2);
+			if (rs.next()) {
+				result = rs.getInt(1);
+				return result;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return result;
+
+	}
+	
 	public boolean isExistsLocation(Location location) {
 		return false;
 

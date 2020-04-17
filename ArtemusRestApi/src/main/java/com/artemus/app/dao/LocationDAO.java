@@ -45,18 +45,19 @@ public class LocationDAO {
 		ResultSet rs = null;
 		String result = "";
 		try {
-			stmt = con.prepareStatement("Select location_code from portcode_unlocode where unlocode=?");
-			stmt.setString(1, Unlocode);
-			rs = stmt.executeQuery();
-			logger.info(stmt);
+			stmt2 = con.prepareStatement("SELECT location_code FROM artemus.location where unlocode=? and login_scac=?");
+			stmt2.setString(1, Unlocode);
+			stmt2.setString(2, loginScac);
+			rs = stmt2.executeQuery();
+			logger.info(stmt2);
 			if (rs.next()) {
 				result = rs.getString(1);
 				return result;
 			} else {
-				stmt2 = con.prepareStatement("SELECT location_code FROM artemus.location where unlocode=?");
-				stmt2.setString(1, Unlocode);
-				rs = stmt2.executeQuery();
-				logger.info(stmt2);
+				stmt = con.prepareStatement("Select location_code from portcode_unlocode where unlocode=?");
+				stmt.setString(1, Unlocode);
+				rs = stmt.executeQuery();
+				logger.info(stmt);
 				if (rs.next()) {
 					result = rs.getString(1);
 					return result;
@@ -70,6 +71,28 @@ public class LocationDAO {
 
 	}
 
+	public int getLocationIdfromUnlocode(String Custcode, String loginScac) {
+		// setting Location Code/Custom Code
+		ResultSet rs = null;
+		int result = 1;
+		try {
+			stmt2 = con.prepareStatement("SELECT location_id FROM artemus.location where location_code=? and login_scac=?");
+			stmt2.setString(1, Custcode);
+			stmt2.setString(2, loginScac);
+			rs = stmt2.executeQuery();
+			logger.info(stmt2);
+			if (rs.next()) {
+				result = rs.getInt(1);
+				return result;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return result;
+
+	}
+	
 	public void validatePort(Voyage objvoyage) {
 
 	}

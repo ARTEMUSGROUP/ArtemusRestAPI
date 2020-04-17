@@ -10,12 +10,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.artemus.app.annotations.Secured;
-import com.artemus.app.model.request.BillHeader;
 import com.artemus.app.model.request.JPBillHeader;
 import com.artemus.app.model.response.ResponseMessage;
-import com.artemus.app.service.BillsService;
 import com.artemus.app.service.JPBillsService;
-import com.artemus.app.service.impl.BillsServiceImpl;
 import com.artemus.app.service.impl.JPBillsServiceImpl;
 
 import io.swagger.annotations.Api;

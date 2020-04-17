@@ -134,7 +134,7 @@ public class VoyageScheduleServiceImpl implements VoyageScheduleService {
 				locationbean = objLocationdao.setLocationBean(locationbean);
 				int locationId = objLocationdao.checkLocationForCustomCode(locationbean.getCustomCode(), loginScac);
 				logger.info("locationId :" + locationId);
-				if (locationId == 0) {				
+				if (locationId == 0) {
 					if (!validateCountry(locationbean, objLocationdao)) {
 						if ((locationbean.getLocation() == null || locationbean.getLocation().isEmpty())
 								&& locationbean.getCountry() == null || locationbean.getCountry().isEmpty()) {
@@ -153,7 +153,7 @@ public class VoyageScheduleServiceImpl implements VoyageScheduleService {
 								break;
 							}
 						}
-					}else {
+					} else {
 						if ((locationbean.getLocation() == null || locationbean.getLocation().isEmpty())) {
 							if (errorMessage.length() > 0) {
 								errorMessage.append(" , ");
@@ -427,6 +427,20 @@ public class VoyageScheduleServiceImpl implements VoyageScheduleService {
 				}
 
 				if (locationbean.getCustomCode() != null || !locationbean.getCustomCode().isEmpty()) {
+
+					int locationIdfromUNCode = objLocationdao.getLocationIdfromUnlocode(locationbean.getCustomCode(),
+							loginScac);
+					int locationIdfromLocation = objLocationdao.getLocationId(locationbean.getLocation(), loginScac);
+					if(locationIdfromLocation!=0) {
+						if (locationIdfromUNCode != locationIdfromLocation) {
+							errorMessage.append("Unlocode: " + locationbean.getUnlocode()
+							+ " entered is same for multiple Locations in AMS system.");
+						}
+					}else {
+						objLocationdao.insert(locationbean, loginScac);
+					}
+					
+
 					if (objLocationdao.isForeignPort(locationbean.getCustomCode())) {
 						locationbean.setCustomForeign(true);
 					} else if (objLocationdao.isDisctrictPort(locationbean.getCustomCode())) {
@@ -437,8 +451,8 @@ public class VoyageScheduleServiceImpl implements VoyageScheduleService {
 							errorMessage.append(" , ");
 						}
 						if (locationbean.getUnlocode() != null && (!locationbean.getUnlocode().isEmpty())) {
-							errorMessage.append(
-									"customCode for unlocode : " + locationbean.getUnlocode() + " does not exists");
+							errorMessage.append("customCode for unlocode : " + locationbean.getUnlocode()
+									+ " does not exists for the login scac" + loginScac);
 						} else {
 							errorMessage.append("customCode : does not exists");
 						}
@@ -451,8 +465,7 @@ public class VoyageScheduleServiceImpl implements VoyageScheduleService {
 						errorMessage.append(" , ");
 					}
 					if (locationbean.getUnlocode() != null && (!locationbean.getUnlocode().isEmpty())) {
-						errorMessage
-								.append("customCode for unlocode : " + locationbean.getUnlocode() + " does not exists");
+						errorMessage.append("customCode for unlocode : " + locationbean.getUnlocode()+" does not exists for the login scac" + loginScac);
 					}
 				}
 			}
