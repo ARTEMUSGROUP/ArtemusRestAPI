@@ -27,7 +27,7 @@ public class AddressInfo {
 	private String state;
 	@ApiModelProperty(value = "The party's zipcode.",required = false)
 	private String zipCode;
-	@ApiModelProperty(value = "The party's phone number.",required = false)
+	@ApiModelProperty(value = "The party's phone number",required = false)
 	private String phoneNo;
 	@ApiModelProperty(value = "The party's fax number.",required = false)
 	private String faxNo;

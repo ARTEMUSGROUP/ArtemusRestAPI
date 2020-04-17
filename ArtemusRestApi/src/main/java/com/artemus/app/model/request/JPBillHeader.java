@@ -41,7 +41,7 @@ public class JPBillHeader {
 	private String masterBill;
 
 	// Shipping Info
-	@ApiModelProperty(value = "The information related to Shipper",required = false)
+	@ApiModelProperty(value = "The information related to Shipper",required = true)
 	private Party shipper;
 
 	// Recipient Info
@@ -49,7 +49,7 @@ public class JPBillHeader {
 	@ApiModelProperty(value = "The information related to Consignee",required = true)
 	@NotNull(message = "consignee cannot be blank")
 	private Party consignee;
-	@ApiModelProperty(value = "The information related to Notify",required = false)
+	@ApiModelProperty(value = "The information related to Notify",required = true)
 	private Party notify;
 
 
