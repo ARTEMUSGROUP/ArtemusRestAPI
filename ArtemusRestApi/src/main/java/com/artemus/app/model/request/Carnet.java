@@ -1,12 +1,11 @@
 package com.artemus.app.model.request;
 
-import io.swagger.annotations.ApiModelProperty;
 
 public class Carnet {
 
-	@ApiModelProperty(value = "Carnet Number",required = false,example=" ")
+	//	@ApiModelProperty(value = "Carnet Number",required = false,example=" ")
 	private String carnetNumber;
-	@ApiModelProperty(value = "Carnet Country",required = false,example=" ")
+	//@ApiModelProperty(value = "Carnet Country",required = false,example=" ")
 	private String carnetCountry;
 	
 	

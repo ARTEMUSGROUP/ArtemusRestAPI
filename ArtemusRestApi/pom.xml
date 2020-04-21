@@ -19,8 +19,8 @@
 				<version>2.5.1</version>
 				<inherited>true</inherited>
 				<configuration>
-					<source>1.7</source> <!-- yours Java version -->
-					<target>1.7</target> <!-- yours Java version -->
+					<source>1.8</source> <!-- yours Java version -->
+					<target>1.8</target> <!-- yours Java version -->
 				</configuration>
 			</plugin>
 		</plugins>
@@ -102,12 +102,13 @@
 			<artifactId>commons-io</artifactId>
 			<version>2.6</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/io.swagger/swagger-annotations -->
+		<!-- https://mvnrepository.com/artifact/io.swagger.core.v3/swagger-annotations -->
 		<dependency>
-			<groupId>io.swagger</groupId>
+			<groupId>io.swagger.core.v3</groupId>
 			<artifactId>swagger-annotations</artifactId>
-			<version>1.5.3</version>
+			<version>2.1.0</version>
 		</dependency>
+
 		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.module/jackson-module-jaxb-annotations -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.module</groupId>
@@ -117,36 +118,35 @@
 
 
 
-		<!-- https://mvnrepository.com/artifact/io.swagger/swagger-jaxrs -->
+		<!-- https://mvnrepository.com/artifact/io.swagger.core.v3/swagger-jaxrs2 -->
 		<dependency>
-			<groupId>io.swagger</groupId>
-			<artifactId>swagger-jaxrs</artifactId>
-			<version>1.5.3</version>
+			<groupId>io.swagger.core.v3</groupId>
+			<artifactId>swagger-jaxrs2</artifactId>
+			<version>2.1.0</version>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/io.swagger/swagger-jaxrs -->
+		<!-- https://mvnrepository.com/artifact/io.swagger.core.v3/swagger-core -->
 		<dependency>
-			<groupId>io.swagger</groupId>
-			<artifactId>swagger-jaxrs</artifactId>
-			<version>1.5.3</version>
-		</dependency>
-
-
-
-		<!-- https://mvnrepository.com/artifact/io.swagger/swagger-core -->
-		<dependency>
-			<groupId>io.swagger</groupId>
+			<groupId>io.swagger.core.v3</groupId>
 			<artifactId>swagger-core</artifactId>
-			<version>1.5.3</version>
+			<version>2.1.0</version>
 		</dependency>
 
 
 
-		<!-- https://mvnrepository.com/artifact/io.swagger/swagger-models -->
+
+		<!-- https://mvnrepository.com/artifact/io.swagger.core.v3/swagger-models -->
 		<dependency>
-			<groupId>io.swagger</groupId>
+			<groupId>io.swagger.core.v3</groupId>
 			<artifactId>swagger-models</artifactId>
-			<version>1.5.3</version>
+			<version>2.1.0</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.glassfish.jersey.media/jersey-media-multipart -->
+		<dependency>
+			<groupId>org.glassfish.jersey.media</groupId>
+			<artifactId>jersey-media-multipart</artifactId>
+			<version>2.1</version>
 		</dependency>
 
 

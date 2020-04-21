@@ -4,49 +4,47 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import com.github.reinert.jjschema.Attributes;
 
-import io.swagger.annotations.ApiModelProperty;
-
 public class Package {
 
-	@ApiModelProperty(value = "A description of the package type. See Appendix C for a list of valid packages.",required = true)
+	//@ApiModelProperty(value = "A description of the package type. See Appendix C for a list of valid packages.",required = true)
 	@Attributes(required = true, description = "The packageType.")
 	@NotEmpty(message = "packageType cannot be blank")
 	private String packageType;
 	
-	@ApiModelProperty(value = "Holds text description of marks found on this package. This element has no attributes and no text – the marks are in the element’s text. If the text would cause XML parsing issues, feel free to use a CDATA tag.",required = false)
+	//@ApiModelProperty(value = "Holds text description of marks found on this package. This element has no attributes and no text – the marks are in the element’s text. If the text would cause XML parsing issues, feel free to use a CDATA tag.",required = false)
 	private String marks;
 	
-	@ApiModelProperty(value = "The number of cargo pieces in this package.Must be greater than 0.",required = true)
+	//@ApiModelProperty(value = "The number of cargo pieces in this package.Must be greater than 0.",required = true)
 	private String pieces;
 	
-	@ApiModelProperty(value = "The name of this attribute. See Appendix B for known attribute types.",required = false)
+	//@ApiModelProperty(value = "The name of this attribute. See Appendix B for known attribute types.",required = false)
 	private ValueUnit weight;
 	
-	@ApiModelProperty(value = "The name of this attribute. See Appendix B for known attribute types.",required = false)
+	//@ApiModelProperty(value = "The name of this attribute. See Appendix B for known attribute types.",required = false)
 	private ValueUnit volume;
 	
-	@ApiModelProperty(value = "The name of this attribute. See Appendix B for known attribute types.",required = false)
+	//@ApiModelProperty(value = "The name of this attribute. See Appendix B for known attribute types.",required = false)
 	private ValueUnit length;
 	
-	@ApiModelProperty(value = "The name of this attribute. See Appendix B for known attribute types.",required = false)
+	//@ApiModelProperty(value = "The name of this attribute. See Appendix B for known attribute types.",required = false)
 	private ValueUnit width;
 	
-	@ApiModelProperty(value = "The name of this attribute. See Appendix B for known attribute types.",required = false)
+	//@ApiModelProperty(value = "The name of this attribute. See Appendix B for known attribute types.",required = false)
 	private ValueUnit height;
 	
-	@ApiModelProperty(value = "The name of this attribute. See Appendix B for known attribute types.",required = false)
+	//@ApiModelProperty(value = "The name of this attribute. See Appendix B for known attribute types.",required = false)
 	private ValueUnit set;
 	
-	@ApiModelProperty(value = "The name of this attribute. See Appendix B for known attribute types.",required = false)
+	//@ApiModelProperty(value = "The name of this attribute. See Appendix B for known attribute types.",required = false)
 	private ValueUnit min;
 	
-	@ApiModelProperty(value = "The name of this attribute. See Appendix B for known attribute types.",required = false)
+	//@ApiModelProperty(value = "The name of this attribute. See Appendix B for known attribute types.",required = false)
 	private ValueUnit max;
 	
-	@ApiModelProperty(value = "The name of this attribute. See Appendix B for known attribute types.",required = false)
+	//@ApiModelProperty(value = "The name of this attribute. See Appendix B for known attribute types.",required = false)
 	private ValueUnit vents;
 	
-	@ApiModelProperty(value = "The name of this attribute. See Appendix B for known attribute types.",required = false)
+	//@ApiModelProperty(value = "The name of this attribute. See Appendix B for known attribute types.",required = false)
 	private ValueUnit drainage;
 
 	public String getPackageType() {

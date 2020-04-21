@@ -1,20 +1,19 @@
 package com.artemus.app.model.request;
 
-import io.swagger.annotations.ApiModelProperty;
 
 public class Cargo {
 
-	@ApiModelProperty(value = "The description of good for this cargo",required = false)
+	//	@ApiModelProperty(value = "The description of good for this cargo",required = false)
 	private String descriptionsOfGoods;
-	@ApiModelProperty(value = "The harmonized tariff code for this cargo.",required = false)
+	//@ApiModelProperty(value = "The harmonized tariff code for this cargo.",required = false)
 	private String harmonizeCode;
-	@ApiModelProperty(value = "The hazard code for this cargo.",required = false)
+	//@ApiModelProperty(value = "The hazard code for this cargo.",required = false)
 	private String hazardCode;
 	//private String manufacturer;
-	@ApiModelProperty(value = "The name of the Country",required = false,example=" ")
+	//@ApiModelProperty(value = "The name of the Country",required = false,example=" ")
 	private String country;
-	@ApiModelProperty(value = "Mandatory for ISF-10.If the customer exists in the AMS system then only provide the name else for "
-			+ "creating new manufacturer customer provide addressInfo as well",required = false,example=" ")
+	//@ApiModelProperty(value = "Mandatory for ISF-10.If the customer exists in the AMS system then only provide the name else for "
+	//	+ "creating new manufacturer customer provide addressInfo as well",required = false,example=" ")
 	private Party manufacturer;
 
 	public String getDescriptionsOfGoods() {
