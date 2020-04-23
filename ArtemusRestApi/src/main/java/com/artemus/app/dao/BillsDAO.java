@@ -10,6 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.artemus.app.connection.DBConnectionFactory;
+import com.artemus.app.model.request.AddressInfo;
 import com.artemus.app.model.request.BillHeader;
 import com.artemus.app.model.request.Cargo;
 import com.artemus.app.model.request.Equipment;
@@ -204,6 +205,9 @@ public class BillsDAO {
 	public boolean insertIntoConsigneeShipperDetails(Party objParty, String tag, int billLadingId) throws SQLException {
 		boolean isDone = false;
 		if (objParty != null) {
+			if(objParty.getName().trim().equalsIgnoreCase("To Order") && objParty.getAddressInfo()==null ) {
+				objParty.setAddressInfo(new AddressInfo());
+			}
 			stmt = con.prepareStatement("Insert into consignee_shipper_details values (?, ?, ?, ?, ?, ?, false,?)");
 			stmt.setInt(1, billLadingId);
 			stmt.setString(2, objParty.getName());

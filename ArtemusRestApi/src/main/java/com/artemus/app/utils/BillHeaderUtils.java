@@ -90,20 +90,23 @@ public class BillHeaderUtils {
 				objMessage.append("shipper:{ " + objShipperMessage + " }");
 			}
 		}
-		if (objBillHeader.getConsignee() == null) {
-			if (objMessage.length() > 0) {
-				objMessage.append(",");
-			}
-			objMessage.append("consignee");
-		} else {
-			String objConsigneerMessage = objBillHeader.getConsignee().validateParty();
-			if (objConsigneerMessage.length() > 0) {
+		if(!objBillHeader.getConsignee().getName().trim().equalsIgnoreCase("To Order")) {
+			if (objBillHeader.getConsignee() == null) {
 				if (objMessage.length() > 0) {
 					objMessage.append(",");
 				}
-				objMessage.append("consignee:{ " + objConsigneerMessage + " }");
+				objMessage.append("consignee");
+			} else {
+				String objConsigneerMessage = objBillHeader.getConsignee().validateParty();
+				if (objConsigneerMessage.length() > 0) {
+					if (objMessage.length() > 0) {
+						objMessage.append(",");
+					}
+					objMessage.append("consignee:{ " + objConsigneerMessage + " }");
+				}
 			}
 		}
+		
 
 		if (objBillHeader.getNotify() == null) {
 			if (objMessage.length() > 0) {

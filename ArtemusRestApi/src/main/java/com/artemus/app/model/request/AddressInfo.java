@@ -13,9 +13,8 @@ import io.swagger.annotations.ApiModelProperty;
 
 public class AddressInfo {
 	
-	@ApiModelProperty(value = "The first part of the party’s address, as it will be passed to customs.",required = true)
+	@ApiModelProperty(value = "The first part of the party’s address, as it will be passed to customs.It is not mandatory for Consignee Party name 'To Order'",required = true)
 	@Attributes(required = true, description = "The addressLine1.")
-	@NotBlank(message = "addressLine1 cannot be blank")
 	private String addressLine1;
 	@ApiModelProperty(value = "The second line of the party’s address.",required = false)
 	private String addressLine2;
