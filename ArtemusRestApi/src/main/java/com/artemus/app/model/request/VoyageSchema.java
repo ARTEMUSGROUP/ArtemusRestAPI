@@ -55,7 +55,7 @@ public class VoyageSchema {
 						.entity(json)
 						.header("Access-Control-Allow-Origin", "*")
 						.header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT")
-						.allow("OPTIONS").build();
+						.build();
 
 			} catch (JsonProcessingException e) {
 				// TODO Auto-generated catch block
@@ -65,7 +65,7 @@ public class VoyageSchema {
 					.entity(json)
 					.header("Access-Control-Allow-Origin", "*")
 					.header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT")
-					.allow("OPTIONS").build();
+					.build();
 	    
 	    }
 	

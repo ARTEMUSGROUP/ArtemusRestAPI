@@ -18,6 +18,7 @@ import com.artemus.app.service.impl.BillsServiceImpl;
 
 import io.swagger.v3.oas.annotations.Operation;
 
+
 @Path("/bills")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces({MediaType.APPLICATION_JSON})
