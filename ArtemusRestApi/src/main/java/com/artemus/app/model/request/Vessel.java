@@ -74,7 +74,7 @@ public class Vessel {
 	}
 
 	public String getVesselName() {
-		return vesselName.toUpperCase();
+		return vesselName.toUpperCase().trim();
 	}
 
 	public void setVesselName(String vesselName) {

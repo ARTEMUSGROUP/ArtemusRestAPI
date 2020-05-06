@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -21,6 +22,7 @@ public class Voyage {
 	@ApiModelProperty(value = "The voyage number identifying this voyage.",required = true)
 	@Attributes(required = true, description = "The voyage number identifying this voyage.")
 	@NotBlank(message = "voyageNumber cannot be blank")
+	@Size(max = 5, message = "The voyageNumber must be max 5 characters only")
 	private String voyageNumber;
 
 	@ApiModelProperty(value = "The vessel name for the vessel for this voyage. It must already exist in our system.",required = true)
@@ -74,7 +76,7 @@ public class Voyage {
 	}
 
 	public String getVoyageNumber() {
-		return voyageNumber;
+		return voyageNumber.trim();
 	}
 
 	public void setVoyageNumber(String voyageNumber) {

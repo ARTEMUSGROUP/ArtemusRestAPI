@@ -7,6 +7,7 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 
+import com.artemus.app.model.request.AddOriginalManifest;
 import com.artemus.app.model.request.BillHeader;
 import com.artemus.app.model.request.JPBillHeader;
 import com.artemus.app.model.request.Vessel;
@@ -82,6 +83,21 @@ public class ValidateBeanUtil {
 				}
 				
 				return objString;
+	}
+	
+	public static StringBuffer getConstraintViolationMsgForAddingManifest(AddOriginalManifest objManifest) {
+		// Step 2
+		Set<ConstraintViolation<AddOriginalManifest>> violations = validator.validate(objManifest);
+		// Step 3
+		StringBuffer objString = new StringBuffer();
+		for (ConstraintViolation<AddOriginalManifest> violation : violations) {
+			if (objString.length()>0) {
+				objString.append(" , ");
+			}
+			objString.append(violation.getMessage());
+		}
+		
+		return objString;
 	}
 
 }
