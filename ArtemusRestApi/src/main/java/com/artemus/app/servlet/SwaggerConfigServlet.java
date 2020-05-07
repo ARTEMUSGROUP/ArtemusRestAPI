@@ -22,6 +22,7 @@ public class SwaggerConfigServlet extends HttpServlet {
 	public void init(ServletConfig config) throws ServletException {
 		// TODO Auto-generated method stub
 		super.init(config);
+
 		/*
 		 * BeanConfig swaggerConfig=new BeanConfig();
 		 * 
@@ -39,7 +40,9 @@ public class SwaggerConfigServlet extends HttpServlet {
 		 * JaxbAnnotationModule()); Yaml.mapper().registerModules(new
 		 * JaxbAnnotationModule()); logger.info("Swagger Initialization Done");
 		 */
-		 
+
+
+	    
 
 	}
 

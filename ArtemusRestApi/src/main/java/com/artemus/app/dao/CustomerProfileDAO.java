@@ -60,14 +60,26 @@ public class CustomerProfileDAO {
 	}
 
 	public boolean validateBillHeaderParties(BillHeader objBillHeader) {
-
+		boolean toOrderExists = false;
 		System.out.println("validateBillHeaderParties ::");
 		validateCustomer(objBillHeader.getShipper(), objBillHeader.getLoginScac());
 		validateCustomer(objBillHeader.getBookingParty(), objBillHeader.getLoginScac());
 		validateCustomer(objBillHeader.getSeller(), objBillHeader.getLoginScac());
 		validateCustomer(objBillHeader.getConsolidator(), objBillHeader.getLoginScac());
 		validateCustomer(objBillHeader.getStuffer(), objBillHeader.getLoginScac());
-		validateCustomer(objBillHeader.getConsignee(), objBillHeader.getLoginScac(), objBillHeader,true);
+		if(objBillHeader.getConsignee().getName().trim().equalsIgnoreCase("To Order")) {
+			objBillHeader.getConsignee().setName("TO ORDER");
+				if (isCustomerExists(objBillHeader.getConsignee(), objBillHeader.getLoginScac())) {
+					toOrderExists = true;
+				} else {
+					custErrorMessage.append("Consignee Party with name :"+objBillHeader.getConsignee().getName()+" does not Exist in the AMS"
+							+ "System. Create one Customer with name as 'To Order' in the AMS System.");
+				}
+		
+
+		}else {
+			validateCustomer(objBillHeader.getConsignee(), objBillHeader.getLoginScac(), objBillHeader,true);
+		}
 		validateCustomer(objBillHeader.getNotify(), objBillHeader.getLoginScac());
 		validateCustomer(objBillHeader.getImporter(), objBillHeader.getLoginScac(), objBillHeader,false);
 		validateCustomer(objBillHeader.getBuyer(), objBillHeader.getLoginScac());

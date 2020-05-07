@@ -30,7 +30,7 @@
 <!-- </Context>  -->
 
 <!-- Akshay Server Config -->
-<Context path="/ArtemusRestApi" reloadable="true">
+<Context path="/ArtemusApi" reloadable="true">
 	<Loader delegate="true"/>
 	<Resource name="jdbc/artemus" 
 		auth="Container" 
