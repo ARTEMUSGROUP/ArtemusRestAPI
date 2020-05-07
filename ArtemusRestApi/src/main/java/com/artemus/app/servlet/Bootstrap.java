@@ -2,8 +2,6 @@ package com.artemus.app.servlet;
 
 import javax.servlet.http.HttpServlet;
 
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -37,19 +35,16 @@ public class Bootstrap extends HttpServlet {
 	
 	@Override
 	public void init(ServletConfig config) throws ServletException {
-		 OpenAPI oas = new OpenAPI();
-		    SwaggerConfiguration oasConfig = new SwaggerConfiguration()
-		            .openAPI(oas)
-		            .resourcePackages(Stream.of("com.artemus.app").collect(Collectors.toSet()));
-
-		    try {
-		      new JaxrsOpenApiContextBuilder()
-		              .servletConfig(config)
-		              .openApiConfiguration(oasConfig)
-		              .buildContext(true);
-		    } catch (OpenApiConfigurationException e) {
-		      throw new ServletException(e.getMessage(), e);
-		    }
+		/*
+		 * OpenAPI oas = new OpenAPI(); SwaggerConfiguration oasConfig = new
+		 * SwaggerConfiguration() .openAPI(oas)
+		 * .resourcePackages(Stream.of("com.artemus.app").collect(Collectors.toSet()));
+		 * 
+		 * try { new JaxrsOpenApiContextBuilder() .servletConfig(config)
+		 * .openApiConfiguration(oasConfig) .buildContext(true); } catch
+		 * (OpenApiConfigurationException e) { throw new
+		 * ServletException(e.getMessage(), e); }
+		 */
 
 		  
 		    
