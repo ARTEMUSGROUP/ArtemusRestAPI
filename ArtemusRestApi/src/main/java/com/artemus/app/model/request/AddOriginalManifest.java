@@ -6,42 +6,47 @@ import org.hibernate.validator.constraints.NotBlank;
 
 import com.github.reinert.jjschema.Attributes;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.Hidden;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 public class AddOriginalManifest {
 
-	@ApiModelProperty(value = "The voyage number identifying this voyage.", required = true)
+	@Schema(description="The voyage number identifying this voyage.",required=true)
 	@Attributes(required = true, description = "The voyage number identifying this voyage.")
 	@NotBlank(message = "voyageNumber cannot be blank")
 	private String voyageNumber;
 
-	@ApiModelProperty(value = "The vessel name for the vessel for this voyage. It must already exist in our system.", required = true)
+	@Schema(description="The vessel name for the vessel for this voyage. It must already exist in our system.",required=true)
 	@Attributes(required = true, description = "The vessel name for the vessel for this voyage.  It must already exist in our system.")
 	@NotBlank(message = "vesselName cannot be blank")
 	private String vesselName;
 
-	@ApiModelProperty(value = "Load Port Location Name.Mandatory if loadPortCustomCode is not given.", required = false)
+	@Schema(description="Load Port Location Name.Mandatory if loadPortCustomCode is not given.",required=false)
 	@Attributes(required = false, description = "The name of this location.  If the location already exists in our system, this and an index are the only required attributes.")
 	private String loadPortLocation;
 
-	@ApiModelProperty(value = "Discharge Port Location Name.Mandatory if dischargePortCustomCode is not given.", required = false)
+	@Schema(description="Discharge Port Location Name.Mandatory if dischargePortCustomCode is not given.",required=false)
 	@Attributes(required = false, description = "The name of this location.  If the location already exists in our system, this and an index are the only required attributes.")
 	private String dischargePortLocation;
 
-	@ApiModelProperty(value = "Custom Code of Load Port Location.Mandatory if loadPortLocation is not given.", required = false)
+	@Schema(description="Custom Code of Load Port Location.Mandatory if loadPortLocation is not given.",required=false)
 	@Attributes(required = false, description = "“Schedule K” port code for this location.")
 	private String loadPortCustomCode;
 
-	@ApiModelProperty(value = "Custom Code of Discharge Port Location.Mandatory if dischargePortLocation is not given.", required = false)
+	//@ApiModelProperty(value = "Custom Code of Discharge Port Location.Mandatory if dischargePortLocation is not given.", required = false)
+	@Schema(description="Custom Code of Discharge Port Location.Mandatory if dischargePortLocation is not given.",required=false)
 	@Attributes(required = false, description = "“Schedule K” port code for this location.")
 	private String dischargePortCustomCode;
 
 	// ---------------------
 
+	@Hidden
 	@XmlTransient
 	private String loginScac;
+	@Hidden
 	@XmlTransient
 	private int vesselId;
+	@Hidden
 	@XmlTransient
 	private int voyageId;
 

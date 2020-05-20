@@ -8,51 +8,58 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import com.github.reinert.jjschema.Attributes;
 
+import io.swagger.v3.oas.annotations.Hidden;
+import io.swagger.v3.oas.annotations.media.Schema;
+
 public class VesselSchedule {
 
-	//@ApiModelProperty(value = "The vessel name",required = true)
+	@Schema(description = "The vessel name",required = true)
 	@Attributes(required = true, description = "The vesselName")
 	@NotEmpty(message = "vesselName is required")
 	private String vesselName;
 	
-	//@ApiModelProperty(value = "The voyage number",required = true)
+	@Schema(description = "The voyage number",required = true)
 	@Attributes(required = true, description = "The voyageNumber")
 	@NotEmpty(message = "voyageNumber cannot be blank")
 	private String voyageNumber;
 
-	//@ApiModelProperty(value = "The indicates of country Of Origin",required = true)
+	@Schema(description = "The indicates of country Of Origin",required = true)
 	private String countryOfOrigin;
 	
-	//@ApiModelProperty(value = "The place of receipt",required = false,example=" ")
+	@Schema(description = "The place of receipt",required = false,example=" ")
 	private String placeOfReceipt;
 	
-	//@ApiModelProperty(value = "Indicates the port of loading.",required = true)
+	@Schema(description = "Indicates the port of loading.",required = true)
 	@Attributes(required = true, description = "The portOfLoading")
 	@NotEmpty(message = "portOfLoading cannot be blank")
 	private String portOfLoading;
 	
-	//@ApiModelProperty(value = "Indicates the port of Discharge.",required = true)
+	@Schema(description = "Indicates the port of Discharge.",required = true)
 	@Attributes(required = true, description = "The portOfDischarge")
 	@NotEmpty(message = "portOfDischarge cannot be blank")
 	private String portOfDischarge;
 	
-	//@ApiModelProperty(value = "The place of delivery.",required = false,example=" ")
+	@Schema(description = "The place of delivery.",required = false,example=" ")
 	private String placeOfDelivery;
 	
-	//@ApiModelProperty(value = "Canada customs office code for this location. Only valid for Canada locations",required = false,example=" ")
+	@Schema(description = "Canada customs office code for this location. Only valid for Canada locations",required = false,example=" ")
 	private String canadaCustomsOffice;
 	
-	//@ApiModelProperty(value = "Type of move, sometimes referred to as type of shipment. Acceptable values:FCL/FCL,FCL/LCL,LCL/FCL,LCL/LCL,PIER/HOUSE,PIER/PIER,BBK/BBK",required = false,example=" ")
+	@Schema(description = "Type of move, sometimes referred to as type of shipment. Acceptable values:FCL/FCL,FCL/LCL,LCL/FCL,LCL/LCL,PIER/HOUSE,PIER/PIER,BBK/BBK",required = false,example=" ")
 	private String moveType;
 
 	// -------------------------------
 	@XmlTransient
+	@Hidden
 	private int vesselId;
 	@XmlTransient
+	@Hidden
 	private int voyageId;
 	@XmlTransient
+	@Hidden
 	private String lloydsCode;
 	@XmlTransient
+	@Hidden
 	private String vesselScac;
 
 	public String getVesselName() {

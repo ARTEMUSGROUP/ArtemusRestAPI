@@ -8,59 +8,66 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import com.github.reinert.jjschema.Attributes;
 
+import io.swagger.v3.oas.annotations.Hidden;
+import io.swagger.v3.oas.annotations.media.Schema;
+
 public class JPEquipment {
 	
-	//@ApiModelProperty(value = "The equipment identifier for this piece of equipment.",required = true)
+	@Schema(description = "The equipment identifier for this piece of equipment.",required = true)
 	@Attributes(required = true, description = "The equipmentNo.")
 	@NotEmpty(message = "equipmentNo cannot be blank")
 	private String equipmentNo;
 	
 	@Attributes(required = true, description = "The equipmentType.")
 	@NotEmpty(message = "equipmentType cannot be blank")
-	//@ApiModelProperty(value = "The size and type code for this piece of equipment.  See Appendix A for the standard list of equipment types.  "
-	//		+ "Additional types can be added to customer databases.",required = true)
+	@Schema(description = "The size and type code for this piece of equipment.  See Appendix A for the standard list of equipment types.  "
+			+ "Additional types can be added to customer databases.",required = true)
 	private String equipmentType;
 	
-	//@ApiModelProperty(value = "The ServiceType ID for ServiceType.  Accepted values include: 51,52,53 for following cases. \r\n" + 
-	//		"                          51-CY Delivery,\r\n" + 
-	//	"                          52-CFS Delivery,\r\n" + 
-	//	"                          53-DOOR Delivery",required = false,example="51")
+	@Schema(description = "The ServiceType ID for ServiceType.  Accepted values include: 51,52,53 for following cases. \r\n" + 
+		"                          51-CY Delivery,\r\n" + 
+		"                          52-CFS Delivery,\r\n" + 
+		"                          53-DOOR Delivery",required = false,example="51")
 	private String serviceTypeId;
 	
-	//@ApiModelProperty(value = "The containerOwnership ID for containerOwnership.  Accepted values include: 1,2,3,4,5 for following cases.\r\n" + 
-	//	"                           1-Shipper supplied,\r\n" + 
-	//	"                           2-Carrier supplied  ,\r\n" + 
-	//	"                           3-Consolidator supplied,\r\n" + 
-	//	"                           4-Deconsolidator supplied,\r\n" + 
-	//	"                           5-Third party supplied",required = false,example="1")
+	@Schema(description = "The containerOwnership ID for containerOwnership.  Accepted values include: 1,2,3,4,5 for following cases.\r\n" + 
+		"                           1-Shipper supplied,\r\n" + 
+		"                           2-Carrier supplied  ,\r\n" + 
+		"                           3-Consolidator supplied,\r\n" + 
+		"                           4-Deconsolidator supplied,\r\n" + 
+		"                           5-Third party supplied",required = false,example="1")
 	private String containerOwnershipId;
 	
-	//@ApiModelProperty(value = "The vanningType ID for vanningType.  Accepted values include: 4,1,16 for following cases:\r\n" + 
-	//	"                              4-Shipper Load,\r\n" + 
-	//	"                              1-Carrier Load,\r\n" + 
-	//	"                              16-Consignee Load",required = false,example="4")
+	@Schema(description = "The vanningType ID for vanningType.  Accepted values include: 4,1,16 for following cases:\r\n" + 
+		"                              4-Shipper Load,\r\n" + 
+		"                              1-Carrier Load,\r\n" + 
+		"                              16-Consignee Load",required = false,example="4")
     private String vanningTypeId;
 	
-    //@ApiModelProperty(value = "The customConvention ID for costomConvention.  Accepted values include: 1,2,3",required = false,example="1")
+    @Schema(description = "The customConvention ID for costomConvention.  Accepted values include: 1,2,3",required = false,example="1")
 	private String customConventionId;
 	
-	//@ApiModelProperty(value = "A comma-separated list of seal numbers for this piece of equipment.",required = true)
+	@Schema(description = "A comma-separated list of seal numbers for this piece of equipment.",required = true)
 	private ArrayList<String> seals;
 	
-	//@ApiModelProperty(value = "Defines packaging for bill cargo.  Packages my be in a single piece of equipment.  Many cargo items may be in a package.",required = true)
+	@Schema(description = "Defines packaging for bill cargo.  Packages my be in a single piece of equipment.  Many cargo items may be in a package.",required = true)
 	private ArrayList<Package> packages;
 	
-	//@ApiModelProperty(value = "Describes the cargo found on this bill of lading.  Cargo items must reference a package.  "
-	//	+ "The text of the Cargo element is the description of good for this cargo.  Use a CDATA tag when needed",required = true)
+	@Schema(description = "Describes the cargo found on this bill of lading.  Cargo items must reference a package.  "
+		+ "The text of the Cargo element is the description of good for this cargo.  Use a CDATA tag when needed",required = true)
 	private ArrayList<Cargo> cargos;
 	
 	//---------------------------------------------
 	@XmlTransient
+	@Hidden
 	private String serviceType;
+	@Hidden
 	@XmlTransient
 	private String containerOwnership;
+	@Hidden
 	@XmlTransient
 	private String vanningType;
+	@Hidden
 	@XmlTransient
 	private String ccid;
 	

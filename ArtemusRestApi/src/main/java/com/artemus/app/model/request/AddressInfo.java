@@ -6,46 +6,52 @@ import org.hibernate.validator.constraints.NotBlank;
 
 import com.github.reinert.jjschema.Attributes;
 
+import io.swagger.v3.oas.annotations.Hidden;
+import io.swagger.v3.oas.annotations.media.Schema;
+
 public class AddressInfo {
 
 	
-	//@ApiModelProperty(value = "The first part of the party’s address, as it will be passed to customs.",required = true)
+	@Schema(description="The first part of the party’s address, as it will be passed to customs.",required = true)
 	@Attributes(required = true, description = "The addressLine1.")
 	private String addressLine1;
-	//@ApiModelProperty(value = "The second line of the party’s address.",required = false)
+	@Schema(description="The second line of the party’s address.",required = false)
 	private String addressLine2;
-	//@ApiModelProperty(value = "The party’s city.",required = false)
+	@Schema(description="The party’s city.",required = false)
 	private String city;
-	//@ApiModelProperty(value = "The party’s three letter country code, as defined by ISO 3166-1 alpha-3.",required = false)
+	@Schema(description="The party’s three letter country code, as defined by ISO 3166-1 alpha-3.",required = false)
 	private String country;
-	//@ApiModelProperty(value = "The party’s state.",required = false)
+	@Schema(description="The party’s state.",required = false)
 	private String state;
-	//@ApiModelProperty(value = "The party's zipcode.",required = false)
+	@Schema(description = "The party's zipcode.",required = false)
 	private String zipCode;
-	//@ApiModelProperty(value = "The party's phone number",required = false)
+	@Schema(description = "The party's phone number",required = false)
 	private String phoneNo;
-	//@ApiModelProperty(value = "The party's fax number.",required = false)
+	@Schema(description = "The party's fax number.",required = false)
 	private String faxNo;
-//	@ApiModelProperty(value = "Entity Type of Customer.For creating new Customer for Consignee or Importer entity number "
-//			+ "is mandatory.Accepted values will be accepted as per following names with exact syntax only: Employee ID, "
-//			+ "Importer/Consignee, SSN, DUNS, Passport, CBP Encrypted Consignee ID, DUNS 4, EI.",required = false)
+	@Schema(description = "Entity Type of Customer.For creating new Customer for Consignee or Importer entity number "
+		+ "is mandatory.Accepted values will be accepted as per following names with exact syntax only: Employee ID, "
+		+ "Importer/Consignee, SSN, DUNS, Passport, CBP Encrypted Consignee ID, DUNS 4, EI.",required = false)
 	private String entityType;
-	//@ApiModelProperty(value = "Entity Number of Customer.For creating new Customer for Consignee or Importer entity number is mandatory.",required = false)
+	@Schema(description = "Entity Number of Customer.For creating new Customer for Consignee or Importer entity number is mandatory.",required = false)
 	private String entityNumber;
-	//@ApiModelProperty(value = "The party's Date of Birth.",required = false,example="1993/01/01")
+	@Schema(description = "The party's Date of Birth.",required = false,example="1993/01/01")
 	private String dob;
+	private String countryOfIssuance;
 	// -------------------
+	@Hidden
 	@XmlTransient
 	private int addressId;
+	@Hidden
 	@XmlTransient
 	private String addressType;
+	@Hidden
 	@XmlTransient
 	private String createdUser;
+	@Hidden
 	@XmlTransient
 	private String createdDate;
 	
-	
-	private String countryOfIssuance;
 
 	public String getEntityType() {
 		if (entityType == null)

@@ -1,9 +1,11 @@
 package com.artemus.app.model.request;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 public class ValueUnit {
-	//@ApiModelProperty(value = "Value",required = false)
+	@Schema(description = "Value",required = false)
 	private double value;
-	//@ApiModelProperty(value = "Unit",required = false,example=" ")
+	@Schema(description = "Unit",required = false,example=" ")
 	private String unit;
 
 	public double getValue() {

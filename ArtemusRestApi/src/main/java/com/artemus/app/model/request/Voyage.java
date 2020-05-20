@@ -11,49 +11,55 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.hibernate.validator.constraints.NotBlank;
 import com.github.reinert.jjschema.Attributes;
 
+import io.swagger.v3.oas.annotations.Hidden;
+import io.swagger.v3.oas.annotations.media.Schema;
+
 
 @XmlRootElement
 //@ApiModel(value="Voyage",description = "All details about the Voyage. ")
 public class Voyage {
 
-	//@ApiModelProperty(value = "The voyage number identifying this voyage.",required = true)
+    @Schema(description = "The voyage number identifying this voyage.",required = true)
 	@Attributes(required = true, description = "The voyage number identifying this voyage.")
 	@NotBlank(message = "voyageNumber cannot be blank")
 	@Size(max = 5, message = "The voyageNumber must be max 5 characters only")
 	private String voyageNumber;
 
-	//@ApiModelProperty(value = "The vessel name for the vessel for this voyage. It must already exist in our system.",required = true)
+	@Schema(description = "The vessel name for the vessel for this voyage. It must already exist in our system.",required = true)
 	@Attributes(required = true, description = "The vessel name for the vessel for this voyage.  It must already exist in our system.")
 	@NotBlank(message = "vesselName cannot be blank")
 	private String vesselName;
 
-	//@ApiModelProperty(value = "The SCAC for the operator of this vessel.  By default the SCAC for the vessel will be used.",required = false,example=" ")
+	@Schema(description = "The SCAC for the operator of this vessel.  By default the SCAC for the vessel will be used.",required = false,example=" ")
 	@Attributes(required = false, description = "The SCAC for the operator of this vessel.  By default the SCAC for the vessel will be used.")
 	private String scacCode;
 
-	//@ApiModelProperty(value = "The number of crew members on the vessel. Not used for U.S. Customs transmissions.",required = false,example=" ")
+	@Schema(description = "The number of crew members on the vessel. Not used for U.S. Customs transmissions.",required = false,example=" ")
 	@Attributes(required = false, description = "The number of crew members on the vessel.  Not used for U.S. Customs transmissions.")
 	private String crewMembers;
 
-	//@ApiModelProperty(value = "The number of passengers on the vessel. Not used for U.S. Customs transmissions.",required = false,example=" ")
+	@Schema(description = "The number of passengers on the vessel. Not used for U.S. Customs transmissions.",required = false,example=" ")
 	@Attributes(required = false, description = "The number of passengers on the vessel.  Not used for U.S. Customs transmissions.")
 	private String passengers;
 
-	//@ApiModelProperty(value = "Canada customs report number. Not used for U.S. Customs transmissions.",required = false,example=" ")
+	@Schema(description = "Canada customs report number. Not used for U.S. Customs transmissions.",required = false,example=" ")
 	@Attributes(required = false, description = "Canada customs report number.  Not used for U.S. Customs transmissions.")
 	private String reportNumber;
 
-	//@ApiModelProperty(value = "Defines a starting or stopping point for a voyage.",required = true)
+	@Schema(description = "Defines a starting or stopping point for a voyage.",required = true)
 	@Attributes(required = true, description = "Defines a starting or stopping point for a voyage.  ")
 	@NotNull(message = "PortDetails cannot be null")
 	private ArrayList<PortDetails> PortDetails;
 
 	// -----------------------------------
 	@XmlTransient
+	@Hidden
 	private int voyageId;
 	@XmlTransient
+	@Hidden
 	private int vesselId;
 	@XmlTransient
+	@Hidden
 	private String vesselScacCode;
 
 	public int getVoyageId() {

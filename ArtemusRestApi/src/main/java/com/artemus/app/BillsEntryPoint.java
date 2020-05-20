@@ -17,17 +17,23 @@ import com.artemus.app.service.BillsService;
 import com.artemus.app.service.impl.BillsServiceImpl;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 
 @Path("/bills")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces({MediaType.APPLICATION_JSON})
+@ApiResponse(responseCode = "200", description = "Bill Created Successfully")
 @io.swagger.v3.oas.annotations.tags.Tag(name = "Bill Service",description="To Create and Update Bill")
 public class BillsEntryPoint {
 
 	@Secured
 	@POST
-	@Operation(description = "API for Bill Creation")
+	@Operation(description = "API for Bill Creation",responses= {@ApiResponse(description = "Create a Bill",
+            content = @Content(mediaType="application/json",schema=@Schema(implementation = ResponseMessage.class))),
+			@ApiResponse(responseCode = "400", description = "Bill not Created")})
 	public ResponseMessage createBill(BillHeader requestObj,@HeaderParam("Authorization") String authorization) {
 		System.out.println(requestObj.toString());
 		String scacCode = authorization.substring(0,4)  ;
