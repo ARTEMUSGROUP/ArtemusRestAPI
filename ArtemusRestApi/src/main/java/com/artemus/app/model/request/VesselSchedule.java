@@ -1,5 +1,7 @@
 package com.artemus.app.model.request;
 
+import java.text.Normalizer;
+
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -109,7 +111,7 @@ public class VesselSchedule {
 	}
 
 	public void setPortOfLoading(String portOfLoading) {
-		this.portOfLoading = portOfLoading;
+		this.portOfLoading = Normalizer.normalize(portOfLoading, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
 	}
 
 	public String getPortOfDischarge() {
@@ -120,7 +122,7 @@ public class VesselSchedule {
 	}
 
 	public void setPortOfDischarge(String portOfDischarge) {
-		this.portOfDischarge = portOfDischarge;
+		this.portOfDischarge = Normalizer.normalize(portOfDischarge, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
 	}
 
 	public String getPlaceOfDelivery() {

@@ -83,6 +83,19 @@ public class JpLocationDAO {
 			rs = stmt.executeQuery();
 			if (rs.next()) {
 				return rs.getInt(1);
+			}else {
+				stmt = con.prepareStatement("Select location_id from location where location_name=?"
+						+ " and login_scac=? union Select location_id from alt_location where alt_name=?"
+						+ " and login_scac=?");
+				stmt.setString(1, locationName.replaceAll("-", ""));
+				stmt.setString(2, loginScac);
+				stmt.setString(3, locationName.replaceAll("-", ""));
+				stmt.setString(4, loginScac);
+				logger.debug(stmt);
+				rs = stmt.executeQuery();
+				if (rs.next()) {
+					return rs.getInt(1);
+				}
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();

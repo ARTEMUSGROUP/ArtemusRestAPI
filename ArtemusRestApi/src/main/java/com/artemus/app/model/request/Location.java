@@ -1,5 +1,7 @@
 package com.artemus.app.model.request;
 
+import java.text.Normalizer;
+
 import javax.validation.Valid;
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.Pattern;
@@ -8,12 +10,13 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.hibernate.validator.constraints.NotBlank;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.reinert.jjschema.Attributes;
 import io.swagger.annotations.ApiModelProperty;
 
 public class Location {
 
-	
+	@JsonProperty
 	@ApiModelProperty(value = "The name of this location. If the location already exists in our system, this are the only required attributes.",required = true)
 	@Attributes(required = true, description = "The name of this location.  If the location already exists in our system, this and an index are the only required attributes.")
 	@NotBlank(message = "location cannot be blank")
@@ -93,7 +96,7 @@ public class Location {
 	}
 
 	public void setLocation(String location) {
-		this.location = location;
+		this.location =Normalizer.normalize(location, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
 	}
 
 	public String getCountry() {
@@ -129,6 +132,9 @@ public class Location {
 	}
 
 	public String getUnlocode() {
+		if(unlocode==null)
+			return "";
+		
 		return unlocode.replaceAll("//s", "");
 	}
 

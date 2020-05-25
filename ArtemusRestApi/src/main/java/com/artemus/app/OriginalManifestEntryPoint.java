@@ -20,7 +20,7 @@ import io.swagger.annotations.SwaggerDefinition;
 import io.swagger.annotations.Tag;
 
 @Path("/addOriginalManifest")
-@Consumes(MediaType.APPLICATION_JSON)
+@Consumes("application/json; charset=UTF-8")
 @Produces({MediaType.APPLICATION_JSON})
 @Api("Original Manifest Service")
 @SwaggerDefinition(tags= {@Tag(name="Original Manifest Service",description="To Send Bill To Customs")})

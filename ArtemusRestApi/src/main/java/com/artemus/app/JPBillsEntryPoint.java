@@ -22,7 +22,7 @@ import io.swagger.annotations.Tag;
 
 
 @Path("/jp/bills")
-@Consumes(MediaType.APPLICATION_JSON)
+@Consumes("application/json; charset=Utf-8")
 @Produces({ MediaType.APPLICATION_JSON })
 @Api("Japan Bill Service")
 @SwaggerDefinition(tags= {@Tag(name="Japan Bill Service",description="To Create and Update Bill")})

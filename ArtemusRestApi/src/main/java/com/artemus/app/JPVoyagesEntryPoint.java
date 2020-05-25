@@ -21,7 +21,7 @@ import io.swagger.annotations.Tag;
 
 
 @Path("/jp/voyages")
-@Consumes(MediaType.APPLICATION_JSON)
+@Consumes("application/json; charset=UTF-8")
 @Produces({ MediaType.APPLICATION_JSON })
 @Api("Japan Voyage Service")
 @SwaggerDefinition(tags= {@Tag(name="Japan Voyage Service",description="To create Voyage")})

@@ -15,14 +15,14 @@ import com.artemus.app.model.request.Voyage;
 import com.artemus.app.model.response.ResponseMessage;
 import com.artemus.app.service.VoyageScheduleService;
 import com.artemus.app.service.impl.VoyageScheduleServiceImpl;
+import com.github.reinert.jjschema.Media;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.SwaggerDefinition;
 import io.swagger.annotations.Tag;
 
-
-@Consumes(MediaType.APPLICATION_JSON)
-@Produces({ MediaType.APPLICATION_JSON })
+@Consumes("application/json; charset=UTF-8")
+@Produces(MediaType.APPLICATION_JSON)
 @Path("voyages")
 @Api("Voyage Service")
 @SwaggerDefinition(tags= {@Tag(name="Voyage Service",description="To create Voyage")})
@@ -30,6 +30,8 @@ public class VoyagesEntryPoint {
 
 	@Secured
 	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
 	public ResponseMessage createVoyage(Voyage objRequest, @HeaderParam("Authorization") String authorization) {
 		String scacCode = authorization.substring(0, 4);
 		objRequest.setScacCode(scacCode);

@@ -1,5 +1,7 @@
 package com.artemus.app.model.request;
 
+import java.text.Normalizer;
+
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.hibernate.validator.constraints.NotBlank;
@@ -69,7 +71,7 @@ public class AddOriginalManifest {
 	}
 
 	public void setLoadPortLocation(String loadPortLocation) {
-		this.loadPortLocation = loadPortLocation;
+		this.loadPortLocation = Normalizer.normalize(loadPortLocation, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
 	}
 
 	public String getDischargePortLocation() {
@@ -80,7 +82,7 @@ public class AddOriginalManifest {
 	}
 
 	public void setDischargePortLocation(String dischargePortLocation) {
-		this.dischargePortLocation = dischargePortLocation;
+		this.dischargePortLocation = Normalizer.normalize(dischargePortLocation, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
 	}
 
 	public String getLoadPortCustomCode() {
