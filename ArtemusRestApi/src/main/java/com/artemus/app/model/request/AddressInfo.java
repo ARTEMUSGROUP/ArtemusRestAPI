@@ -2,6 +2,7 @@ package com.artemus.app.model.request;
 
 import java.sql.Date;
 
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.hibernate.validator.constraints.NotBlank;
@@ -20,7 +21,8 @@ public class AddressInfo {
 	private String addressLine2;
 	@ApiModelProperty(value = "The party’s city.",required = false)
 	private String city;
-	@ApiModelProperty(value = "The party’s three letter country code, as defined by ISO 3166-1 alpha-3.",required = false)
+	@Size(max = 2, message = "country must be 2 letter country code")
+	@ApiModelProperty(value = "The party’s two letter country code, as defined by ISO 3166-1 alpha-3.",required = false)
 	private String country;
 	@ApiModelProperty(value = "The party’s state.",required = false)
 	private String state;
@@ -229,8 +231,15 @@ public class AddressInfo {
 
 	public String validateAddressInfo() {
 		String objAddressInfoMessage = "";
+		if(country.length()>2)
+		{
+			objAddressInfoMessage = " country code must be two letters only ";
+
+		}
 		if (addressLine1 == null || addressLine1.isEmpty())
+		{
 			objAddressInfoMessage = " addressLine1 ";
+		}
 		return objAddressInfoMessage;
 	}
 

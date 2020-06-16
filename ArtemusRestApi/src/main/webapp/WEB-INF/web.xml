@@ -18,7 +18,7 @@
 		<servlet-name>Jersey Web Application</servlet-name>
 		<url-pattern>/v1/*</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
 		<servlet-name>Swagger configuration</servlet-name>
 		<servlet-class>com.artemus.app.servlet.SwaggerConfigServlet</servlet-class>

@@ -22,9 +22,9 @@ public class Location {
 	@NotBlank(message = "location cannot be blank")
 	private String location;
 
-	@ApiModelProperty(value = "The location’s three letter country code, as defined by ISO 3166-1 alpha-3. If this location does not already exist in our database, this field is required.",required = false)
+	@ApiModelProperty(value = "The location’s two letter country code, as defined by ISO 3166-1 alpha-3. If this location does not already exist in our database, this field is required.",required = false)
 	@Attributes(required = false, description = "The location’s three letter country code, as defined by ISO 3166-1 alpha-3.  If this location does not already exist in our database, this field is required.T")
-	@Size(max = 3, message = "country must be 3 letter country code of location")
+	@Size(max = 2, message = "country must be 2 letter country code of location")
 	private String country;
 
 	@ApiModelProperty(value = "The providence for this location. For U.S. locations, use the two letter state abbreviation.",required = false)

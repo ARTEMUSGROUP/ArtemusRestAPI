@@ -17,6 +17,7 @@ public class BillHeaderUtils {
 			}
 		}
 
+		
 		if (objBillHeader.getBillType() == null || objBillHeader.getBillType().isEmpty()) {
 			if (objMessage.length() > 0) {
 				objMessage.append(",");
