@@ -441,12 +441,25 @@ public class BillsDAO {
 		// TODO Auto-generated method stub
 		try {
 			if (objEquipment.getCargos() != null) {
+				
+				stmt1=con.prepareStatement("SELECT system_code FROM artemus.new_hazard_code where un_code=?");
+				
 				stmt = con.prepareStatement("Insert into cargo "
 						+ " (bill_lading_id, cargo_id, equipment_number, description, harmonize_code, "
 						+ " hazard_code, manufacturer, country,customer_id) values " + " (?,?,?,?,?,?,?,?,?)");
 
 				for (Cargo objCargo : objEquipment.getCargos()) {
 					if (objCargo != null) {
+						
+						// get hazard code from hazard un_code
+						stmt1.setString(1,objCargo.getHazardCode());
+					rs=stmt1.executeQuery();
+						if (rs.next()) {
+							objCargo.setHazardCode(rs.getString(1));
+							logger.info(rs.getString(1));
+						}
+						
+						// Insert into Cargo
 						stmt.setInt(1, billLadingId);
 						stmt.setInt(2, cargoIndex);
 						stmt.setString(3, objEquipment.getEquipmentNo());
@@ -470,6 +483,7 @@ public class BillsDAO {
 						if (stmt.executeUpdate() != 1) {
 							return -1;
 						}
+						//logger.info(stmt);
 						System.out.println("Inside CArgos" + objCargo);
 						if (objCargo.getCountry().isEmpty()
 								|| objCargo.getCountry() == null && objCargo.getHarmonizeCode().isEmpty()
