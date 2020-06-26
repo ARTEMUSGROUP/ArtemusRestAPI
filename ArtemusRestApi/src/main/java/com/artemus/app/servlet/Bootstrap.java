@@ -25,10 +25,10 @@ import io.swagger.v3.oas.models.OpenAPI;
         version = "1.0.0", 
         description = "Artemus API version 1.0",
         termsOfService = "",
-        contact = @Contact(url = "http://giantleapsystems.com/", name = "Akshay", email = "akshay.tikone@giantleapsystems.com"),
+        contact = @Contact(url = "http://giantleapsystems.com/"),
         license = @License(
-            name = "Akshay",
-            url = "http://localhost:8080/ArtemusApi/v1"
+            name = "Artemus API v1",
+            url = "https://localhost:8080/ArtemusApi/v1"
         )
     ),tags = {
             @Tag(name = "Vessel Service", description = "To Create and Update Vessel"),
