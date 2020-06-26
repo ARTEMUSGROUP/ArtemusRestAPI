@@ -23,7 +23,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 
 @Path("/bills")
-@Consumes(MediaType.APPLICATION_JSON)
+@Consumes("application/json; charset=UTF-8")
 @Produces({MediaType.APPLICATION_JSON})
 @ApiResponse(responseCode = "200", description = "Bill Created Successfully")
 @io.swagger.v3.oas.annotations.tags.Tag(name = "Bill Service",description="To Create and Update Bill")

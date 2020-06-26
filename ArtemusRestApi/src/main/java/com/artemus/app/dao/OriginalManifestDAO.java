@@ -303,12 +303,18 @@ public class OriginalManifestDAO {
 			if (rs.next()) {
 				return rs.getString("location_code");
 			} else {
-				return "";
+				stmt = con.prepareStatement("Select location_code from location where location_name=? and login_scac=? ");
+				stmt.setString(1, locationName.replaceAll("-", ""));
+				stmt.setString(2, loginScac);
+				rs = stmt.executeQuery();
+				if (rs.next()) {
+					return rs.getString("location_code");
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			return "";
 		}
+		return "";
 	}
 
 	private int getReferenceNumber(String loginScac) {

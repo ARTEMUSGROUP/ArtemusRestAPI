@@ -19,7 +19,7 @@ import io.swagger.v3.oas.annotations.Operation;
 
 
 @Path("/jp/bills")
-@Consumes(MediaType.APPLICATION_JSON)
+@Consumes("application/json; charset=Utf-8")
 @Produces({ MediaType.APPLICATION_JSON })
 @io.swagger.v3.oas.annotations.tags.Tag(name="Japan Bill Service",description="To Create and Update Bill")
 public class JPBillsEntryPoint {

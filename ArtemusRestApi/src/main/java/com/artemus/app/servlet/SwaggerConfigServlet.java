@@ -39,10 +39,7 @@ public class SwaggerConfigServlet extends HttpServlet {
 		/*
 		 * JaxbAnnotationModule()); Yaml.mapper().registerModules(new
 		 * JaxbAnnotationModule()); logger.info("Swagger Initialization Done");
-		 */
-
-
-	    
+		 */	    
 
 	}
 

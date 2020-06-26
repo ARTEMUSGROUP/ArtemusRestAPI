@@ -78,6 +78,7 @@ public class OriginalManifestServiceImpl implements OriginalManifestService {
 		try {
 			if (!objManifest.getLoadPortLocation().isEmpty()) {
 				loadPortCode = objManifestdao.getLocationCode(objManifest.getLoadPortLocation(), loginScac);
+				logger.info(objManifest.getLoadPortLocation());
 				if (loadPortCode == "") {
 					errorMessage.append("Location Code for Load Port Location " + objManifest.getLoadPortLocation()
 							+ " does not exists.");
@@ -88,6 +89,7 @@ public class OriginalManifestServiceImpl implements OriginalManifestService {
 			}
 			if (!objManifest.getDischargePortLocation().isEmpty()) {
 				dischargePortCode = objManifestdao.getLocationCode(objManifest.getDischargePortLocation(), loginScac);
+				logger.info(objManifest.getDischargePortLocation());
 				if (dischargePortCode == "") {
 					errorMessage.append("Location Code for Discharge Port Location " + objManifest.getLoadPortLocation()
 							+ " does not exists.");

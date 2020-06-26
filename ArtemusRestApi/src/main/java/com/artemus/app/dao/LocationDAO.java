@@ -1,10 +1,15 @@
 package com.artemus.app.dao;
 
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.Normalizer;
+import java.text.Normalizer.Form;
+import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -114,6 +119,19 @@ public class LocationDAO {
 			rs = stmt.executeQuery();
 			if (rs.next()) {
 				return rs.getInt(1);
+			}else {
+				stmt = con.prepareStatement("Select location_id from location where location_name=?"
+						+ " and login_scac=? union Select location_id from alt_location where alt_name=?"
+						+ " and login_scac=?");
+				stmt.setString(1, locationName.replaceAll("-", ""));
+				stmt.setString(2, loginScac);
+				stmt.setString(3, locationName.replaceAll("-", ""));
+				stmt.setString(4, loginScac);
+				logger.debug(stmt);
+				rs = stmt.executeQuery();
+				if (rs.next()) {
+					return rs.getInt(1);
+				}
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -200,47 +218,6 @@ public class LocationDAO {
 		}
 	}
 
-//	public boolean checkForLocationName(String locationName, String loginScac) {
-//		// TODO Auto-generated method stub
-//		boolean result = true;
-//		try {
-//			stmt = con.prepareStatement("Select location_name from location where location_name=? and login_scac=? "
-//					+ "union Select alt_name from alt_location where alt_name=? and login_scac=?");
-//			stmt.setString(1, locationName);
-//			stmt.setString(2, loginScac);
-//			stmt.setString(3, locationName);
-//			stmt.setString(4, loginScac);
-//			rs = stmt.executeQuery();
-//			if (rs.next()) {
-//				result = true;
-//			} else {
-//				result = false;
-//			}
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//		return result;
-//	}
-
-	/*
-	 * public boolean getLocationCode(Location objlocationBean,String scacCode) {
-	 * boolean isValid = false; try { stmt = con.prepareStatement(
-	 * "(Select a.location_code from location a left outer join alt_location c on a.location_id=c.location_id,"
-	 * + " voyage_details b " +
-	 * " where c.alt_name like ? and a.login_scac= ? and b.location_id=a.location_id and b.voyage_id = ? and b.is_discharge_port=true )"
-	 * + " union" +
-	 * " (Select a.location_code from location a, voyage_details b  where a.location_name like ? "
-	 * +
-	 * " and a.login_scac= ?  and b.location_id=a.location_id and b.voyage_id = ? and b.is_discharge_port=true)"
-	 * ); stmt.setString(1, objlocationBean.getLocation() + "%"); stmt.setString(2,
-	 * scacCode); stmt.setInt(3, objlocationBean.getVoyageId()); stmt.setString(4,
-	 * objlocationBean.getLocation() + "%"); stmt.setString(5, scacCode);
-	 * stmt.setInt(6, objlocationBean.getVoyageId()); rs = stmt.executeQuery();
-	 * System.out.println(stmt.toString()); if (rs.next()) {
-	 * objlocationBean.setLocationCode(rs.getString("location_code")); isValid =
-	 * true; } else { isValid = false; } } catch (SQLException e) {
-	 * e.printStackTrace(); } return isValid; }
-	 */
 
 	public boolean insert(Location locationbean, String loginScac) {
 		logger.info("inside insert location...");
@@ -321,6 +298,7 @@ public class LocationDAO {
 	}
 
 	public Location setLocationBean(Location locationbean) {
+		String locationname="";
 
 		if (locationbean.getCustomCode() == null)
 			locationbean.setCustomCode("");
@@ -364,6 +342,8 @@ public class LocationDAO {
 		else
 			System.out.println("Error");
 
+		System.out.println(locationbean.getLocation().replaceAll("-", ""));
+		
 		return locationbean;
 
 	}

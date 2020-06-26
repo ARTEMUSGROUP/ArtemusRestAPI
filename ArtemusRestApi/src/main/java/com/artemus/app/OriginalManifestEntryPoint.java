@@ -17,7 +17,7 @@ import com.artemus.app.service.impl.OriginalManifestServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 
 @Path("/addOriginalManifest")
-@Consumes(MediaType.APPLICATION_JSON)
+@Consumes("application/json; charset=UTF-8")
 @Produces({MediaType.APPLICATION_JSON})
 @io.swagger.v3.oas.annotations.tags.Tag(name = "Original Manifest Service",description="To Send Bill To Customs")
 public class OriginalManifestEntryPoint {

@@ -1,5 +1,7 @@
 package com.artemus.app.model.request;
 
+import java.text.Normalizer;
+
 import javax.validation.Valid;
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.Pattern;
@@ -8,6 +10,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.hibernate.validator.constraints.NotBlank;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.reinert.jjschema.Attributes;
 
 import io.swagger.v3.oas.annotations.Hidden;
@@ -16,15 +19,20 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 public class Location {
 
+
 	
 	@Schema(description = "The name of this location. If the location already exists in our system, this are the only required attributes.",required = true)
+	@JsonProperty
+	//@ApiModelProperty(value = "The name of this location. If the location already exists in our system, this are the only required attributes.",required = true)
 	@Attributes(required = true, description = "The name of this location.  If the location already exists in our system, this and an index are the only required attributes.")
 	@NotBlank(message = "location cannot be blank")
 	private String location;
 
+
 	@Schema(description = "The location’s three letter country code, as defined by ISO 3166-1 alpha-3. If this location does not already exist in our database, this field is required.",required = false)
+	//@ApiModelProperty(value = "The location’s two letter country code, as defined by ISO 3166-1 alpha-3. If this location does not already exist in our database, this field is required.",required = false)
 	@Attributes(required = false, description = "The location’s three letter country code, as defined by ISO 3166-1 alpha-3.  If this location does not already exist in our database, this field is required.T")
-	@Size(max = 3, message = "country must be 3 letter country code of location")
+	@Size(max = 2, message = "country must be 2 letter country code of location")
 	private String country;
 
 	@Schema(description = "The providence for this location. For U.S. locations, use the two letter state abbreviation.",required = false)
@@ -102,7 +110,7 @@ public class Location {
 	}
 
 	public void setLocation(String location) {
-		this.location = location;
+		this.location =Normalizer.normalize(location, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
 	}
 
 	public String getCountry() {
@@ -138,6 +146,9 @@ public class Location {
 	}
 
 	public String getUnlocode() {
+		if(unlocode==null)
+			return "";
+		
 		return unlocode.replaceAll("//s", "");
 	}
 
