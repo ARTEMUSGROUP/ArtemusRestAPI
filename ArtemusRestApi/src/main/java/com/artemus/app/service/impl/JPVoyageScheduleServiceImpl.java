@@ -27,7 +27,7 @@ public class JPVoyageScheduleServiceImpl implements JPVoyageScheduleService {
 
 	@Override
 	public void createVoyage(Voyage objVoyage) {
-		logger.debug(objVoyage.toString());
+		logger.info(objVoyage.toString());
 		// validate json
 		ValidateBeanUtil.buildDefaultValidatorFactory();
 		StringBuffer invalidJsonMsg = ValidateBeanUtil.getConstraintViolationMsgForVoyage(objVoyage);
@@ -49,7 +49,7 @@ public class JPVoyageScheduleServiceImpl implements JPVoyageScheduleService {
 				populateVoyage(objVoyage);
 				validatePort(objVoyage);
 				if (errorMessage.length() > 0) {
-					logger.debug(errorMessage);
+					logger.info(errorMessage);
 					throw new ErrorResponseException(errorMessage.toString());
 				}
 				if (!validateVoyage(objVoyage)) {
@@ -57,7 +57,7 @@ public class JPVoyageScheduleServiceImpl implements JPVoyageScheduleService {
 				}
 			} else {
 				if (errorMessage.length() > 0) {
-					logger.debug(errorMessage);
+					logger.info(errorMessage);
 					throw new ErrorResponseException(errorMessage.toString());
 				}
 			}

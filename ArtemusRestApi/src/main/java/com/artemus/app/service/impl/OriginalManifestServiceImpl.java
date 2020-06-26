@@ -24,7 +24,7 @@ public class OriginalManifestServiceImpl implements OriginalManifestService {
 	@Override
 	public void sentBillToCustoms(AddOriginalManifest objManifest) {
 		// Validate JSON
-		logger.debug(objManifest.toString());
+		logger.info(objManifest.toString());
 		ValidateBeanUtil.buildDefaultValidatorFactory();
 		StringBuffer invalidJsonMsg = ValidateBeanUtil.getConstraintViolationMsgForAddingManifest(objManifest);
 		if (invalidJsonMsg.length() > 0) {

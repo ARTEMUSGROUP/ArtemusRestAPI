@@ -78,7 +78,7 @@ public class JpVoyageDAO {
 	}
 
 	public boolean insert(Voyage objmVoyageBean) {
-		logger.debug(objmVoyageBean.getPortDetails().toString());
+		logger.info(objmVoyageBean.getPortDetails().toString());
 		String result = "";
 		int voyageId = 0;
 		try {
@@ -95,7 +95,7 @@ public class JpVoyageDAO {
 			stmt.setString(7, objmVoyageBean.getReportNumber());
 			stmt.setString(8, "admin");
 			stmt.setString(9, "Y");
-			logger.debug(stmt);
+			logger.info(stmt);
 			stmt.execute();
 			rs = stmt.getGeneratedKeys();
 			if (rs.next()) {
@@ -110,7 +110,7 @@ public class JpVoyageDAO {
 			stmt.setInt(2, voyageId);
 			
 			for (int i = 0; i < objmVoyageBean.getPortDetails().size(); i++) {
-				logger.debug(objmVoyageBean.toString());
+				logger.info(objmVoyageBean.toString());
 				stmt.setInt(3, objmVoyageBean.getPortDetails().get(i).getLocationIndex());
 				stmt.setBoolean(4, objmVoyageBean.getPortDetails().get(i).getLastLoadPort());
 				stmt.setString(5, objmVoyageBean.getPortDetails().get(i).getTerminal());
@@ -119,7 +119,7 @@ public class JpVoyageDAO {
 				stmt.setBoolean(8, objmVoyageBean.getPortDetails().get(i).getLoad());
 				stmt.setBoolean(9, objmVoyageBean.getPortDetails().get(i).getDischarge());
 				stmt.setString(10, objmVoyageBean.getPortDetails().get(i).getLocation().getLocation());
-				logger.debug(stmt);
+				logger.info(stmt);
 				stmt.execute();
 
 //				stmt1= con.prepareStatement("update location " +

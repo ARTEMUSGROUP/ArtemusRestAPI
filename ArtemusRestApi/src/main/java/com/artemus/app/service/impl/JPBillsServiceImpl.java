@@ -29,7 +29,7 @@ public class JPBillsServiceImpl implements JPBillsService {
 	@Override
 	public void createBill(JPBillHeader objBillHeader) {
 		// Validate JSON
-		logger.debug(objBillHeader.toString());
+		logger.info(objBillHeader.toString());
 		ValidateBeanUtil.buildDefaultValidatorFactory();
 		StringBuffer invalidJsonMsg = ValidateBeanUtil.getConstraintViolationMsgForVoyage(objBillHeader);
 		if (invalidJsonMsg.length() > 0) {
@@ -62,7 +62,7 @@ public class JPBillsServiceImpl implements JPBillsService {
 	@Override
 	public void updateBill(JPBillHeader objBillHeader) {
 		// Validate JSON
-		logger.debug(objBillHeader.toString());
+		logger.info(objBillHeader.toString());
 		ValidateBeanUtil.buildDefaultValidatorFactory();
 		StringBuffer invalidJsonMsg = ValidateBeanUtil.getConstraintViolationMsgForVoyage(objBillHeader);
 		if (invalidJsonMsg.length() > 0) {

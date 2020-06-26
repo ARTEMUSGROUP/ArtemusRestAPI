@@ -26,9 +26,10 @@ public class SwaggerConfigServlet extends HttpServlet{
 		
 		swaggerConfig.setTitle("Artemus API Documentation");
 		swaggerConfig.setVersion("1.0");
-		swaggerConfig.setSchemes(new String[]{"https"});
-        //swaggerConfig.setHost("localhost:8080");
-		swaggerConfig.setHost("ace.artemusgroupusa.com");
+		//swaggerConfig.setSchemes(new String[]{"https"});
+		swaggerConfig.setSchemes(new String[]{"http"});
+        swaggerConfig.setHost("localhost:8080");
+		//swaggerConfig.setHost("ace.artemusgroupusa.com");
 		//swaggerConfig.setHost("52.54.244.138:8080");
 		swaggerConfig.setBasePath("/ArtemusApi/v1");
 	    swaggerConfig.setResourcePackage("com.artemus.app");

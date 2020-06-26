@@ -28,7 +28,7 @@ public class BillsServiceImpl implements BillsService {
 
 	public void createBill(BillHeader objBillHeader) {
 		// Validate JSON
-		logger.debug(objBillHeader.toString());
+		logger.info(objBillHeader.toString());
 				ValidateBeanUtil.buildDefaultValidatorFactory();
 				StringBuffer invalidJsonMsg = ValidateBeanUtil.getConstraintViolationMsgForVoyage(objBillHeader);
 				if (invalidJsonMsg.length() > 0) {

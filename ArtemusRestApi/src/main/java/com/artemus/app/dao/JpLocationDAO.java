@@ -79,7 +79,7 @@ public class JpLocationDAO {
 			stmt.setString(2, loginScac);
 			stmt.setString(3, locationName);
 			stmt.setString(4, loginScac);
-			logger.debug(stmt);
+			logger.info(stmt);
 			rs = stmt.executeQuery();
 			if (rs.next()) {
 				return rs.getInt(1);
@@ -91,7 +91,7 @@ public class JpLocationDAO {
 				stmt.setString(2, loginScac);
 				stmt.setString(3, locationName.replaceAll("-", ""));
 				stmt.setString(4, loginScac);
-				logger.debug(stmt);
+				logger.info(stmt);
 				rs = stmt.executeQuery();
 				if (rs.next()) {
 					return rs.getInt(1);
