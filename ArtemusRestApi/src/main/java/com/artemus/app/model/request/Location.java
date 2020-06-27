@@ -29,7 +29,7 @@ public class Location {
 	private String location;
 
 
-	@Schema(description = "The location’s three letter country code, as defined by ISO 3166-1 alpha-3. If this location does not already exist in our database, this field is required.",required = false)
+	@Schema(description = "The location’s two letter country code.",required = false)
 	//@ApiModelProperty(value = "The location’s two letter country code, as defined by ISO 3166-1 alpha-3. If this location does not already exist in our database, this field is required.",required = false)
 	@Attributes(required = false, description = "The location’s three letter country code, as defined by ISO 3166-1 alpha-3.  If this location does not already exist in our database, this field is required.T")
 	@Size(max = 2, message = "country must be 2 letter country code of location")

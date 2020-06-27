@@ -15,7 +15,6 @@ import com.artemus.app.model.request.Voyage;
 import com.artemus.app.model.response.ResponseMessage;
 import com.artemus.app.service.VoyageScheduleService;
 import com.artemus.app.service.impl.VoyageScheduleServiceImpl;
-import com.github.reinert.jjschema.Media;
 
 
 @Consumes("application/json; charset=UTF-8")

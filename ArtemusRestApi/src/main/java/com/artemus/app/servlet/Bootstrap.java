@@ -25,10 +25,8 @@ import io.swagger.v3.oas.models.OpenAPI;
         version = "1.0.0", 
         description = "Artemus API version 1.0",
         termsOfService = "",
-        contact = @Contact(url = "http://giantleapsystems.com/"),
+        contact = @Contact(),
         license = @License(
-            name = "Artemus API v1",
-            url = "https://localhost:8080/ArtemusApi/v1"
         )
     ),tags = {
             @Tag(name = "Vessel Service", description = "To Create and Update Vessel"),
@@ -39,8 +37,8 @@ import io.swagger.v3.oas.models.OpenAPI;
         	@Tag(name = "Original Manifest Service",description="To Send Bill To Customs")
     },servers = {
             @Server(
-                    description = "Test Server",
-                    url = "http://52.54.244.138:8080/ArtemusApi/"
+                    description = "Production Server",
+                    url = "https://api.artemusgroupusa.com/ArtemusApi/"
                    )
     }
 )

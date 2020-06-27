@@ -4,7 +4,7 @@ import java.sql.SQLException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.mozilla.javascript.ObjToIntMap;
+//import org.mozilla.javascript.ObjToIntMap;
 
 import com.artemus.app.dao.OriginalManifestDAO;
 import com.artemus.app.exceptions.ErrorResponseException;
