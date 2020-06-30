@@ -1,10 +1,20 @@
 package com.artemus.app.model.request;
 
+import javax.xml.bind.annotation.XmlTransient;
+
+import io.swagger.v3.oas.annotations.Hidden;
+import io.swagger.v3.oas.annotations.media.Schema;
+
+
 public class Party {
+	@Schema(description = "Name of the Party",required = true,example="string")
 	private String name;
+	@Schema(description = "Address Information of the Party",required = true)
 	private AddressInfo addressInfo;
 
 	// -----------------------
+	@XmlTransient
+	@Hidden
 	private int customerId;
 
 	public int getCustomerId() {

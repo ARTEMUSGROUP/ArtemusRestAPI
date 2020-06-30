@@ -1,7 +1,11 @@
 package com.artemus.app.model.request;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 public class ValueUnit {
+	@Schema(description = "Value",required = false)
 	private double value;
+	@Schema(description = "Unit",required = false,example=" ")
 	private String unit;
 
 	public double getValue() {

@@ -15,9 +15,12 @@ import com.artemus.app.service.JPVoyageScheduleService;
 import com.artemus.app.service.impl.JPVoyageScheduleServiceImpl;
 
 
+
+
 @Path("/jp/voyages")
-@Consumes(MediaType.APPLICATION_JSON)
+@Consumes("application/json; charset=UTF-8")
 @Produces({ MediaType.APPLICATION_JSON })
+@io.swagger.v3.oas.annotations.tags.Tag(name="Japan Voyage Service",description="To create Voyage")
 public class JPVoyagesEntryPoint {
 
 	

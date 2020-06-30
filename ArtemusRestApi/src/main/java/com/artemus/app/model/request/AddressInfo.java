@@ -1,29 +1,67 @@
 package com.artemus.app.model.request;
 
+import java.sql.Date;
+
+import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlTransient;
+
+import org.hibernate.validator.constraints.NotBlank;
+
+import com.github.reinert.jjschema.Attributes;
+
+import io.swagger.v3.oas.annotations.Hidden;
+import io.swagger.v3.oas.annotations.media.Schema;
+
 public class AddressInfo {
-	private String addressType;
+
+	
+	@Schema(description="The first part of the party’s address, as it will be passed to customs.",required = true)
+	@Attributes(required = true, description = "The addressLine1.")
 	private String addressLine1;
+	@Schema(description="The second line of the party’s address.",required = false)
 	private String addressLine2;
+	@Schema(description="The party’s city.",required = false)
 	private String city;
+	@Schema(description="The party’s two letter country code, as defined by ISO 3166-1 alpha-3.",required = false)
+	@Size(max = 2, message = "country must be 2 letter country code")
 	private String country;
+	@Schema(description="The party’s state.",required = false)
 	private String state;
+	@Schema(description = "The party's zipcode.",required = false)
 	private String zipCode;
+	@Schema(description = "The party's phone number",required = false)
 	private String phoneNo;
+	@Schema(description = "The party's fax number.",required = false)
 	private String faxNo;
-	// -------------------
-	private int addressId;
+	@Schema(description = "Entity Type of Customer.For creating new Customer for Consignee or Importer entity number "
+		+ "is mandatory.Accepted values will be accepted as per following names with exact syntax only: Employee ID, "
+		+ "Importer/Consignee, SSN, DUNS, Passport, CBP Encrypted Consignee ID, DUNS 4, EI.",required = false)
 	private String entityType;
+	@Schema(description = "Entity Number of Customer.For creating new Customer for Consignee or Importer entity number is mandatory.",required = false)
 	private String entityNumber;
-	private String createdUser;
-	private String createdDate;
+	@Schema(description = "The party's Date of Birth.",required = false,example="1993/01/01")
 	private String dob;
 	private String countryOfIssuance;
+	// -------------------
+	@Hidden
+	@XmlTransient
+	private int addressId;
+	@Hidden
+	@XmlTransient
+	private String addressType;
+	@Hidden
+	@XmlTransient
+	private String createdUser;
+	@Hidden
+	@XmlTransient
+	private String createdDate;
+	
 
 	public String getEntityType() {
 		if (entityType == null)
-			return entityType;
+			return "";
 		else
-			return entityType.toUpperCase();
+			return entityType;
 	}
 
 	public void setEntityType(String entityType) {
@@ -32,9 +70,9 @@ public class AddressInfo {
 
 	public String getEntityNumber() {
 		if (entityNumber == null)
-			return entityNumber;
+			return "";
 		else
-			return entityNumber.toUpperCase();
+			return entityNumber;
 	}
 
 	public void setEntityNumber(String entityNumber) {
@@ -43,7 +81,7 @@ public class AddressInfo {
 
 	public String getCreatedUser() {
 		if (createdUser == null)
-			return createdUser;
+			return "";
 		else
 			return createdUser.toUpperCase();
 	}
@@ -54,29 +92,30 @@ public class AddressInfo {
 
 	public String getCreatedDate() {
 		if (createdDate == null)
-			return createdDate;
+			return "";
 		else
-			return createdDate.toUpperCase();
+			return createdDate;
 	}
 
 	public void setCreatedDate(String createdDate) {
 		this.createdDate = createdDate;
 	}
-
-	public String getDob() {
-		if (dob == null)
-			return dob;
-		else
-			return dob.toUpperCase();
-	}
-
-	public void setDob(String dob) {
-		this.dob = dob;
-	}
+  
+	  public String getDob() { 
+		  if (dob == null) 
+			  return ""; 
+		  else 
+			  return dob; 
+		  }
+	  
+	  public void setDob(String dob) { 
+		  this.dob = dob; 
+		  }
+	 
 
 	public String getCountryOfIssuance() {
-		if(countryOfIssuance==null)
-			return countryOfIssuance;
+		if (countryOfIssuance == null)
+			return "";
 		else
 			return countryOfIssuance.toUpperCase();
 	}
@@ -94,10 +133,10 @@ public class AddressInfo {
 	}
 
 	public String getAddressType() {
-		if(addressType==null)
-return addressType;
+		if (addressType == null)
+			return "";
 		else
-		return addressType.toUpperCase();
+			return addressType.toUpperCase();
 	}
 
 	public void setAddressType(String addressType) {
@@ -105,10 +144,10 @@ return addressType;
 	}
 
 	public String getAddressLine1() {
-		if(addressLine1==null)
-			return addressLine1;
+		if (addressLine1 == null)
+			return "";
 		else
-		return addressLine1.toUpperCase();
+			return addressLine1.toUpperCase();
 	}
 
 	public void setAddressLine1(String addressLine1) {
@@ -116,10 +155,10 @@ return addressType;
 	}
 
 	public String getAddressLine2() {
-		if(addressLine2==null)
-			return addressLine2;
+		if (addressLine2 == null)
+			return "";
 		else
-		return addressLine2.toUpperCase();
+			return addressLine2.toUpperCase();
 	}
 
 	public void setAddressLine2(String addressLine2) {
@@ -127,10 +166,10 @@ return addressType;
 	}
 
 	public String getCity() {
-		if(city==null)
-			return city;
-		else	
-		return city.toUpperCase();
+		if (city == null)
+			return "";
+		else
+			return city.toUpperCase();
 	}
 
 	public void setCity(String city) {
@@ -138,10 +177,10 @@ return addressType;
 	}
 
 	public String getCountry() {
-		if(country==null)
-			return country;
-		else	
-		return country.toUpperCase();
+		if (country == null)
+			return "";
+		else
+			return country.toUpperCase();
 	}
 
 	public void setCountry(String country) {
@@ -149,10 +188,10 @@ return addressType;
 	}
 
 	public String getState() {
-		if(state==null)
-			return state;
-			else	
-		return state.toUpperCase();
+		if (state == null)
+			return "";
+		else
+			return state.toUpperCase();
 	}
 
 	public void setState(String state) {
@@ -160,10 +199,10 @@ return addressType;
 	}
 
 	public String getZipCode() {
-		if(zipCode==null)
-			return zipCode;
-			else	
-		return zipCode.toUpperCase();
+		if (zipCode == null)
+			return "";
+		else
+			return zipCode.toUpperCase();
 	}
 
 	public void setZipCode(String zipCode) {
@@ -171,10 +210,12 @@ return addressType;
 	}
 
 	public String getPhoneNo() {
-		if(phoneNo==null)
+		if (phoneNo == null || phoneNo.isEmpty()) {
+			phoneNo = "";
 			return phoneNo;
-			else	
-		return phoneNo.toUpperCase();
+		}
+
+		return phoneNo;
 	}
 
 	public void setPhoneNo(String phoneNo) {
@@ -182,10 +223,10 @@ return addressType;
 	}
 
 	public String getFaxNo() {
-		if(faxNo==null)
-			return faxNo;
-		else	
-		return faxNo.toUpperCase();
+		if (faxNo == null)
+			return "";
+		else
+			return faxNo.toUpperCase();
 	}
 
 	public void setFaxNo(String faxNo) {
@@ -194,8 +235,15 @@ return addressType;
 
 	public String validateAddressInfo() {
 		String objAddressInfoMessage = "";
+		if(country.length()>2)
+		{
+			objAddressInfoMessage = " country code must be two letters only ";
+
+		}
 		if (addressLine1 == null || addressLine1.isEmpty())
+		{
 			objAddressInfoMessage = " addressLine1 ";
+		}
 		return objAddressInfoMessage;
 	}
 

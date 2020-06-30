@@ -1,19 +1,52 @@
 package com.artemus.app.model.request;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
+import com.github.reinert.jjschema.Attributes;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+
 public class Package {
 
+	@Schema(description = "A description of the package type. See Appendix C for a list of valid packages.",required = true)
+	@Attributes(required = true, description = "The packageType.")
+	@NotEmpty(message = "packageType cannot be blank")
 	private String packageType;
+	
+	@Schema(description = "Holds text description of marks found on this package. This element has no attributes and no text – the marks are in the element’s text. If the text would cause XML parsing issues, feel free to use a CDATA tag.",required = false)
 	private String marks;
+	
+	@Schema(description = "The number of cargo pieces in this package.Must be greater than 0.",required = true)
 	private String pieces;
+	
+	@Schema(description = "The name of this attribute. See Appendix B for known attribute types.",required = false)
 	private ValueUnit weight;
+	
+	@Schema(description = "The name of this attribute. See Appendix B for known attribute types.",required = false)
 	private ValueUnit volume;
+	
+	@Schema(description = "The name of this attribute. See Appendix B for known attribute types.",required = false)
 	private ValueUnit length;
+	
+	@Schema(description = "The name of this attribute. See Appendix B for known attribute types.",required = false)
 	private ValueUnit width;
+	
+	@Schema(description = "The name of this attribute. See Appendix B for known attribute types.",required = false)
 	private ValueUnit height;
+	
+	@Schema(description = "The name of this attribute. See Appendix B for known attribute types.",required = false)
 	private ValueUnit set;
+	
+	@Schema(description = "The name of this attribute. See Appendix B for known attribute types.",required = false)
 	private ValueUnit min;
+	
+	@Schema(description = "The name of this attribute. See Appendix B for known attribute types.",required = false)
 	private ValueUnit max;
+	
+	@Schema(description = "The name of this attribute. See Appendix B for known attribute types.",required = false)
 	private ValueUnit vents;
+	
+	@Schema(description = "The name of this attribute. See Appendix B for known attribute types.",required = false)
 	private ValueUnit drainage;
 
 	public String getPackageType() {

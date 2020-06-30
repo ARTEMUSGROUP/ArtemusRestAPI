@@ -17,6 +17,7 @@ public class BillHeaderUtils {
 			}
 		}
 
+		
 		if (objBillHeader.getBillType() == null || objBillHeader.getBillType().isEmpty()) {
 			if (objMessage.length() > 0) {
 				objMessage.append(",");
@@ -54,11 +55,11 @@ public class BillHeaderUtils {
 						objMessage.append("nvoBill : Required when nvoType is 'non automated NVO'");
 					} else {
 						if (objBillHeader.getNvoBill().equalsIgnoreCase("House")) {
-							if(objBillHeader.getScacBill() == null || objBillHeader.getScacBill().isEmpty()) {
+							if(objBillHeader.getMasterBillScac() == null || objBillHeader.getMasterBillScac().isEmpty()) {
 								if (objMessage.length() > 0) {
 									objMessage.append(",");
 								}
-								objMessage.append("scacBill:Required when nvoBill is 'House'");
+								objMessage.append("masterBillScac:Required when nvoBill is 'House'");
 							}
 							if(objBillHeader.getMasterBill() == null || objBillHeader.getMasterBill().isEmpty()) {
 								if (objMessage.length() > 0) {
@@ -90,20 +91,23 @@ public class BillHeaderUtils {
 				objMessage.append("shipper:{ " + objShipperMessage + " }");
 			}
 		}
-		if (objBillHeader.getConsignee() == null) {
-			if (objMessage.length() > 0) {
-				objMessage.append(",");
-			}
-			objMessage.append("consignee");
-		} else {
-			String objConsigneerMessage = objBillHeader.getConsignee().validateParty();
-			if (objConsigneerMessage.length() > 0) {
+		if(!objBillHeader.getConsignee().getName().trim().equalsIgnoreCase("To Order")) {
+			if (objBillHeader.getConsignee() == null) {
 				if (objMessage.length() > 0) {
 					objMessage.append(",");
 				}
-				objMessage.append("consignee:{ " + objConsigneerMessage + " }");
+				objMessage.append("consignee");
+			} else {
+				String objConsigneerMessage = objBillHeader.getConsignee().validateParty();
+				if (objConsigneerMessage.length() > 0) {
+					if (objMessage.length() > 0) {
+						objMessage.append(",");
+					}
+					objMessage.append("consignee:{ " + objConsigneerMessage + " }");
+				}
 			}
 		}
+		
 
 		if (objBillHeader.getNotify() == null) {
 			if (objMessage.length() > 0) {
@@ -120,6 +124,13 @@ public class BillHeaderUtils {
 			}
 		}
 
+		if (objBillHeader.getHblScac().length()>4) {
+			if (objMessage.length() > 0) {
+				objMessage.append(",");
+			}
+			objMessage.append("hblScac: { " + objBillHeader.getHblScac() + " } must be 4 letters only.");
+		}
+		
 		if (objBillHeader.getVesselSchedule() == null) {
 			if (objMessage.length() > 0) {
 				objMessage.append(",");

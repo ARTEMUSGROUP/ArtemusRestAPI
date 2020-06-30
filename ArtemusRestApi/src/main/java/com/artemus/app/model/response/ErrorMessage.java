@@ -41,4 +41,10 @@ public class ErrorMessage {
 		this.href = href;
 	}
 
+	@Override
+	public String toString() {
+		return "ErrorMessage [errorMessage=" + errorMessage + ", errorMessageKey=" + errorMessageKey + ", href=" + href
+				+ "]";
+	}
+
 }

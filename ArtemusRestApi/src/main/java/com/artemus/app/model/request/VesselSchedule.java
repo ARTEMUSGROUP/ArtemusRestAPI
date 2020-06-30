@@ -1,22 +1,67 @@
 package com.artemus.app.model.request;
 
+import java.text.Normalizer;
+
+import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlTransient;
+
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.NotEmpty;
+
+import com.github.reinert.jjschema.Attributes;
+
+import io.swagger.v3.oas.annotations.Hidden;
+import io.swagger.v3.oas.annotations.media.Schema;
+
 public class VesselSchedule {
 
+	@Schema(description = "The vessel name",required = true)
+	@Attributes(required = true, description = "The vesselName")
+	@NotEmpty(message = "vesselName is required")
 	private String vesselName;
+	
+	@Schema(description = "The voyage number",required = true)
+	@Attributes(required = true, description = "The voyageNumber")
+	@NotEmpty(message = "voyageNumber cannot be blank")
 	private String voyageNumber;
 
+	@Schema(description = "The indicates of country Of Origin",required = true)
 	private String countryOfOrigin;
+	
+	@Schema(description = "The place of receipt",required = false,example=" ")
 	private String placeOfReceipt;
+	
+	@Schema(description = "Indicates the port of loading.",required = true)
+	@Attributes(required = true, description = "The portOfLoading")
+	@NotEmpty(message = "portOfLoading cannot be blank")
 	private String portOfLoading;
+	
+	@Schema(description = "Indicates the port of Discharge.",required = true)
+	@Attributes(required = true, description = "The portOfDischarge")
+	@NotEmpty(message = "portOfDischarge cannot be blank")
 	private String portOfDischarge;
+	
+	@Schema(description = "The place of delivery.",required = false,example=" ")
 	private String placeOfDelivery;
+	
+	@Schema(description = "Canada customs office code for this location. Only valid for Canada locations",required = false,example=" ")
 	private String canadaCustomsOffice;
+	
+	@Schema(description = "Type of move, sometimes referred to as type of shipment. Acceptable values:FCL/FCL,FCL/LCL,LCL/FCL,LCL/LCL,PIER/HOUSE,PIER/PIER,BBK/BBK",required = false,example=" ")
 	private String moveType;
 
 	// -------------------------------
+	@XmlTransient
+	@Hidden
 	private int vesselId;
+	@XmlTransient
+	@Hidden
 	private int voyageId;
+	@XmlTransient
+	@Hidden
 	private String lloydsCode;
+	@XmlTransient
+	@Hidden
 	private String vesselScac;
 
 	public String getVesselName() {
@@ -71,7 +116,7 @@ public class VesselSchedule {
 	}
 
 	public void setPortOfLoading(String portOfLoading) {
-		this.portOfLoading = portOfLoading;
+		this.portOfLoading = Normalizer.normalize(portOfLoading, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
 	}
 
 	public String getPortOfDischarge() {
@@ -82,7 +127,7 @@ public class VesselSchedule {
 	}
 
 	public void setPortOfDischarge(String portOfDischarge) {
-		this.portOfDischarge = portOfDischarge;
+		this.portOfDischarge = Normalizer.normalize(portOfDischarge, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
 	}
 
 	public String getPlaceOfDelivery() {
@@ -193,6 +238,43 @@ public class VesselSchedule {
 
 	public void setVesselScac(String vesselScac) {
 		this.vesselScac = vesselScac;
+	}
+	
+	public StringBuffer jpvalidateVesselSchedule() {
+		StringBuffer objVesselMessage = new StringBuffer();
+
+		if (countryOfOrigin == null || countryOfOrigin.isEmpty()) {
+			if (objVesselMessage.length() > 0) {
+				objVesselMessage.append(",");
+			}
+			objVesselMessage.append("countryOfOrigin");
+		}
+		if (vesselName == null || vesselName.isEmpty()) {
+			if (objVesselMessage.length() > 0) {
+				objVesselMessage.append(",");
+			}
+			objVesselMessage.append("vesselName");
+		}
+		if (portOfDischarge == null || portOfDischarge.isEmpty()) {
+			if (objVesselMessage.length() > 0) {
+				objVesselMessage.append(",");
+			}
+			objVesselMessage.append("portOfDischarge");
+		}
+		if (voyageNumber == null || voyageNumber.isEmpty()) {
+			if (objVesselMessage.length() > 0) {
+				objVesselMessage.append(",");
+			}
+			objVesselMessage.append("voyageNumber");
+		}
+		if (portOfLoading == null || portOfLoading.isEmpty()) {
+			if (objVesselMessage.length() > 0) {
+				objVesselMessage.append(",");
+			}
+			objVesselMessage.append("portOfLoading");
+		}
+
+		return objVesselMessage;
 	}
 
 }

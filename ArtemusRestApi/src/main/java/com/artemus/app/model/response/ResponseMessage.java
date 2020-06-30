@@ -32,4 +32,10 @@ public class ResponseMessage {
 	public void setMessage(String message) {
 		this.message = message;
 	}
+
+	@Override
+	public String toString() {
+		return "ResponseMessage [code=" + code + ", status=" + status + ", message=" + message + "]";
+	}
+
 }

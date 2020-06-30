@@ -2,47 +2,121 @@ package com.artemus.app.model.request;
 
 import java.util.ArrayList;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.NotEmpty;
+
+import com.github.reinert.jjschema.Attributes;
+
+import io.swagger.v3.oas.annotations.Hidden;
+import io.swagger.v3.oas.annotations.media.Schema;
+
 
 @XmlRootElement
+//@ApiModel(value="Bill Header",description = "All details about the Bill Header. ")
 public class BillHeader {
+	@Schema(description ="The bill of lading number. Do not prepend the BL issuer’s SCAC. We will do that when the bill is transmitted.",required = true)
+	@Attributes(required = true, description = "The billOfLading.")
+	@NotEmpty(message = "billOfLading cannot be blank")
+	@Size(max = 20, message = "The billOfLading must be max 20 letters only")
 	private String billOfLading;
+	
+	@Attributes(required = true, description = "The billType.")
+	@Schema(description = "billType for Bill.The billType must be max 8 letters only",required = true)
+	@NotEmpty(message = "billType cannot be blank")
+	@Size(max = 8, message = "The billType must be max 8 letters only")
 	private String billType;
+	@Schema(description = "House Bill Scac.The House Bill Scac must be 4 letters only.",required = false,example="DEMO")
 	private String hblScac;
+	@Schema(description = "Indicates whether or not this is an NVO’s house bill, and the type of bill. Accepted values: non NVO, automated NVO, non automated NVO",required = true,example="non NVO")
 	private String nvoType;
+	@Schema(description = "The type of bill being transmitted. Accepted values include: Master,House",required = false,example=" ")
 	private String nvoBill;
-	private String scacBill;
+	@Schema(description = "In the case of an NVO’s house bill, the SCAC of the master carrier.masterBillScac must be max 4 letters only. ",required = false,example=" ")
+	private String masterBillScac;
+	@Schema(description = "In the case of an NVO’s house bill, this indicates the BL number of the master carrier’s bill",required = false,example=" ")
 	private String masterBill;
 
 	// Shipping Info
+	@Schema(description = "The information related to Shipper",required = true)
 	private Party shipper;
+	@Schema(description = "The information related to BookingParty",required = false)
 	private Party bookingParty;
+	@Schema(description = "The information related to Seller",required = false)
 	private Party seller;
+	@Schema(description = "The information related to Consolidator",required = false)
 	private Party consolidator;
+	@Schema(description = "The information related to Stuffer",required = false)
 	private Party stuffer;
 
 	// Recipient Info
+	@Attributes(required = true, description = "The consignee.")
+	@Schema(description = "The information related to Consignee",required = true)
+	@NotNull(message = "consignee cannot be blank")
 	private Party consignee;
+	@Schema(description = "The information related to Notify",required = true)
 	private Party notify;
+	@Schema(description = "The information related to Importer",required = false)
 	private Party importer;
+	@Schema(description = "The information related to Buyer",required = false)
 	private Party buyer;
+	@Schema(description = "The information related to ShipTo",required = false)
 	private Party shipTo;
 
 	// Notify Parties
+	@Schema(description = "Array of carrier code's(scac) related to notify parties",required = false)
 	private ArrayList<String> notifyParties;
 
 	// Vessel Schedule
+	@Attributes(required = true, description = "The vesselSchedule.")
+	@Schema(description = "The information related to vessel",required = true)
+	@NotNull(message = "vesselSchedule cannot be blank")
 	private VesselSchedule vesselSchedule;
 
+	@Schema(description = "The information related to Equipment",required = true)
 	private ArrayList<Equipment> equipments;
 
 	// Bill Update
-	private boolean isBillUpdate;
-
+	// private boolean isBillUpdate;
+	@XmlTransient
+	@Hidden
 	private String loginScac;
 	// --------------------------
+	@XmlTransient
+	@Hidden
 	public int billLadingId;
 
+	// ISF
+	@Schema(description = "Type of Transmission Type.Accepted values are:CT,FT,FR. By default CT will be selected. "
+		+ "CT-Complete transaction, FR-Flexible Range, FT-Flexible Timing",required = false,example="CT")
+	@Size(max = 2,min=2, message = "The transmissionType must be max of 2 characters only")
+	private String transmissionType;
+	@Schema(description = "Type of Shipment.Accepted values include: 01,02,03,04,05,06,07,08,09,10,11."
+		+ "By default 01 will be selected.The following values corresponds as below: 01-Standard or regular filings,"
+		+ " 02-To Order Shipments, 03-Household Goods / Personal Effects (HHG / PE), 04-Military Government, 05-Diplomatic Shipment,"
+		+ " 06-Carnet, 07-US Goods Returned, 08-FTZ Shipments, 09-International Mail Shipments, 10-Outer Continental Shelf Shipments,"
+		+ " 11-Informal.",required = false,example="01")
+	@Size(max = 2, message = "The shipmentType must be max of 2 digits only")
+	private String shipmentType;
+	@Schema(description = "Carnet Information",required = false)
+	private Carnet carnet;
+	@Schema(description = "Informal Information",required = false)
+	private Informal informal;
+
+	// -----------------------------
+	@XmlTransient
+	@Hidden
+	private String isfErrorDescription;
+	@XmlTransient
+	@Hidden
+	private String isfType;
+	
 	public String getLoginScac() {
 		if (loginScac == null)
 			return loginScac;
@@ -78,7 +152,7 @@ public class BillHeader {
 
 	public String getHblScac() {
 		if (hblScac == null) {
-			return hblScac;
+			return "";
 		} else {
 			return hblScac.toUpperCase();
 		}
@@ -110,22 +184,20 @@ public class BillHeader {
 		this.nvoBill = nvoBill;
 	}
 
-	public String getScacBill() {
-		if (scacBill == null)
-			return scacBill;
-		else
-			return scacBill.toUpperCase();
-	}
-
-	public void setScacBill(String scacBill) {
-		this.scacBill = scacBill;
-	}
 
 	public String getMasterBill() {
 		if (masterBill == null)
 			return masterBill;
 		else
 			return masterBill.toUpperCase();
+	}
+
+	public String getMasterBillScac() {
+		return masterBillScac;
+	}
+
+	public void setMasterBillScac(String masterBillScac) {
+		this.masterBillScac = masterBillScac;
 	}
 
 	public void setMasterBill(String masterBill) {
@@ -213,7 +285,11 @@ public class BillHeader {
 	}
 
 	public ArrayList<String> getNotifyParties() {
-		return notifyParties;
+		if (notifyParties == null) {
+			return new ArrayList<String>();
+		} else {
+			return notifyParties;
+		}
 	}
 
 	public void setNotifyParties(ArrayList<String> notifyParties) {
@@ -236,14 +312,6 @@ public class BillHeader {
 		this.equipments = equipments;
 	}
 
-	public boolean isBillUpdate() {
-		return isBillUpdate;
-	}
-
-	public void setBillUpdate(boolean isBillUpdate) {
-		this.isBillUpdate = isBillUpdate;
-	}
-
 	public int getBillLadingId() {
 		return billLadingId;
 	}
@@ -252,16 +320,58 @@ public class BillHeader {
 		this.billLadingId = billLadingId;
 	}
 
-	@Override
-	public String toString() {
-		return "BillHeader [billOfLading=" + billOfLading + ", billType=" + billType + ", hblScac=" + hblScac
-				+ ", nvoType=" + nvoType + ", nvoBill=" + nvoBill + ", scacBill=" + scacBill + ", masterBill="
-				+ masterBill + ", shipper=" + shipper + ", bookingParty=" + bookingParty + ", seller=" + seller
-				+ ", consolidator=" + consolidator + ", stuffer=" + stuffer + ", consignee=" + consignee + ", notify="
-				+ notify + ", importer=" + importer + ", buyer=" + buyer + ", shipTo=" + shipTo + ", notifyParties="
-				+ notifyParties + ", vesselSchedule=" + vesselSchedule + ", equipments=" + equipments
-				+ ", isBillUpdate=" + isBillUpdate + ", loginScac=" + loginScac + ", billLadingId=" + billLadingId
-				+ "]";
+	public String getTransmissionType() {
+		if(transmissionType==null){
+			return "CT";
+		}
+		return transmissionType.trim();
+	}
+
+	public void setTransmissionType(String transmissionType) {
+		this.transmissionType = transmissionType;
+	}
+
+	public String getShipmentType() {
+		if(shipmentType==null) {
+			return "01";
+		}
+		return shipmentType.trim();
+	}
+
+	public void setShipmentType(String shipmentType) {
+		this.shipmentType = shipmentType;
+	}
+
+	public String getIsfType() {
+		return isfType;
+	}
+
+	public void setIsfType(String isfType) {
+		this.isfType = isfType;
+	}
+
+	public String getIsfErrorDescription() {
+		return isfErrorDescription;
+	}
+
+	public void setIsfErrorDescription(String isfErrorDescription) {
+		this.isfErrorDescription = isfErrorDescription;
+	}
+
+	public Carnet getCarnet() {
+		return carnet;
+	}
+
+	public void setCarnet(Carnet carnet) {
+		this.carnet = carnet;
+	}
+
+	public Informal getInformal() {
+		return informal;
+	}
+
+	public void setInformal(Informal informal) {
+		this.informal = informal;
 	}
 
 }

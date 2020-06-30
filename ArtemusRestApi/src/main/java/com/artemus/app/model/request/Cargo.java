@@ -1,12 +1,20 @@
 package com.artemus.app.model.request;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 public class Cargo {
 
+	@Schema(description = "The description of good for this cargo",required = false)
 	private String descriptionsOfGoods;
+	@Schema(description = "The harmonized tariff code for this cargo.",required = false)
 	private String harmonizeCode;
+	@Schema(description = "The hazard code for this cargo.",required = false)
 	private String hazardCode;
-	private String manufacturer;
+	@Schema(description = "The name of the Country",required = false,example=" ")
 	private String country;
+	@Schema(description = "Mandatory for ISF-10.If the customer exists in the AMS system then only provide the name else for "
+		+ "creating new manufacturer customer provide addressInfo as well",required = false,example=" ")
+	private Party manufacturer;
 
 	public String getDescriptionsOfGoods() {
 		if (descriptionsOfGoods==null)
@@ -38,13 +46,12 @@ public class Cargo {
 		this.hazardCode = hazardCode;
 	}
 
-	public String getManufacturer() {
-		if(manufacturer==null)
-			manufacturer="";
-		return manufacturer.toUpperCase();
+	public Party getManufacturer() {
+		
+		return manufacturer;
 	}
 
-	public void setManufacturer(String manufacturer) {
+	public void setManufacturer(Party manufacturer) {
 		this.manufacturer = manufacturer;
 	}
 
@@ -58,4 +65,7 @@ public class Cargo {
 		this.country = country;
 	}
 
+	
+	
+	
 }
