@@ -22,9 +22,8 @@ public class AddressInfo {
 	private String addressLine2;
 	@Schema(description="The party’s city.",required = false)
 	private String city;
-	@Schema(description="The party’s three letter country code, as defined by ISO 3166-1 alpha-3.",required = false)
+	@Schema(description="The party’s two letter country code, as defined by ISO 3166-1 alpha-3.",required = false)
 	@Size(max = 2, message = "country must be 2 letter country code")
-	//@ApiModelProperty(value = "The party’s two letter country code, as defined by ISO 3166-1 alpha-3.",required = false)
 	private String country;
 	@Schema(description="The party’s state.",required = false)
 	private String state;

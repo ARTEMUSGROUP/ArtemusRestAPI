@@ -51,7 +51,7 @@ public class Vessel {
 	private String callSign;
 	
 	@Size(max = 4, message = "Alphanumeric four letter Japan carrier Code")
-	//@Schema(value = "The information related to Shipper",required = false,example=" ")
+	@Schema(description = "The information related to Shipper",required = false,example=" ")
 	private String jpnCarrierCode;
 	
 	@Schema(description = "Alphanumeric Four letter Canada carrier Code",required = false)

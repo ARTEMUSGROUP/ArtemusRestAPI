@@ -30,7 +30,7 @@
 <!-- </Context>  -->
 
 <!-- Akshay Server Config -->
-<Context path="/ArtemusApi" reloadable="true">
+<!-- <Context path="/ArtemusApi" reloadable="true">
 	<Loader delegate="true"/>
 	<Resource name="jdbc/artemus" 
 		auth="Container" 
@@ -43,7 +43,7 @@
 		driverClassName="com.mysql.jdbc.Driver" 
 		url="jdbc:mysql://localhost:3306/artemus?autoReconnect=true"/>
 </Context>
-
+ -->
 <!-- Production Server Config -->
 <!-- <Context path="/ArtemusApi" reloadable="true">
 	<Loader delegate="true"/>
@@ -58,3 +58,18 @@
 		driverClassName="com.mysql.jdbc.Driver"
 		url="jdbc:mysql://localhost:3306/artemus?autoReconnect=true"/>
 </Context>   -->
+
+<!-- New API Production Server Config -->
+<Context path="/ArtemusApi" reloadable="true">
+	<Loader delegate="true"/>
+	<Resource name="jdbc/artemus"
+		auth="Container"
+		type="javax.sql.DataSource"
+		maxActive="100"
+		maxIdle="30"
+		maxWait="10000"
+		username="root"
+		password="@ss123"
+		driverClassName="com.mysql.jdbc.Driver"
+		url="jdbc:mysql://34.232.156.35:3306/artemus?autoReconnect=true"/>
+</Context>  

@@ -1,23 +1,13 @@
 package com.artemus.app.servlet;
 
-import javax.servlet.http.HttpServlet;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
 
-import io.swagger.v3.core.jackson.SwaggerModule;
-import io.swagger.v3.jaxrs2.integration.JaxrsOpenApiContextBuilder;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Contact;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.info.License;
 import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.integration.OpenApiConfigurationException;
-import io.swagger.v3.oas.integration.SwaggerConfiguration;
-import io.swagger.v3.oas.models.OpenAPI;
 
 @OpenAPIDefinition(
     info = @Info(
@@ -37,12 +27,12 @@ import io.swagger.v3.oas.models.OpenAPI;
         	@Tag(name = "Original Manifest Service",description="To Send Bill To Customs")
     },servers = {
             @Server(
-                    description = "Production Server",
+                    description = "Artemus API Production Server",
                     url = "https://api.artemusgroupusa.com/ArtemusApi/"
                    )
     }
 )
-public class Bootstrap extends HttpServlet {
+public class Bootstrap {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -55,22 +45,5 @@ public class Bootstrap extends HttpServlet {
     public Response getTags() {
         return Response.ok().entity("ok").build();
     }
-	
-	@Override
-	public void init(ServletConfig config) throws ServletException {
-		/*
-		 * OpenAPI oas = new OpenAPI(); SwaggerConfiguration oasConfig = new
-		 * SwaggerConfiguration() .openAPI(oas)
-		 * .resourcePackages(Stream.of("com.artemus.app").collect(Collectors.toSet()));
-		 * 
-		 * try { new JaxrsOpenApiContextBuilder() .servletConfig(config)
-		 * .openApiConfiguration(oasConfig) .buildContext(true); } catch
-		 * (OpenApiConfigurationException e) { throw new
-		 * ServletException(e.getMessage(), e); }
-		 */
-
-		  
-		    
-	}
 	
 }
