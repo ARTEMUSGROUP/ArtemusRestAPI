@@ -469,14 +469,18 @@ public class JPVoyageScheduleServiceImpl implements JPVoyageScheduleService {
 					int locationIdfromUNCode = objLocationdao.getLocationIdfromUnlocode(locationbean.getCustomCode(),
 							loginScac);
 					int locationIdfromLocation = objLocationdao.getLocationId(locationbean.getLocation(), loginScac);
-					if(locationIdfromLocation!=0) {
+					if(locationIdfromLocation!=0 && locationIdfromUNCode !=0) {
 						if (locationIdfromUNCode != locationIdfromLocation) {
 							errorMessage.append("Unlocode: " + locationbean.getUnlocode()
-							+ " entered is same for multiple Locations in AMS system.");
+							+ " for custom Code "+locationbean.getCustomCode()+"entered is same for multiple Locations in AMS system.");
 						}
-					}else {
-						objLocationdao.insert(locationbean, loginScac);
 					}
+					
+					// Insert into location
+					if(locationIdfromLocation==0 && locationIdfromUNCode==0) {
+							objLocationdao.insert(locationbean, loginScac);
+					}
+					
 					
 					if (objLocationdao.isDisctrictPort(locationbean.getCustomCode())) {
 						locationbean.setCustomForeign(false);
@@ -502,7 +506,7 @@ public class JPVoyageScheduleServiceImpl implements JPVoyageScheduleService {
 					}
 					if (locationbean.getUnlocode() != null && (!locationbean.getUnlocode().isEmpty())) {
 						errorMessage
-								.append("customCode for unlocode : " + locationbean.getUnlocode() + " does not exists");
+								.append("customCode for unlocode : " + locationbean.getUnlocode() + "is invalid or  does not exists");
 					}
 				}
 

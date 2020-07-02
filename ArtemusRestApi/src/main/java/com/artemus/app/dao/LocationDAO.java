@@ -81,7 +81,7 @@ public class LocationDAO {
 		ResultSet rs = null;
 		int result = 1;
 		try {
-			stmt2 = con.prepareStatement("SELECT location_id FROM artemus.location where location_code=? and login_scac=?");
+			stmt2 = con.prepareStatement("SELECT location_id FROM artemus.location where location_code=? and login_scac=? and location_code!=''");
 			stmt2.setString(1, Custcode);
 			stmt2.setString(2, loginScac);
 			rs = stmt2.executeQuery();
