@@ -446,7 +446,7 @@ public class BillsDAO {
 				
 				stmt = con.prepareStatement("Insert into cargo "
 						+ " (bill_lading_id, cargo_id, equipment_number, description, harmonize_code, "
-						+ " hazard_code, manufacturer, country,customer_id) values " + " (?,?,?,?,?,?,?,?,?)");
+						+ " hazard_code, manufacturer, country,customer_id,flash_point,flash_unit) values " + " (?,?,?,?,?,?,?,?,?,?,?)");
 
 				for (Cargo objCargo : objEquipment.getCargos()) {
 					if (objCargo != null) {
@@ -480,6 +480,14 @@ public class BillsDAO {
 						}
 						
 						stmt.setString(8, objCargo.getCountry());
+						if(objCargo.getFlashPointDetails()!=null) {
+							stmt.setDouble(10, objCargo.getFlashPointDetails().getFlashPoint());
+							stmt.setString(11, objCargo.getFlashPointDetails().getFlashUnit());
+						}else {
+							stmt.setDouble(10, 0);
+							stmt.setString(11, "");
+						}
+						
 						if (stmt.executeUpdate() != 1) {
 							return -1;
 						}
