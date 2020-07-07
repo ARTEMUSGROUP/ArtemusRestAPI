@@ -24,6 +24,7 @@ public class BillsDAO {
 	private ResultSet rs = null, MIrs = null;
 	static Logger logger = LogManager.getLogger();
 	StringBuffer errorMessage = new StringBuffer("");
+	StringBuffer hazardErrorMessage = new StringBuffer("");
 
 	public BillsDAO(Connection connection) {
 		try {
@@ -457,6 +458,8 @@ public class BillsDAO {
 						if (rs.next()) {
 							objCargo.setHazardCode(rs.getString(1));
 							logger.info(rs.getString(1));
+						}else if(objCargo.getHazardCode()!=null && !objCargo.getHazardCode().isEmpty()) {
+							hazardErrorMessage.append("Entered hazard_code "+objCargo.getHazardCode()+" is invalid .Insert Valid one.");
 						}
 						
 						// Insert into Cargo
@@ -696,4 +699,9 @@ public class BillsDAO {
 
 	}
 
+	public StringBuffer getHazardErrorMessage() {
+		return hazardErrorMessage;
+	}
+
+	
 }
