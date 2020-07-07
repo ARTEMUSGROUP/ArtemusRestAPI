@@ -454,45 +454,56 @@ public class JPVoyageScheduleServiceImpl implements JPVoyageScheduleService {
 		boolean result = true;
 		try {
 			for (PortDetails objPortDetail : objVoyage.getPortDetails()) {
+				String customCodefromUNCode="";
 				Location locationbean = objPortDetail.getLocation();
 				objLocationdao.setLocationBean(locationbean);
+				if (locationbean.getLocationType().equalsIgnoreCase("I")) {
+					if (errorMessage.length() > 0) {
+						errorMessage.append(" , ");
+					}
+					errorMessage.append("locationType must be marine");
+				}
 
 				if (locationbean.getCustomCode() == null || locationbean.getCustomCode().isEmpty()) {
 					// setting customCode from locationCode
-					String customCodefromUNCode = objLocationdao.getLocationCode(locationbean.getUnlocode(), loginScac);
-					logger.debug(customCodefromUNCode);
+					customCodefromUNCode = objLocationdao.getLocationCode(locationbean.getUnlocode(), loginScac);
 					locationbean.setCustomCode(customCodefromUNCode);
 				}
 
-				if (locationbean.getCustomCode() != null && !locationbean.getCustomCode().isEmpty()) {
-					
+				if (!locationbean.getCustomCode().isEmpty()) {
+
 					int locationIdfromUNCode = objLocationdao.getLocationIdfromUnlocode(locationbean.getCustomCode(),
 							loginScac);
 					int locationIdfromLocation = objLocationdao.getLocationId(locationbean.getLocation(), loginScac);
-					if(locationIdfromLocation!=0) {
+					if(locationIdfromLocation!=0 && locationIdfromUNCode !=0) {
 						if (locationIdfromUNCode != locationIdfromLocation) {
 							errorMessage.append("Unlocode: " + locationbean.getUnlocode()
-							+ " entered is same for multiple Locations in AMS system.");
+							+ "for Custom Code"+locationbean.getCustomCode() +"entered is same for multiple Locations in AMS system.");
 						}
-					}else {
-						objLocationdao.insert(locationbean, loginScac);
 					}
 					
-					if (objLocationdao.isDisctrictPort(locationbean.getCustomCode())) {
-						locationbean.setCustomForeign(false);
-					} else if (objLocationdao.isForeignPort(locationbean.getCustomCode())) {
+					// Insert into location
+					if(locationIdfromLocation==0 && locationIdfromUNCode==0) {
+							objLocationdao.insert(locationbean, loginScac);
+					}
+					
+
+					if (objLocationdao.isForeignPort(locationbean.getCustomCode())) {
 						locationbean.setCustomForeign(true);
+					} else if (objLocationdao.isDisctrictPort(locationbean.getCustomCode())) {
+						locationbean.setCustomForeign(false);
 					} else {
 						// Error Message Handle
 						if (errorMessage.length() > 0) {
 							errorMessage.append(" , ");
 						}
 						if (locationbean.getUnlocode() != null && (!locationbean.getUnlocode().isEmpty())) {
-							errorMessage.append(
-									"customCode for unlocode : " + locationbean.getUnlocode() + " does not exists");
+							errorMessage.append("customCode for unlocode : " + locationbean.getUnlocode()
+									+ " does not exists for the login scac" + loginScac);
 						} else {
 							errorMessage.append("customCode : does not exists");
 						}
+
 						result = false;
 					}
 				} else {
@@ -501,11 +512,9 @@ public class JPVoyageScheduleServiceImpl implements JPVoyageScheduleService {
 						errorMessage.append(" , ");
 					}
 					if (locationbean.getUnlocode() != null && (!locationbean.getUnlocode().isEmpty())) {
-						errorMessage
-								.append("customCode for unlocode : " + locationbean.getUnlocode() + " does not exists");
+						errorMessage.append("customCode for unlocode : " + locationbean.getUnlocode()+"is invalid or  does not exists for the login scac" + loginScac);
 					}
 				}
-
 			}
 		} finally {
 			objLocationdao.closeAll();

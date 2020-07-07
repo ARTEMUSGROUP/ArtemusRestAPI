@@ -22,7 +22,7 @@ import com.artemus.app.utils.ValidateBeanUtil;
 public class BillsServiceImpl implements BillsService {
 	static Logger logger = LogManager.getLogger();
 	BillHeaderUtils objUtils = new BillHeaderUtils();
-	StringBuilder errorMessage = new StringBuilder("");
+	StringBuffer errorMessage = new StringBuffer("");
 	StringBuilder entityErrorMessage = new StringBuilder("");
 	boolean isError;
 
@@ -277,8 +277,14 @@ public class BillsServiceImpl implements BillsService {
 			objDao.isFROBBill(objBillHeader);
 			// Adding Equipments
 			addEquipments(objBillHeader, billLadingId, objDao, objCustomerProfiledao);
-			// Setting ISF Error
 
+			//validate Hazard Code
+			errorMessage=objDao.getHazardErrorMessage();
+			if(errorMessage.length()>5) {
+				throw new ErrorResponseException(errorMessage.toString());
+			}
+			
+			// Setting ISF Error
 			isferrormsg = objBillHeader.getIsfType() + ":" + objDao.getErrorMessage().toString();
 			System.out.println(isferrormsg);
 			entityErrorMessage.append(isferrormsg);
@@ -362,6 +368,14 @@ public class BillsServiceImpl implements BillsService {
 				objDao.isFROBBill(objBillHeader);
 				// Adding Equipments
 				addEquipments(objBillHeader, billLadingId, objDao, objCustomerProfiledao);
+				
+				
+				//validate Hazard Code
+				errorMessage=objDao.getHazardErrorMessage();
+				if(errorMessage.length()>5) {
+					throw new ErrorResponseException(errorMessage.toString());
+				}
+				
 				// Updating into billDetailStatus if all Adding Equipments is succeeds
 				// Setting ISF Error
 

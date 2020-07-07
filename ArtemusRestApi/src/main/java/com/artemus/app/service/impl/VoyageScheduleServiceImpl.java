@@ -435,7 +435,7 @@ public class VoyageScheduleServiceImpl implements VoyageScheduleService {
 					if(locationIdfromLocation!=0 && locationIdfromUNCode !=0) {
 						if (locationIdfromUNCode != locationIdfromLocation) {
 							errorMessage.append("Unlocode: " + locationbean.getUnlocode()
-							+ " entered is same for multiple Locations in AMS system.");
+							+ "for Custom Code"+locationbean.getCustomCode() +"entered is same for multiple Locations in AMS system.");
 						}
 					}
 					

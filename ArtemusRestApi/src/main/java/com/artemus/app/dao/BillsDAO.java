@@ -24,6 +24,7 @@ public class BillsDAO {
 	private ResultSet rs = null, MIrs = null;
 	static Logger logger = LogManager.getLogger();
 	StringBuffer errorMessage = new StringBuffer("");
+	StringBuffer hazardErrorMessage = new StringBuffer("");
 
 	public BillsDAO(Connection connection) {
 		try {
@@ -446,7 +447,7 @@ public class BillsDAO {
 				
 				stmt = con.prepareStatement("Insert into cargo "
 						+ " (bill_lading_id, cargo_id, equipment_number, description, harmonize_code, "
-						+ " hazard_code, manufacturer, country,customer_id) values " + " (?,?,?,?,?,?,?,?,?)");
+						+ " hazard_code, manufacturer, country,customer_id,flash_point,flash_unit) values " + " (?,?,?,?,?,?,?,?,?,?,?)");
 
 				for (Cargo objCargo : objEquipment.getCargos()) {
 					if (objCargo != null) {
@@ -457,6 +458,8 @@ public class BillsDAO {
 						if (rs.next()) {
 							objCargo.setHazardCode(rs.getString(1));
 							logger.info(rs.getString(1));
+						}else if(objCargo.getHazardCode()!=null && !objCargo.getHazardCode().isEmpty()) {
+							hazardErrorMessage.append("Entered hazard_code "+objCargo.getHazardCode()+" is invalid .Insert Valid one.");
 						}
 						
 						// Insert into Cargo
@@ -480,6 +483,15 @@ public class BillsDAO {
 						}
 						
 						stmt.setString(8, objCargo.getCountry());
+						
+						if(objCargo.getFlashPointDetails()!=null) {
+							stmt.setDouble(10, objCargo.getFlashPointDetails().getFlashPoint());
+							stmt.setString(11, objCargo.getFlashPointDetails().getFlashUnit());
+						}else {
+							stmt.setDouble(10, 0);
+							stmt.setString(11, "");
+						}
+						
 						if (stmt.executeUpdate() != 1) {
 							return -1;
 						}
@@ -687,5 +699,11 @@ public class BillsDAO {
 		return errorMessage;
 
 	}
+
+	public StringBuffer getHazardErrorMessage() {
+		return hazardErrorMessage;
+	}
+	
+	
 
 }
