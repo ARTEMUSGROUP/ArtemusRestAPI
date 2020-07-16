@@ -17,7 +17,6 @@ public class BillHeaderUtils {
 			}
 		}
 
-		
 		if (objBillHeader.getBillType() == null || objBillHeader.getBillType().isEmpty()) {
 			if (objMessage.length() > 0) {
 				objMessage.append(",");
@@ -27,7 +26,7 @@ public class BillHeaderUtils {
 			if (objBillHeader.getBillType().equalsIgnoreCase("way bill")
 					|| objBillHeader.getBillType().equalsIgnoreCase("empty")
 					|| objBillHeader.getBillType().equalsIgnoreCase("Original")) {
-				if(objBillHeader.getBillType().equalsIgnoreCase("Original")) {
+				if (objBillHeader.getBillType().equalsIgnoreCase("Original")) {
 					objBillHeader.setBillType("Orignal");
 				}
 			} else {
@@ -55,13 +54,14 @@ public class BillHeaderUtils {
 						objMessage.append("nvoBill : Required when nvoType is 'non automated NVO'");
 					} else {
 						if (objBillHeader.getNvoBill().equalsIgnoreCase("House")) {
-							if(objBillHeader.getMasterBillScac() == null || objBillHeader.getMasterBillScac().isEmpty()) {
+							if (objBillHeader.getMasterBillScac() == null
+									|| objBillHeader.getMasterBillScac().isEmpty()) {
 								if (objMessage.length() > 0) {
 									objMessage.append(",");
 								}
 								objMessage.append("masterBillScac:Required when nvoBill is 'House'");
 							}
-							if(objBillHeader.getMasterBill() == null || objBillHeader.getMasterBill().isEmpty()) {
+							if (objBillHeader.getMasterBill() == null || objBillHeader.getMasterBill().isEmpty()) {
 								if (objMessage.length() > 0) {
 									objMessage.append(",");
 								}
@@ -91,7 +91,8 @@ public class BillHeaderUtils {
 				objMessage.append("shipper:{ " + objShipperMessage + " }");
 			}
 		}
-		if(!objBillHeader.getConsignee().getName().trim().equalsIgnoreCase("To Order")) {
+
+		if (!objBillHeader.getConsignee().getName().trim().equalsIgnoreCase("To Order")) {
 			if (objBillHeader.getConsignee() == null) {
 				if (objMessage.length() > 0) {
 					objMessage.append(",");
@@ -107,7 +108,6 @@ public class BillHeaderUtils {
 				}
 			}
 		}
-		
 
 		if (objBillHeader.getNotify() == null) {
 			if (objMessage.length() > 0) {
@@ -124,13 +124,13 @@ public class BillHeaderUtils {
 			}
 		}
 
-		if (objBillHeader.getHblScac().length()>4) {
+		if (objBillHeader.getHblScac().length() > 4) {
 			if (objMessage.length() > 0) {
 				objMessage.append(",");
 			}
 			objMessage.append("hblScac: { " + objBillHeader.getHblScac() + " } must be 4 letters only.");
 		}
-		
+
 		if (objBillHeader.getVesselSchedule() == null) {
 			if (objMessage.length() > 0) {
 				objMessage.append(",");
@@ -156,7 +156,7 @@ public class BillHeaderUtils {
 			StringBuffer objEquipmentsMessage = new StringBuffer();
 			int equipmentCount = 0;
 			for (Equipment objEquipment : objBillHeader.getEquipments()) {
-				String str = objEquipment.validateEquipment().toString();
+				String str = objEquipment.validateEquipment(objBillHeader.getBillType()).toString();
 				if (str.length() > 0) {
 					objEquipmentsMessage.append(equipmentCount + ": {" + str + "}");
 				}

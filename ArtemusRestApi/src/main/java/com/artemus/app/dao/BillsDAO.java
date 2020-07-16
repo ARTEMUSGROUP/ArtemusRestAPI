@@ -206,7 +206,7 @@ public class BillsDAO {
 	public boolean insertIntoConsigneeShipperDetails(Party objParty, String tag, int billLadingId) throws SQLException {
 		boolean isDone = false;
 		if (objParty != null) {
-			if(objParty.getName().trim().equalsIgnoreCase("To Order") && objParty.getAddressInfo()==null ) {
+			if (objParty.getName().trim().equalsIgnoreCase("To Order") && objParty.getAddressInfo() == null) {
 				objParty.setAddressInfo(new AddressInfo());
 			}
 			stmt = con.prepareStatement("Insert into consignee_shipper_details values (?, ?, ?, ?, ?, ?, false,?)");
@@ -215,7 +215,8 @@ public class BillsDAO {
 			stmt.setString(3, tag);
 			stmt.setString(4, objParty.getAddressInfo().getAddressLine1());
 			stmt.setString(5, objParty.getAddressInfo().getAddressLine2());
-			stmt.setString(6, objParty.getAddressInfo().getCity() + ","+objParty.getAddressInfo().getState()+"," + objParty.getAddressInfo().getZipCode()+" "+objParty.getAddressInfo().getCountry());
+			stmt.setString(6, objParty.getAddressInfo().getCity() + "," + objParty.getAddressInfo().getState() + ","
+					+ objParty.getAddressInfo().getZipCode() + " " + objParty.getAddressInfo().getCountry());
 			stmt.setInt(7, objParty.getCustomerId());
 			logger.info(stmt);
 			if (stmt.executeUpdate() != 1) {
@@ -307,6 +308,7 @@ public class BillsDAO {
 				for (String seal : objEquipment.getSeals()) {
 					stmt.setString(2, objEquipment.getEquipmentNo());
 					stmt.setString(3, seal);
+					logger.info(stmt);
 					stmt.executeUpdate();
 				}
 			}
@@ -442,26 +444,28 @@ public class BillsDAO {
 		// TODO Auto-generated method stub
 		try {
 			if (objEquipment.getCargos() != null) {
-				
-				stmt1=con.prepareStatement("SELECT system_code FROM artemus.new_hazard_code where un_code=?");
-				
+
+				stmt1 = con.prepareStatement("SELECT system_code FROM artemus.new_hazard_code where un_code=?");
+
 				stmt = con.prepareStatement("Insert into cargo "
 						+ " (bill_lading_id, cargo_id, equipment_number, description, harmonize_code, "
-						+ " hazard_code, manufacturer, country,customer_id,flash_point,flash_unit) values " + " (?,?,?,?,?,?,?,?,?,?,?)");
+						+ " hazard_code, manufacturer, country,customer_id,flash_point,flash_unit) values "
+						+ " (?,?,?,?,?,?,?,?,?,?,?)");
 
 				for (Cargo objCargo : objEquipment.getCargos()) {
 					if (objCargo != null) {
-						
+
 						// get hazard code from hazard un_code
-						stmt1.setString(1,objCargo.getHazardCode());
-					rs=stmt1.executeQuery();
+						stmt1.setString(1, objCargo.getHazardCode());
+						rs = stmt1.executeQuery();
 						if (rs.next()) {
 							objCargo.setHazardCode(rs.getString(1));
 							logger.info(rs.getString(1));
-						}else if(objCargo.getHazardCode()!=null && !objCargo.getHazardCode().isEmpty()) {
-							hazardErrorMessage.append("Entered hazard_code "+objCargo.getHazardCode()+" is invalid .Insert Valid one.");
+						} else if (objCargo.getHazardCode() != null && !objCargo.getHazardCode().isEmpty()) {
+							hazardErrorMessage.append("Entered hazard_code " + objCargo.getHazardCode()
+									+ " is invalid .Insert Valid one.");
 						}
-						
+
 						// Insert into Cargo
 						stmt.setInt(1, billLadingId);
 						stmt.setInt(2, cargoIndex);
@@ -469,32 +473,33 @@ public class BillsDAO {
 						stmt.setString(4, objCargo.getDescriptionsOfGoods());
 						stmt.setString(5, objCargo.getHarmonizeCode());
 						stmt.setString(6, objCargo.getHazardCode());
-						if(objCargo.getManufacturer()!=null) {
+						if (objCargo.getManufacturer() != null) {
 							stmt.setInt(9, objCargo.getManufacturer().getCustomerId());// Field cannot get
-							if(objCargo.getManufacturer().getName()==null ||objCargo.getManufacturer().getName().isEmpty() ) {
+							if (objCargo.getManufacturer().getName() == null
+									|| objCargo.getManufacturer().getName().isEmpty()) {
 								stmt.setString(7, "");
-							}else {
+							} else {
 								stmt.setString(7, objCargo.getManufacturer().getName());
 							}
-						}else {
+						} else {
 							stmt.setString(7, "");
 							stmt.setInt(9, 0);// Field cannot get
 							errorMessage.append("<br>Manufacturer entry is missing.");
 						}
-						
+
 						stmt.setString(8, objCargo.getCountry());
-						if(objCargo.getFlashPointDetails()!=null) {
+						if (objCargo.getFlashPointDetails() != null) {
 							stmt.setDouble(10, objCargo.getFlashPointDetails().getFlashPoint());
 							stmt.setString(11, objCargo.getFlashPointDetails().getFlashUnit());
-						}else {
+						} else {
 							stmt.setDouble(10, 0);
 							stmt.setString(11, "");
 						}
-						
+
 						if (stmt.executeUpdate() != 1) {
 							return -1;
 						}
-						//logger.info(stmt);
+						// logger.info(stmt);
 						System.out.println("Inside CArgos" + objCargo);
 						if (objCargo.getCountry().isEmpty()
 								|| objCargo.getCountry() == null && objCargo.getHarmonizeCode().isEmpty()
@@ -703,5 +708,219 @@ public class BillsDAO {
 		return hazardErrorMessage;
 	}
 
-	
+	public int addEmptyPackages(Equipment objEquipment, int billLadingId, int packageIndex) {
+		try {
+			stmt = con.prepareStatement(
+					"Insert into packages " + " (bill_lading_id, package_id,equipment_number, marks, pieces, packages)"
+							+ " values (?, ?, ?, ?, ?, ?)");
+			stmt1 = con.prepareStatement("Insert into packages_details "
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+			logger.info("Inside Empty Packages");
+			if (objEquipment.getPackages() == null) {
+				objEquipment.setPackages(new ArrayList<Package>());
+				Package emptyPackage = new Package();
+				emptyPackage.setPackageType("CTN");
+				emptyPackage.setPieces("0");
+				objEquipment.getPackages().add(emptyPackage);
+			}
+
+			for (Package objPackage : objEquipment.getPackages()) {
+
+				stmt.setInt(1, billLadingId);
+				stmt.setInt(2, packageIndex);
+				stmt.setString(3, objEquipment.getEquipmentNo());
+				stmt.setString(4, objPackage.getMarks());
+				stmt.setString(5, "0");
+				stmt.setString(6, "CTN");
+				logger.info(stmt);
+				if (stmt.executeUpdate() != 1) {
+					return -1;
+				}
+
+				// following query till end of the list PackagesBean to insert notify party
+				// records in packages table
+
+				stmt1.setInt(1, billLadingId);
+				stmt1.setInt(2, packageIndex);
+				stmt1.setString(3, objEquipment.getEquipmentNo());
+
+				if (objPackage.getWeight().getUnit().equalsIgnoreCase("LBS")) {
+					stmt1.setDouble(4, objPackage.getWeight().getValue());
+					stmt1.setString(16, objPackage.getWeight().getUnit());
+				} else {
+					stmt1.setDouble(4, 0);
+					stmt1.setString(16, "");
+				}
+
+				// set Weight by default
+					stmt1.setDouble(5, 1);
+					stmt1.setString(17, "KGS");
+			
+
+				if (objPackage.getVolume().getUnit().equalsIgnoreCase("CF")) {
+					stmt1.setDouble(6, objPackage.getVolume().getValue());
+					stmt1.setString(18, objPackage.getVolume().getUnit());
+				} else {
+					stmt1.setDouble(6, 0);
+					stmt1.setString(18, "");
+				}
+
+				if (objPackage.getVolume().getUnit().equalsIgnoreCase("CM")) {
+					stmt1.setDouble(7, objPackage.getVolume().getValue());
+					stmt1.setString(19, objPackage.getVolume().getUnit());
+				} else {
+					stmt1.setDouble(7, 0);
+					stmt1.setString(19, "");
+				}
+
+				stmt1.setDouble(8, objPackage.getLength().getValue());
+				stmt1.setDouble(9, objPackage.getWidth().getValue());
+				stmt1.setDouble(10, objPackage.getHeight().getValue());
+				stmt1.setDouble(11, objPackage.getSet().getValue());
+				stmt1.setDouble(12, objPackage.getMin().getValue());
+				stmt1.setDouble(13, objPackage.getMax().getValue());
+				stmt1.setDouble(14, objPackage.getVents().getValue());
+				stmt1.setDouble(15, objPackage.getDrainage().getValue());
+
+				stmt1.setString(20, objPackage.getLength().getUnit());
+				stmt1.setString(21, objPackage.getWidth().getUnit());
+				stmt1.setString(22, objPackage.getHeight().getUnit());
+				stmt1.setString(23, objPackage.getSet().getUnit());
+				stmt1.setString(24, objPackage.getMin().getUnit());
+				stmt1.setString(25, objPackage.getMax().getUnit());
+				stmt1.setString(26, objPackage.getVents().getUnit());
+				stmt1.setString(27, objPackage.getDrainage().getUnit());
+				logger.info(stmt1);
+				if (stmt1.executeUpdate() != 1) {
+					return -1;
+				}
+
+				++packageIndex;
+			}
+			return packageIndex;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return -1;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return -1;
+		}
+	}
+
+	public int addEmptyCargos(Equipment objEquipment, int billLadingId, int cargoIndex) {
+		try {
+
+			objEquipment.setCargos(new ArrayList<Cargo>());
+
+			if (objEquipment.getCargos() != null) {
+
+				stmt1 = con.prepareStatement("SELECT system_code FROM artemus.new_hazard_code where un_code=?");
+
+				stmt = con.prepareStatement("Insert into cargo "
+						+ " (bill_lading_id, cargo_id, equipment_number, description, harmonize_code, "
+						+ " hazard_code, manufacturer, country,customer_id,flash_point,flash_unit) values "
+						+ " (?,?,?,?,?,?,?,?,?,?,?)");
+
+				Cargo emptyCargo = new Cargo();
+				emptyCargo.setHarmonizeCode("869000");
+				objEquipment.getCargos().add(emptyCargo);
+
+				for (Cargo objCargo : objEquipment.getCargos()) {
+					if (objCargo != null) {
+
+						// get hazard code from hazard un_code
+						stmt1.setString(1, objCargo.getHazardCode());
+						rs = stmt1.executeQuery();
+						if (rs.next()) {
+							objCargo.setHazardCode(rs.getString(1));
+							logger.info(rs.getString(1));
+						} else if (objCargo.getHazardCode() != null && !objCargo.getHazardCode().isEmpty()) {
+							hazardErrorMessage.append("Entered hazard_code " + objCargo.getHazardCode()
+									+ " is invalid .Insert Valid one.");
+						}
+
+						// Insert into Cargo
+						stmt.setInt(1, billLadingId);
+						stmt.setInt(2, cargoIndex);
+						stmt.setString(3, objEquipment.getEquipmentNo());
+						stmt.setString(4, objCargo.getDescriptionsOfGoods());
+						stmt.setString(5, "869000");
+						stmt.setString(6, objCargo.getHazardCode());
+						if (objCargo.getManufacturer() != null) {
+							stmt.setInt(9, objCargo.getManufacturer().getCustomerId());// Field cannot get
+							if (objCargo.getManufacturer().getName() == null
+									|| objCargo.getManufacturer().getName().isEmpty()) {
+								stmt.setString(7, "");
+							} else {
+								stmt.setString(7, objCargo.getManufacturer().getName());
+							}
+						} else {
+							stmt.setString(7, "");
+							stmt.setInt(9, 0);// Field cannot get
+							errorMessage.append("<br>Manufacturer entry is missing.");
+						}
+
+						stmt.setString(8, objCargo.getCountry());
+						if (objCargo.getFlashPointDetails() != null) {
+							stmt.setDouble(10, objCargo.getFlashPointDetails().getFlashPoint());
+							stmt.setString(11, objCargo.getFlashPointDetails().getFlashUnit());
+						} else {
+							stmt.setDouble(10, 0);
+							stmt.setString(11, "");
+						}
+
+						if (stmt.executeUpdate() != 1) {
+							return -1;
+						}
+						// logger.info(stmt);
+						System.out.println("Inside CArgos" + objCargo);
+						if (objCargo.getCountry().isEmpty()
+								|| objCargo.getCountry() == null && objCargo.getHarmonizeCode().isEmpty()
+								|| objCargo.getHarmonizeCode() == null) {
+							errorMessage.append("<br>Country is missing for Manufacturer.")
+									.append("<br>Harmonized Code entry is missing.");
+						} else if (objCargo.getHarmonizeCode().isEmpty() || objCargo.getHarmonizeCode() == null) {
+							errorMessage.append("<br>Harmonized Code entry is missing.");
+						}
+
+					}
+					++cargoIndex;
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return -1;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return -1;
+		}
+		return cargoIndex;
+	}
+
+	public boolean insertIntoEmptySeals(Equipment objEquipment, int billLadingId) {
+		try {
+			objEquipment.setSeals(new ArrayList<String>());
+			String emptySeal = new String();
+			emptySeal = "";
+			objEquipment.getSeals().add(emptySeal);
+			if (objEquipment.getSeals() != null) {
+				stmt = con.prepareStatement("Insert into seal values (?, ?, ?)");
+				stmt.setInt(1, billLadingId);
+				for (String seal : objEquipment.getSeals()) {
+					stmt.setString(2, objEquipment.getEquipmentNo());
+					stmt.setString(3, seal);
+					logger.info(stmt);
+					stmt.executeUpdate();
+				}
+			}
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
 }

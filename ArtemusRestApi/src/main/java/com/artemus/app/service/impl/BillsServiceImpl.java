@@ -29,11 +29,11 @@ public class BillsServiceImpl implements BillsService {
 	public void createBill(BillHeader objBillHeader) {
 		// Validate JSON
 		logger.info(objBillHeader.toString());
-				ValidateBeanUtil.buildDefaultValidatorFactory();
-				StringBuffer invalidJsonMsg = ValidateBeanUtil.getConstraintViolationMsgForVoyage(objBillHeader);
-				if (invalidJsonMsg.length() > 0) {
-					throw new MissingRequiredFieldException(invalidJsonMsg.toString());
-				}
+		ValidateBeanUtil.buildDefaultValidatorFactory();
+		StringBuffer invalidJsonMsg = ValidateBeanUtil.getConstraintViolationMsgForVoyage(objBillHeader);
+		if (invalidJsonMsg.length() > 0) {
+			throw new MissingRequiredFieldException(invalidJsonMsg.toString());
+		}
 		objUtils.validateRequiredFields(objBillHeader);
 		// Call for DAO
 		CustomerProfileDAO customerProfileDao = new CustomerProfileDAO();
@@ -275,15 +275,16 @@ public class BillsServiceImpl implements BillsService {
 			objDao.insertIntoNotifyPartyDetails(objBillHeader.getNotifyParties(), billLadingId);
 			// Setting ISF Type
 			objDao.isFROBBill(objBillHeader);
+
 			// Adding Equipments
 			addEquipments(objBillHeader, billLadingId, objDao, objCustomerProfiledao);
-			
-			//validate Hazard Code
-			errorMessage=objDao.getHazardErrorMessage();
-			if(errorMessage.length()>5) {
+
+			// validate Hazard Code
+			errorMessage = objDao.getHazardErrorMessage();
+			if (errorMessage.length() > 5) {
 				throw new ErrorResponseException(errorMessage.toString());
 			}
-			
+
 			// Setting ISF Error
 
 			isferrormsg = objBillHeader.getIsfType() + ":" + objDao.getErrorMessage().toString();
@@ -314,7 +315,7 @@ public class BillsServiceImpl implements BillsService {
 				}
 
 			}
-			//Setting Entity Error
+			// Setting Entity Error
 			entityErrorMessage.append(objCustomerProfiledao.getIsfErrorMessage());
 			// Setting ISF errorDescription
 			objBillHeader.setIsfErrorDescription(entityErrorMessage.toString());
@@ -370,13 +371,13 @@ public class BillsServiceImpl implements BillsService {
 				// Adding Equipments
 				addEquipments(objBillHeader, billLadingId, objDao, objCustomerProfiledao);
 				// Updating into billDetailStatus if all Adding Equipments is succeeds
-				
-				//validate Hazard Code
-				errorMessage=objDao.getHazardErrorMessage();
-				if(errorMessage.length()>5) {
+
+				// validate Hazard Code
+				errorMessage = objDao.getHazardErrorMessage();
+				if (errorMessage.length() > 5) {
 					throw new ErrorResponseException(errorMessage.toString());
 				}
-				
+
 				// Setting ISF Error
 
 				isferrormsg = objBillHeader.getIsfType() + ":" + objDao.getErrorMessage().toString();
@@ -407,7 +408,7 @@ public class BillsServiceImpl implements BillsService {
 					}
 
 				}
-				//Setting Entity Error
+				// Setting Entity Error
 				entityErrorMessage.append(objCustomerProfiledao.getIsfErrorMessage());
 				// Setting ISF errorDescription
 				objBillHeader.setIsfErrorDescription(entityErrorMessage.toString());
@@ -438,30 +439,87 @@ public class BillsServiceImpl implements BillsService {
 		int packageIndex = 0;
 		int cargoIndex = 0;
 
-		for (Equipment objEquipment : objBillHeader.getEquipments()) {
-			if (!objBillsDao.insertIntoEquipments(objEquipment, billLadingId)) {
-				returnedVal = false;
-				break;
+		// adding empty containers
+		if (objBillHeader.getBillType().equalsIgnoreCase("empty")) {
+			System.out.println("Inside empty Containers");
+			for (Equipment objEquipment : objBillHeader.getEquipments()) {
+
+				if (!objBillsDao.insertIntoEquipments(objEquipment, billLadingId)) {
+					returnedVal = false;
+					break;
+				}
+				
+				if(objEquipment.getSeals()!=null) {
+					if (!objBillsDao.insertIntoSeals(objEquipment, billLadingId)) {
+						returnedVal = false;
+						break;
+					}
+				}else if(!objBillsDao.insertIntoEmptySeals(objEquipment, billLadingId)) {
+					returnedVal = false;
+					break;
+				}
+				
+				if(objEquipment.getPackages() != null) {
+					packageIndex = objBillsDao.addPackages(objEquipment, billLadingId, packageIndex);
+					if (packageIndex == -1) {
+						returnedVal = false;
+						break;
+					}
+				}else {
+					packageIndex = objBillsDao.addEmptyPackages(objEquipment, billLadingId, packageIndex);
+					if (packageIndex == -1) {
+						returnedVal = false;
+						break;
+					}
+				}
+				
+				if(objEquipment.getCargos() != null) {
+					if (cargoIndex < objEquipment.getCargos().size()) {
+						customerProfileDao.validateCustomer(objEquipment.getCargos().get(cargoIndex).getManufacturer(),
+								objBillHeader.getLoginScac());
+					}
+					cargoIndex = objBillsDao.addCargos(objEquipment, billLadingId, cargoIndex);
+					if (cargoIndex == -1) {
+						returnedVal = false;
+						break;
+					}
+				}else {
+					cargoIndex = objBillsDao.addEmptyCargos(objEquipment, billLadingId, cargoIndex);
+					if (cargoIndex == -1) {
+						returnedVal = false;
+						break;
+					}
+				}
+				
+
 			}
-			if (!objBillsDao.insertIntoSeals(objEquipment, billLadingId)) {
-				returnedVal = false;
-				break;
-			}
-			packageIndex = objBillsDao.addPackages(objEquipment, billLadingId, packageIndex);
-			if (packageIndex == -1) {
-				returnedVal = false;
-				break;
-			}
-			if (cargoIndex < objEquipment.getCargos().size()) {
-				customerProfileDao.validateCustomer(objEquipment.getCargos().get(cargoIndex).getManufacturer(),
-						objBillHeader.getLoginScac());
-			}
-			cargoIndex = objBillsDao.addCargos(objEquipment, billLadingId, cargoIndex);
-			if (cargoIndex == -1) {
-				returnedVal = false;
-				break;
+		} else {
+			for (Equipment objEquipment : objBillHeader.getEquipments()) {
+				if (!objBillsDao.insertIntoEquipments(objEquipment, billLadingId)) {
+					returnedVal = false;
+					break;
+				}
+				if (!objBillsDao.insertIntoSeals(objEquipment, billLadingId)) {
+					returnedVal = false;
+					break;
+				}
+				packageIndex = objBillsDao.addPackages(objEquipment, billLadingId, packageIndex);
+				if (packageIndex == -1) {
+					returnedVal = false;
+					break;
+				}
+				if (cargoIndex < objEquipment.getCargos().size()) {
+					customerProfileDao.validateCustomer(objEquipment.getCargos().get(cargoIndex).getManufacturer(),
+							objBillHeader.getLoginScac());
+				}
+				cargoIndex = objBillsDao.addCargos(objEquipment, billLadingId, cargoIndex);
+				if (cargoIndex == -1) {
+					returnedVal = false;
+					break;
+				}
 			}
 		}
+
 		if (!returnedVal) {
 			throw new SQLException();
 		}
