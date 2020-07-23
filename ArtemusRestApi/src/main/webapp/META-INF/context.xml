@@ -30,7 +30,7 @@
 <!-- </Context>  -->
 
 <!-- Akshay Server Config -->
-<Context path="/ArtemusApi" reloadable="true">
+<!-- <Context path="/ArtemusApi" reloadable="true">
 	<Loader delegate="true"/>
 	<Resource name="jdbc/artemus" 
 		auth="Container" 
@@ -42,7 +42,7 @@
 		password="pretoriu@98335" 
 		driverClassName="com.mysql.jdbc.Driver" 
 		url="jdbc:mysql://localhost:3306/artemus?autoReconnect=true"/>
-</Context>
+</Context> -->
 
 <!-- Production Server Config -->
 <!-- <Context path="/ArtemusApi" reloadable="true">

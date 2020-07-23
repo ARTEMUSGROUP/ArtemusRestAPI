@@ -447,7 +447,7 @@ public class BillsServiceImpl implements BillsService {
 					break;
 				}
 
-				if (objEquipment.getSeals() != null) {
+				if (objEquipment.getSeals() != null && !objEquipment.getSeals().isEmpty()) {
 					if (!objBillsDao.insertIntoSeals(objEquipment, billLadingId)) {
 						returnedVal = false;
 						break;
@@ -457,7 +457,7 @@ public class BillsServiceImpl implements BillsService {
 					break;
 				}
 
-				if (objEquipment.getPackages() != null) {
+				if (objEquipment.getPackages() != null && !objEquipment.getPackages().isEmpty()) {
 					packageIndex = objBillsDao.addPackages(objEquipment, billLadingId, packageIndex);
 					if (packageIndex == -1) {
 						returnedVal = false;
@@ -471,7 +471,7 @@ public class BillsServiceImpl implements BillsService {
 					}
 				}
 
-				if (objEquipment.getCargos() != null) {
+				if (objEquipment.getCargos() != null && !objEquipment.getCargos().isEmpty()) {
 					if (cargoIndex < objEquipment.getCargos().size()) {
 						customerProfileDao.validateCustomer(objEquipment.getCargos().get(cargoIndex).getManufacturer(),
 								objBillHeader.getLoginScac());

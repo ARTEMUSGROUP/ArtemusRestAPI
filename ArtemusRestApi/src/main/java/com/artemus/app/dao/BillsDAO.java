@@ -716,13 +716,13 @@ public class BillsDAO {
 			stmt1 = con.prepareStatement("Insert into packages_details "
 					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
 			logger.info("Inside Empty Packages");
-			if (objEquipment.getPackages() == null) {
+			
 				objEquipment.setPackages(new ArrayList<Package>());
 				Package emptyPackage = new Package();
 				emptyPackage.setPackageType("CTN");
-				emptyPackage.setPieces("0");
+				emptyPackage.setPieces("1");
 				objEquipment.getPackages().add(emptyPackage);
-			}
+			
 
 			for (Package objPackage : objEquipment.getPackages()) {
 
@@ -730,7 +730,7 @@ public class BillsDAO {
 				stmt.setInt(2, packageIndex);
 				stmt.setString(3, objEquipment.getEquipmentNo());
 				stmt.setString(4, objPackage.getMarks());
-				stmt.setString(5, "0");
+				stmt.setString(5, "1");
 				stmt.setString(6, "CTN");
 				logger.info(stmt);
 				if (stmt.executeUpdate() != 1) {
