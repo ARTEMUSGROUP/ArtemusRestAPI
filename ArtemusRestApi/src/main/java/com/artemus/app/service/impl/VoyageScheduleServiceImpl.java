@@ -300,6 +300,26 @@ public class VoyageScheduleServiceImpl implements VoyageScheduleService {
 				result = false;
 			}
 
+			// Location enter must be loadport or discharge port
+			portValidation = false;
+			String locationName = "";
+			for (PortDetails portCall : objVoyage.getPortDetails()) {
+				if (portCall.getLoad() != true && portCall.getDischarge() != true) {
+					locationName = portCall.getLocation().getLocation();
+					portValidation = true;
+					break;
+				}
+			}
+
+			if (portValidation) {
+				if (errorMessage.length() > 0) {
+					errorMessage.append(" , ");
+				}
+				errorMessage.append(
+						"Location entered:" + locationName + " must be assigned as a Load Port or Dischage Port  ");
+				result = false;
+			}
+
 			String lastloaddate;
 			String dischargeDate;
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -335,15 +355,26 @@ public class VoyageScheduleServiceImpl implements VoyageScheduleService {
 						result = false;
 						break;
 					}
-					if (dichargedate1.compareTo(lastloaddate1) >= 0 || dichargedate1.compareTo(lastloaddate1) == 0) {
-						result = true;
+					if (lastloaddate1 != null) {
+						if (dichargedate1.compareTo(lastloaddate1) >= 0
+								|| dichargedate1.compareTo(lastloaddate1) == 0) {
+							result = true;
+						} else {
+							if (errorMessage.length() > 0) {
+								errorMessage.append(" , ");
+							}
+							// Error message
+							errorMessage
+									.append(" 'arrivalDate' of discharge port " + portCall.getLocation().getLocation()
+											+ "should not be less than last load port please check 'portDetails' ");
+						}
 					} else {
 						if (errorMessage.length() > 0) {
 							errorMessage.append(" , ");
 						}
 						// Error message
-						errorMessage.append(" 'arrivalDate' of discharge port " + portCall.getLocation().getLocation()
-								+ "should not be less than last load port please check 'portDetails' ");
+						errorMessage.append("lastLoadPort : Voyage should have atleast one lastLoadPort");
+						break;
 					}
 				}
 			}
@@ -411,7 +442,7 @@ public class VoyageScheduleServiceImpl implements VoyageScheduleService {
 		boolean result = true;
 		try {
 			for (PortDetails objPortDetail : objVoyage.getPortDetails()) {
-				String customCodefromUNCode="";
+				String customCodefromUNCode = "";
 				Location locationbean = objPortDetail.getLocation();
 				objLocationdao.setLocationBean(locationbean);
 				if (locationbean.getLocationType().equalsIgnoreCase("I")) {
@@ -432,18 +463,18 @@ public class VoyageScheduleServiceImpl implements VoyageScheduleService {
 					int locationIdfromUNCode = objLocationdao.getLocationIdfromUnlocode(locationbean.getCustomCode(),
 							loginScac);
 					int locationIdfromLocation = objLocationdao.getLocationId(locationbean.getLocation(), loginScac);
-					if(locationIdfromLocation!=0 && locationIdfromUNCode !=0) {
+					if (locationIdfromLocation != 0 && locationIdfromUNCode != 0) {
 						if (locationIdfromUNCode != locationIdfromLocation) {
-							errorMessage.append("Unlocode: " + locationbean.getUnlocode()
-							+ "for Custom Code"+locationbean.getCustomCode() +"entered is same for multiple Locations in AMS system.");
+							errorMessage.append("Unlocode: " + locationbean.getUnlocode() + "for Custom Code"
+									+ locationbean.getCustomCode()
+									+ "entered is same for multiple Locations in AMS system.");
 						}
 					}
-					
+
 					// Insert into location
-					if(locationIdfromLocation==0 && locationIdfromUNCode==0) {
-							objLocationdao.insert(locationbean, loginScac);
+					if (locationIdfromLocation == 0 && locationIdfromUNCode == 0) {
+						objLocationdao.insert(locationbean, loginScac);
 					}
-					
 
 					if (objLocationdao.isForeignPort(locationbean.getCustomCode())) {
 						locationbean.setCustomForeign(true);
@@ -469,7 +500,8 @@ public class VoyageScheduleServiceImpl implements VoyageScheduleService {
 						errorMessage.append(" , ");
 					}
 					if (locationbean.getUnlocode() != null && (!locationbean.getUnlocode().isEmpty())) {
-						errorMessage.append("customCode for unlocode : " + locationbean.getUnlocode()+"is invalid or  does not exists for the login scac" + loginScac);
+						errorMessage.append("customCode for unlocode : " + locationbean.getUnlocode()
+								+ "is invalid or  does not exists for the login scac" + loginScac);
 					}
 				}
 			}
@@ -477,7 +509,7 @@ public class VoyageScheduleServiceImpl implements VoyageScheduleService {
 			objLocationdao.closeAll();
 		}
 		return result;
-	
+
 	}
 
 }

@@ -347,7 +347,7 @@ public class BillsDAO {
 				stmt.setString(4, objPackage.getMarks());
 				stmt.setString(5, objPackage.getPieces());
 				stmt.setString(6, objPackage.getPackageType());
-				System.out.println(stmt);
+				System.out.println("Package" + stmt);
 				if (stmt.executeUpdate() != 1) {
 					return -1;
 				}
@@ -716,13 +716,11 @@ public class BillsDAO {
 			stmt1 = con.prepareStatement("Insert into packages_details "
 					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
 			logger.info("Inside Empty Packages");
-			if (objEquipment.getPackages() == null) {
-				objEquipment.setPackages(new ArrayList<Package>());
-				Package emptyPackage = new Package();
-				emptyPackage.setPackageType("CTN");
-				emptyPackage.setPieces("0");
-				objEquipment.getPackages().add(emptyPackage);
-			}
+
+			Package emptyPackage = new Package();
+			emptyPackage.setPackageType("CTN");
+			emptyPackage.setPieces("1");
+			objEquipment.getPackages().add(emptyPackage);
 
 			for (Package objPackage : objEquipment.getPackages()) {
 
@@ -730,7 +728,7 @@ public class BillsDAO {
 				stmt.setInt(2, packageIndex);
 				stmt.setString(3, objEquipment.getEquipmentNo());
 				stmt.setString(4, objPackage.getMarks());
-				stmt.setString(5, "0");
+				stmt.setString(5, "1");
 				stmt.setString(6, "CTN");
 				logger.info(stmt);
 				if (stmt.executeUpdate() != 1) {
@@ -753,9 +751,8 @@ public class BillsDAO {
 				}
 
 				// set Weight by default
-					stmt1.setDouble(5, 1);
-					stmt1.setString(17, "KGS");
-			
+				stmt1.setDouble(5, 1);
+				stmt1.setString(17, "KGS");
 
 				if (objPackage.getVolume().getUnit().equalsIgnoreCase("CF")) {
 					stmt1.setDouble(6, objPackage.getVolume().getValue());

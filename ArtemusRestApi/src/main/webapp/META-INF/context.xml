@@ -1,5 +1,5 @@
 <!-- Test Server Config -->
-<Context path="/ArtemusApi" reloadable="true">
+<!-- <Context path="/ArtemusApi" reloadable="true">
 	<Loader delegate="true"/>
 	<Resource name="jdbc/artemus" 
 		auth="Container" 
@@ -11,7 +11,7 @@
 		password="@ss123" 
 		driverClassName="com.mysql.jdbc.Driver" 
 		url="jdbc:mysql://localhost:3306/artemus?autoReconnect=true"/>
-</Context>  
+</Context>   -->
 
 <!-- Radhika Server Config -->
 <!-- <Context path="/ArtemusApi" reloadable="true"> -->
