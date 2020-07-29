@@ -17,70 +17,69 @@ import com.github.reinert.jjschema.Attributes;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-
 @XmlRootElement
-@ApiModel(value="Bill Header",description = "All details about the Bill Header. ")
+@ApiModel(value = "Bill Header", description = "All details about the Bill Header. ")
 public class BillHeader {
-	@ApiModelProperty(value ="The bill of lading number. Do not prepend the BL issuer’s SCAC. We will do that when the bill is transmitted.",required = true)
+	@ApiModelProperty(value = "The bill of lading number. Do not prepend the BL issuer’s SCAC. We will do that when the bill is transmitted.", required = true)
 	@Attributes(required = true, description = "The billOfLading.")
 	@NotEmpty(message = "billOfLading cannot be blank")
 	@Size(max = 20, message = "The billOfLading must be max 20 letters only")
 	private String billOfLading;
-	
+
 	@Attributes(required = true, description = "The billType.")
-	@ApiModelProperty(value = "billType for Bill.The billType must be max 8 letters only",required = true)
+	@ApiModelProperty(value = "billType for Bill.The billType must be max 8 letters only", required = true)
 	@NotEmpty(message = "billType cannot be blank")
 	@Size(max = 8, message = "The billType must be max 8 letters only")
 	private String billType;
-	@ApiModelProperty(value = "House Bill Scac.The House Bill Scac must be 4 letters only.",required = false,example="DEMO")
+	@ApiModelProperty(value = "House Bill Scac.The House Bill Scac must be 4 letters only.", required = false, example = "DEMO")
 	private String hblScac;
-	@ApiModelProperty(value = "Indicates whether or not this is an NVO’s house bill, and the type of bill. Accepted values: non NVO, automated NVO, non automated NVO",required = true,example="non NVO")
+	@ApiModelProperty(value = "Indicates whether or not this is an NVO’s house bill, and the type of bill. Accepted values: non NVO, automated NVO, non automated NVO", required = true, example = "non NVO")
 	private String nvoType;
-	@ApiModelProperty(value = "The type of bill being transmitted. Accepted values include: Master,House",required = false,example=" ")
+	@ApiModelProperty(value = "The type of bill being transmitted. Accepted values include: Master,House", required = false, example = " ")
 	private String nvoBill;
-	@ApiModelProperty(value = "In the case of an NVO’s house bill, the SCAC of the master carrier.masterBillScac must be max 4 letters only. ",required = false,example=" ")
+	@ApiModelProperty(value = "In the case of an NVO’s house bill, the SCAC of the master carrier.masterBillScac must be max 4 letters only. ", required = false, example = " ")
 	private String masterBillScac;
 	// private String scacBill;
-	@ApiModelProperty(value = "In the case of an NVO’s house bill, this indicates the BL number of the master carrier’s bill",required = false,example=" ")
+	@ApiModelProperty(value = "In the case of an NVO’s house bill, this indicates the BL number of the master carrier’s bill", required = false, example = " ")
 	private String masterBill;
 
 	// Shipping Info
-	@ApiModelProperty(value = "The information related to Shipper",required = true)
+	@ApiModelProperty(value = "The information related to Shipper", required = true)
 	private Party shipper;
-	@ApiModelProperty(value = "The information related to BookingParty",required = false)
+	@ApiModelProperty(value = "The information related to BookingParty", required = false)
 	private Party bookingParty;
-	@ApiModelProperty(value = "The information related to Seller",required = false)
+	@ApiModelProperty(value = "The information related to Seller", required = false)
 	private Party seller;
-	@ApiModelProperty(value = "The information related to Consolidator",required = false)
+	@ApiModelProperty(value = "The information related to Consolidator", required = false)
 	private Party consolidator;
-	@ApiModelProperty(value = "The information related to Stuffer",required = false)
+	@ApiModelProperty(value = "The information related to Stuffer", required = false)
 	private Party stuffer;
 
 	// Recipient Info
 	@Attributes(required = true, description = "The consignee.")
-	@ApiModelProperty(value = "The information related to Consignee",required = true)
+	@ApiModelProperty(value = "The information related to Consignee", required = true)
 	@NotNull(message = "consignee cannot be blank")
 	private Party consignee;
-	@ApiModelProperty(value = "The information related to Notify",required = true)
+	@ApiModelProperty(value = "The information related to Notify", required = true)
 	private Party notify;
-	@ApiModelProperty(value = "The information related to Importer",required = false)
+	@ApiModelProperty(value = "The information related to Importer", required = false)
 	private Party importer;
-	@ApiModelProperty(value = "The information related to Buyer",required = false)
+	@ApiModelProperty(value = "The information related to Buyer", required = false)
 	private Party buyer;
-	@ApiModelProperty(value = "The information related to ShipTo",required = false)
+	@ApiModelProperty(value = "The information related to ShipTo", required = false)
 	private Party shipTo;
 
 	// Notify Parties
-	@ApiModelProperty(value = "Array of carrier code's(scac) related to notify parties",required = false)
+	@ApiModelProperty(value = "Array of carrier code's(scac) related to notify parties", required = false)
 	private ArrayList<String> notifyParties;
 
 	// Vessel Schedule
 	@Attributes(required = true, description = "The vesselSchedule.")
-	@ApiModelProperty(value = "The information related to vessel",required = true)
+	@ApiModelProperty(value = "The information related to vessel", required = true)
 	@NotNull(message = "vesselSchedule cannot be blank")
 	private VesselSchedule vesselSchedule;
 
-	@ApiModelProperty(value = "The information related to Equipment",required = true)
+	@ApiModelProperty(value = "The information related to Equipment", required = true)
 	private ArrayList<Equipment> equipments;
 
 	// Bill Update
@@ -93,19 +92,19 @@ public class BillHeader {
 
 	// ISF
 	@ApiModelProperty(value = "Type of Transmission Type.Accepted values are:CT,FT,FR. By default CT will be selected. "
-			+ "CT-Complete transaction, FR-Flexible Range, FT-Flexible Timing",required = false,example="CT")
-	@Size(max = 2,min=2, message = "The transmissionType must be max of 2 characters only")
+			+ "CT-Complete transaction, FR-Flexible Range, FT-Flexible Timing", required = false, example = "CT")
+	@Size(max = 2, min = 2, message = "The transmissionType must be max of 2 characters only")
 	private String transmissionType;
 	@ApiModelProperty(value = "Type of Shipment.Accepted values include: 01,02,03,04,05,06,07,08,09,10,11."
 			+ "By default 01 will be selected.The following values corresponds as below: 01-Standard or regular filings,"
 			+ " 02-To Order Shipments, 03-Household Goods / Personal Effects (HHG / PE), 04-Military Government, 05-Diplomatic Shipment,"
 			+ " 06-Carnet, 07-US Goods Returned, 08-FTZ Shipments, 09-International Mail Shipments, 10-Outer Continental Shelf Shipments,"
-			+ " 11-Informal.",required = false,example="01")
+			+ " 11-Informal.", required = false, example = "01")
 	@Size(max = 2, message = "The shipmentType must be max of 2 digits only")
 	private String shipmentType;
-	@ApiModelProperty(value = "Carnet Information",required = false)
+	@ApiModelProperty(value = "Carnet Information", required = false)
 	private Carnet carnet;
-	@ApiModelProperty(value = "Informal Information",required = false)
+	@ApiModelProperty(value = "Informal Information", required = false)
 	private Informal informal;
 
 	// -----------------------------
@@ -113,7 +112,7 @@ public class BillHeader {
 	private String isfErrorDescription;
 	@XmlTransient
 	private String isfType;
-	
+
 	public String getLoginScac() {
 		if (loginScac == null)
 			return loginScac;
@@ -136,8 +135,9 @@ public class BillHeader {
 		this.billOfLading = billOfLading;
 	}
 
-	 //@JsonProperty("billType")
-	 //@Schema(required = true, description = "The type of bill being transmitted.  Accepted values include: way bill, empty, Original")
+	// @JsonProperty("billType")
+	// @Schema(required = true, description = "The type of bill being transmitted.
+	// Accepted values include: way bill, empty, Original")
 	public String getBillType() {
 		if (billType == null)
 			return billType;
@@ -172,8 +172,9 @@ public class BillHeader {
 		this.nvoType = nvoType;
 	}
 
-	//@JsonProperty("nvoBill")
-	//@Schema(description = "The type of bill being transmitted.  Accepted values include: Master,House")
+	// @JsonProperty("nvoBill")
+	// @Schema(description = "The type of bill being transmitted. Accepted values
+	// include: Master,House")
 	public String getNvoBill() {
 		if (nvoBill == null)
 			return nvoBill;
@@ -194,12 +195,15 @@ public class BillHeader {
 
 	public String getMasterBill() {
 		if (masterBill == null)
-			return masterBill;
-		else
-			return masterBill.toUpperCase();
+			return "";
+
+		return masterBill.toUpperCase();
 	}
 
 	public String getMasterBillScac() {
+		if (masterBillScac == null)
+			return "";
+
 		return masterBillScac;
 	}
 
@@ -327,7 +331,6 @@ public class BillHeader {
 //		this.isBillUpdate = isBillUpdate;
 //	}
 
-
 	public int getBillLadingId() {
 		return billLadingId;
 	}
@@ -337,7 +340,7 @@ public class BillHeader {
 	}
 
 	public String getTransmissionType() {
-		if(transmissionType==null){
+		if (transmissionType == null) {
 			return "CT";
 		}
 		return transmissionType.trim();
@@ -348,7 +351,7 @@ public class BillHeader {
 	}
 
 	public String getShipmentType() {
-		if(shipmentType==null) {
+		if (shipmentType == null) {
 			return "01";
 		}
 		return shipmentType.trim();

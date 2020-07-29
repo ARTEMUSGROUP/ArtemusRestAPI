@@ -20,12 +20,11 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.SwaggerDefinition;
 import io.swagger.annotations.Tag;
 
-
 @Path("/jp/bills")
 @Consumes("application/json; charset=Utf-8")
 @Produces({ MediaType.APPLICATION_JSON })
 @Api("Japan Bill Service")
-@SwaggerDefinition(tags= {@Tag(name="Japan Bill Service",description="To Create and Update Bill")})
+@SwaggerDefinition(tags = { @Tag(name = "Japan Bill Service", description = "To Create and Update Bill") })
 public class JPBillsEntryPoint {
 
 	@Secured
@@ -35,6 +34,11 @@ public class JPBillsEntryPoint {
 		System.out.println(requestObj.toString());
 		String scacCode = authorization.substring(0, 4);
 		requestObj.setLoginScac(scacCode);
+		if (requestObj.getHblScac() != null && !requestObj.getHblScac().isEmpty()) {
+
+		} else {
+			requestObj.setHblScac(scacCode);
+		}
 		JPBillsService billsService = new JPBillsServiceImpl();
 		billsService.createBill(requestObj);
 
@@ -52,6 +56,11 @@ public class JPBillsEntryPoint {
 		System.out.println(requestObj.toString());
 		String scacCode = authorization.substring(0, 4);
 		requestObj.setLoginScac(scacCode);
+		if (requestObj.getHblScac() != null && !requestObj.getHblScac().isEmpty()) {
+
+		} else {
+			requestObj.setHblScac(scacCode);
+		}
 		JPBillsService billsService = new JPBillsServiceImpl();
 		billsService.updateBill(requestObj);
 
