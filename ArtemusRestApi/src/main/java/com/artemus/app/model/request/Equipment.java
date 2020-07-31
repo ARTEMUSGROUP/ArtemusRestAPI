@@ -2,6 +2,8 @@ package com.artemus.app.model.request;
 
 import java.util.ArrayList;
 
+import javax.validation.Valid;
+
 import org.hibernate.validator.constraints.NotEmpty;
 
 import com.github.reinert.jjschema.Attributes;
@@ -24,6 +26,7 @@ public class Equipment {
 	@Schema(description = "A comma-separated list of seal numbers for this piece of equipment.", required = true)
 	private ArrayList<String> seals;
 
+	@Valid
 	@Schema(description = "Defines packaging for bill cargo. Packages my be in a single piece of equipment. Many cargo items may be in a package.", required = true)
 	private ArrayList<Package> packages;
 

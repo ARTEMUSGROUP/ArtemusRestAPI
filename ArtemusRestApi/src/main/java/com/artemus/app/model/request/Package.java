@@ -1,9 +1,14 @@
 package com.artemus.app.model.request;
 
+import javax.validation.Valid;
+import javax.validation.constraints.AssertTrue;
+import javax.validation.constraints.Size;
+
 import org.hibernate.validator.constraints.NotEmpty;
 
 import com.github.reinert.jjschema.Attributes;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 public class Package {
@@ -11,6 +16,7 @@ public class Package {
 	@Schema(description = "A description of the package type. See Appendix C for a list of valid packages.",required = true)
 	@Attributes(required = true, description = "The packageType.")
 	@NotEmpty(message = "packageType cannot be blank")
+	@Valid
 	private String packageType;
 	
 	@Schema(description = "Holds text description of marks found on this package. This element has no attributes and no text – the marks are in the element’s text. If the text would cause XML parsing issues, feel free to use a CDATA tag.",required = false)
@@ -49,6 +55,16 @@ public class Package {
 	@Schema(description = "The name of this attribute. See Appendix B for known attribute types.",required = false)
 	private ValueUnit drainage;
 
+	@AssertTrue(message = " Package Type must be 3 digit code.")
+	@Hidden
+	public boolean isValid() {
+		if ((packageType.length()>3)) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+	
 	public String getPackageType() {
 		if(packageType==null)
 			return packageType;	

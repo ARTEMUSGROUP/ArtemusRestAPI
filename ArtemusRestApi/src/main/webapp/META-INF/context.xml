@@ -72,4 +72,4 @@
 		password="@ss123"
 		driverClassName="com.mysql.jdbc.Driver"
 		url="jdbc:mysql://34.232.156.35:3306/artemus?autoReconnect=true"/>
-</Context>   -->
+</Context>  --> 

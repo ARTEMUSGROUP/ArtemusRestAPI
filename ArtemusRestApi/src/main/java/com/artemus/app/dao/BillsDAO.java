@@ -214,9 +214,17 @@ public class BillsDAO {
 			stmt.setString(2, objParty.getName());
 			stmt.setString(3, tag);
 			stmt.setString(4, objParty.getAddressInfo().getAddressLine1());
-			stmt.setString(5, objParty.getAddressInfo().getAddressLine2());
-			stmt.setString(6, objParty.getAddressInfo().getCity() + "," + objParty.getAddressInfo().getState() + ","
-					+ objParty.getAddressInfo().getZipCode() + " " + objParty.getAddressInfo().getCountry());
+			if (objParty.getAddressInfo().getAddressLine2() != null
+					&& !objParty.getAddressInfo().getAddressLine2().isEmpty()) {
+				stmt.setString(5, objParty.getAddressInfo().getAddressLine2());
+				stmt.setString(6, objParty.getAddressInfo().getCity() + "," + objParty.getAddressInfo().getState() + " "
+						+ objParty.getAddressInfo().getZipCode() + " " + objParty.getAddressInfo().getCountry());
+			} else {
+
+				stmt.setString(5, objParty.getAddressInfo().getCity() + "," + objParty.getAddressInfo().getState() + " "
+						+ objParty.getAddressInfo().getZipCode() + " " + objParty.getAddressInfo().getCountry());
+				stmt.setString(6, "");
+			}
 			stmt.setInt(7, objParty.getCustomerId());
 			logger.info(stmt);
 			if (stmt.executeUpdate() != 1) {

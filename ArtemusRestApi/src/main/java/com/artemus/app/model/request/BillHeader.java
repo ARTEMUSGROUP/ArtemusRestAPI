@@ -187,12 +187,15 @@ public class BillHeader {
 
 	public String getMasterBill() {
 		if (masterBill == null)
-			return masterBill;
-		else
+			return "";
+		
 			return masterBill.toUpperCase();
 	}
 
 	public String getMasterBillScac() {
+		if (masterBillScac == null)
+			return "";
+		
 		return masterBillScac;
 	}
 

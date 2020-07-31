@@ -10,6 +10,9 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.artemus.app.connection.DBConnectionFactory;
 import com.artemus.app.model.request.AddressInfo;
 import com.artemus.app.model.request.BillHeader;
@@ -22,6 +25,7 @@ public class CustomerProfileDAO {
 	private ResultSet rs = null;
 	StringBuilder custErrorMessage = new StringBuilder("");
 	StringBuilder custIsfErrorMessage = new StringBuilder("");
+	static Logger logger = LogManager.getLogger();
 
 	public CustomerProfileDAO() {
 
@@ -164,6 +168,7 @@ public class CustomerProfileDAO {
 
 				if (objParty.getAddressInfo().getEntityNumber() != "") {
 					System.out.print("Entity Number Exist");
+					logger.info("Entity Number Exist");
 				}
 				return true;
 			}
@@ -362,7 +367,7 @@ public class CustomerProfileDAO {
 			}
 
 			System.out.println(stmt.toString());
-
+			logger.info(stmt.toString());
 			return true;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -425,6 +430,7 @@ public class CustomerProfileDAO {
 				partyBean.setCustomerId(rs.getInt(1));
 
 			System.out.println(stmt.toString());
+			logger.info(stmt.toString());
 
 			return true;
 		} catch (SQLException e) {
@@ -450,6 +456,7 @@ public class CustomerProfileDAO {
 				partyBean.setCustomerId(rs.getInt(2));
 
 				if (partyBean.getCustomerId() != 0) {
+					logger.info("Customer Exist");
 					System.out.print("Customer Exist");
 				}
 				return true;
