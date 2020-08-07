@@ -261,16 +261,22 @@ public class BillsServiceImpl implements BillsService {
 				throw new SQLException();
 			}
 			// Adding insertIntoConsigneeShipperDetails
-			objDao.insertIntoConsigneeShipperDetails(objBillHeader.getShipper(), "shipper", billLadingId);
-			objDao.insertIntoConsigneeShipperDetails(objBillHeader.getBookingParty(), "booking", billLadingId);
-			objDao.insertIntoConsigneeShipperDetails(objBillHeader.getSeller(), "seller", billLadingId);
-			objDao.insertIntoConsigneeShipperDetails(objBillHeader.getStuffer(), "stuffer", billLadingId);
-			objDao.insertIntoConsigneeShipperDetails(objBillHeader.getConsignee(), "consignee", billLadingId);
-			objDao.insertIntoConsigneeShipperDetails(objBillHeader.getNotify(), "notify", billLadingId);
-			objDao.insertIntoConsigneeShipperDetails(objBillHeader.getConsolidator(), "consolidator", billLadingId);
-			objDao.insertIntoConsigneeShipperDetails(objBillHeader.getImporter(), "importer", billLadingId);
-			objDao.insertIntoConsigneeShipperDetails(objBillHeader.getBuyer(), "buyer", billLadingId);
-			objDao.insertIntoConsigneeShipperDetails(objBillHeader.getShipTo(), "shipTo", billLadingId);
+			objDao.insertIntoConsigneeShipperDetails(objBillHeader.getShipper(), "shipper", billLadingId,
+					objBillHeader);
+			objDao.insertIntoConsigneeShipperDetails(objBillHeader.getBookingParty(), "booking", billLadingId,
+					objBillHeader);
+			objDao.insertIntoConsigneeShipperDetails(objBillHeader.getSeller(), "seller", billLadingId, objBillHeader);
+			objDao.insertIntoConsigneeShipperDetails(objBillHeader.getStuffer(), "stuffer", billLadingId,
+					objBillHeader);
+			objDao.insertIntoConsigneeShipperDetails(objBillHeader.getConsignee(), "consignee", billLadingId,
+					objBillHeader);
+			objDao.insertIntoConsigneeShipperDetails(objBillHeader.getNotify(), "notify", billLadingId, objBillHeader);
+			objDao.insertIntoConsigneeShipperDetails(objBillHeader.getConsolidator(), "consolidator", billLadingId,
+					objBillHeader);
+			objDao.insertIntoConsigneeShipperDetails(objBillHeader.getImporter(), "importer", billLadingId,
+					objBillHeader);
+			objDao.insertIntoConsigneeShipperDetails(objBillHeader.getBuyer(), "buyer", billLadingId, objBillHeader);
+			objDao.insertIntoConsigneeShipperDetails(objBillHeader.getShipTo(), "shipTo", billLadingId, objBillHeader);
 			// Adding insertIntoNotifyPartyDetails
 			objDao.insertIntoNotifyPartyDetails(objBillHeader.getNotifyParties(), billLadingId);
 			// Setting ISF Type
@@ -291,27 +297,27 @@ public class BillsServiceImpl implements BillsService {
 			System.out.println(entityErrorMessage);
 
 			if (objBillHeader.getIsfType() == "ISF-5") {
-				if (objBillHeader.getShipTo() == null) {
-					entityErrorMessage.append("<br>Ship To information is not entered.");
-				}
-				if (objBillHeader.getBookingParty() == null) {
-					entityErrorMessage.append("<br>Booking Party information is not entered.");
-				}
+				/*
+				 * if (objBillHeader.getShipTo() == null) {
+				 * entityErrorMessage.append("<br>Ship To information is not entered."); } if
+				 * (objBillHeader.getBookingParty() == null) {
+				 * entityErrorMessage.append("<br>Booking Party information is not entered."); }
+				 */
 			} else if (objBillHeader.getIsfType() == "ISF-10") {
-				if (objBillHeader.getShipTo() == null) {
-					entityErrorMessage.append("<br>Ship To information is not entered.");
-				} else if (objBillHeader.getSeller() == null) {
-					entityErrorMessage.append("<br>Seller information is not entered.");
-				} else if (objBillHeader.getBuyer() == null) {
-					entityErrorMessage.append("<br>Buyer information is not entered.");
-				} else if (objBillHeader.getStuffer() == null) {
-					entityErrorMessage.append("<br>Stuffer information is not entered.");
-				} else if (objBillHeader.getConsolidator() == null) {
-					entityErrorMessage.append("<br>Consolidator information is not entered.");
-				} else if (objBillHeader.getImporter() == null) {
-					entityErrorMessage.append("<br>Importer information is not entered.");
-				}
-
+				/*
+				 * if (objBillHeader.getShipTo() == null) {
+				 * entityErrorMessage.append("<br>Ship To information is not entered."); } else
+				 * if (objBillHeader.getSeller() == null) {
+				 * entityErrorMessage.append("<br>Seller information is not entered."); } else
+				 * if (objBillHeader.getBuyer() == null) {
+				 * entityErrorMessage.append("<br>Buyer information is not entered."); } else if
+				 * (objBillHeader.getStuffer() == null) {
+				 * entityErrorMessage.append("<br>Stuffer information is not entered."); } else
+				 * if (objBillHeader.getConsolidator() == null) {
+				 * entityErrorMessage.append("<br>Consolidator information is not entered."); }
+				 * else if (objBillHeader.getImporter() == null) {
+				 * entityErrorMessage.append("<br>Importer information is not entered."); }
+				 */
 			}
 			// Setting Entity Error
 			entityErrorMessage.append(objCustomerProfiledao.getIsfErrorMessage());
@@ -352,16 +358,26 @@ public class BillsServiceImpl implements BillsService {
 				objDao.deleteFromPackages(billLadingId);
 				objDao.deleteFromCargo(billLadingId);
 				// Adding insertIntoConsigneeShipperDetails
-				objDao.insertIntoConsigneeShipperDetails(objBillHeader.getShipper(), "shipper", billLadingId);
-				objDao.insertIntoConsigneeShipperDetails(objBillHeader.getBookingParty(), "booking", billLadingId);
-				objDao.insertIntoConsigneeShipperDetails(objBillHeader.getSeller(), "seller", billLadingId);
-				objDao.insertIntoConsigneeShipperDetails(objBillHeader.getStuffer(), "stuffer", billLadingId);
-				objDao.insertIntoConsigneeShipperDetails(objBillHeader.getConsignee(), "consignee", billLadingId);
-				objDao.insertIntoConsigneeShipperDetails(objBillHeader.getNotify(), "notify", billLadingId);
-				objDao.insertIntoConsigneeShipperDetails(objBillHeader.getConsolidator(), "consolidator", billLadingId);
-				objDao.insertIntoConsigneeShipperDetails(objBillHeader.getImporter(), "importer", billLadingId);
-				objDao.insertIntoConsigneeShipperDetails(objBillHeader.getBuyer(), "buyer", billLadingId);
-				objDao.insertIntoConsigneeShipperDetails(objBillHeader.getShipTo(), "shipTo", billLadingId);
+				objDao.insertIntoConsigneeShipperDetails(objBillHeader.getShipper(), "shipper", billLadingId,
+						objBillHeader);
+				objDao.insertIntoConsigneeShipperDetails(objBillHeader.getBookingParty(), "booking", billLadingId,
+						objBillHeader);
+				objDao.insertIntoConsigneeShipperDetails(objBillHeader.getSeller(), "seller", billLadingId,
+						objBillHeader);
+				objDao.insertIntoConsigneeShipperDetails(objBillHeader.getStuffer(), "stuffer", billLadingId,
+						objBillHeader);
+				objDao.insertIntoConsigneeShipperDetails(objBillHeader.getConsignee(), "consignee", billLadingId,
+						objBillHeader);
+				objDao.insertIntoConsigneeShipperDetails(objBillHeader.getNotify(), "notify", billLadingId,
+						objBillHeader);
+				objDao.insertIntoConsigneeShipperDetails(objBillHeader.getConsolidator(), "consolidator", billLadingId,
+						objBillHeader);
+				objDao.insertIntoConsigneeShipperDetails(objBillHeader.getImporter(), "importer", billLadingId,
+						objBillHeader);
+				objDao.insertIntoConsigneeShipperDetails(objBillHeader.getBuyer(), "buyer", billLadingId,
+						objBillHeader);
+				objDao.insertIntoConsigneeShipperDetails(objBillHeader.getShipTo(), "shipTo", billLadingId,
+						objBillHeader);
 				// Adding insertIntoNotifyPartyDetails
 				objDao.insertIntoNotifyPartyDetails(objBillHeader.getNotifyParties(), billLadingId);
 				// Setting ISF Type
@@ -384,26 +400,27 @@ public class BillsServiceImpl implements BillsService {
 				System.out.println(entityErrorMessage);
 
 				if (objBillHeader.getIsfType() == "ISF-5") {
-					if (objBillHeader.getShipTo() == null) {
-						entityErrorMessage.append("<br>Ship To information is not entered.");
-					}
-					if (objBillHeader.getBookingParty() == null) {
-						entityErrorMessage.append("<br>Booking Party information is not entered.");
-					}
+					/*
+					 * if (objBillHeader.getShipTo() == null) {
+					 * entityErrorMessage.append("<br>Ship To information is not entered."); } if
+					 * (objBillHeader.getBookingParty() == null) {
+					 * entityErrorMessage.append("<br>Booking Party information is not entered."); }
+					 */
 				} else if (objBillHeader.getIsfType() == "ISF-10") {
-					if (objBillHeader.getShipTo() == null) {
-						entityErrorMessage.append("<br>Ship To information is not entered.");
-					} else if (objBillHeader.getSeller() == null) {
-						entityErrorMessage.append("<br>Seller information is not entered.");
-					} else if (objBillHeader.getBuyer() == null) {
-						entityErrorMessage.append("<br>Buyer information is not entered.");
-					} else if (objBillHeader.getStuffer() == null) {
-						entityErrorMessage.append("<br>Stuffer information is not entered.");
-					} else if (objBillHeader.getConsolidator() == null) {
-						entityErrorMessage.append("<br>Consolidator information is not entered.");
-					} else if (objBillHeader.getImporter() == null) {
-						entityErrorMessage.append("<br>Importer information is not entered.");
-					}
+					/*
+					 * if (objBillHeader.getShipTo() == null) {
+					 * entityErrorMessage.append("<br>Ship To information is not entered."); } else
+					 * if (objBillHeader.getSeller() == null) {
+					 * entityErrorMessage.append("<br>Seller information is not entered."); } else
+					 * if (objBillHeader.getBuyer() == null) {
+					 * entityErrorMessage.append("<br>Buyer information is not entered."); } else if
+					 * (objBillHeader.getStuffer() == null) {
+					 * entityErrorMessage.append("<br>Stuffer information is not entered."); } else
+					 * if (objBillHeader.getConsolidator() == null) {
+					 * entityErrorMessage.append("<br>Consolidator information is not entered."); }
+					 * else if (objBillHeader.getImporter() == null) {
+					 * entityErrorMessage.append("<br>Importer information is not entered."); }
+					 */
 
 				}
 				// Setting Entity Error

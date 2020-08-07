@@ -203,7 +203,8 @@ public class BillsDAO {
 		return isUpdated;
 	}
 
-	public boolean insertIntoConsigneeShipperDetails(Party objParty, String tag, int billLadingId) throws SQLException {
+	public boolean insertIntoConsigneeShipperDetails(Party objParty, String tag, int billLadingId,
+			BillHeader objBillHeader) throws SQLException {
 		boolean isDone = false;
 		if (objParty != null) {
 			if (objParty.getName().trim().equalsIgnoreCase("To Order") && objParty.getAddressInfo() == null) {
@@ -232,16 +233,43 @@ public class BillsDAO {
 			}
 			isDone = true;
 		} else {
-			stmt = con.prepareStatement("Insert into consignee_shipper_details values (?, ?, ?, ?, ?, ?, false,?)");
-			stmt.setInt(1, billLadingId);
-			stmt.setString(2, "");
-			stmt.setString(3, tag);
-			stmt.setString(4, "");
-			stmt.setString(5, "");
-			stmt.setString(6, "");
-			stmt.setInt(7, 0);
-			logger.info(stmt);
-			if (stmt.executeUpdate() != 1) {
+			Party objSameParty = new Party();
+			if (tag.equalsIgnoreCase("booking") || tag.equalsIgnoreCase("seller")
+					|| tag.equalsIgnoreCase("consolidator") || tag.equalsIgnoreCase("stuffer")) {
+
+				objSameParty.setAddressInfo(objBillHeader.getShipper().getAddressInfo());
+				objSameParty.setName(objBillHeader.getShipper().getName());
+
+			} else {
+				objSameParty.setAddressInfo(objBillHeader.getConsignee().getAddressInfo());
+				objSameParty.setName(objBillHeader.getConsignee().getName());
+
+			}
+
+			stmt1 = con.prepareStatement("Insert into consignee_shipper_details values (?, ?, ?, ?, ?, ?, true,?)");
+			stmt1.setInt(1, billLadingId);
+			stmt1.setString(2, objSameParty.getName());
+			stmt1.setString(3, tag);
+			stmt1.setString(4, objSameParty.getAddressInfo().getAddressLine1());
+			if (objSameParty.getAddressInfo().getAddressLine2() != null
+					&& !objSameParty.getAddressInfo().getAddressLine2().isEmpty()) {
+				stmt1.setString(5, objSameParty.getAddressInfo().getAddressLine2());
+				stmt1.setString(6,
+						objSameParty.getAddressInfo().getCity() + "," + objSameParty.getAddressInfo().getState() + " "
+								+ objSameParty.getAddressInfo().getZipCode() + " "
+								+ objSameParty.getAddressInfo().getCountry());
+			} else {
+
+				stmt1.setString(5,
+						objSameParty.getAddressInfo().getCity() + "," + objSameParty.getAddressInfo().getState() + " "
+								+ objSameParty.getAddressInfo().getZipCode() + " "
+								+ objSameParty.getAddressInfo().getCountry());
+				stmt1.setString(6, "");
+			}
+
+			stmt1.setInt(7, objSameParty.getCustomerId());
+			logger.info(stmt1);
+			if (stmt1.executeUpdate() != 1) {
 				throw new SQLException();
 			}
 			isDone = true;
@@ -724,13 +752,12 @@ public class BillsDAO {
 			stmt1 = con.prepareStatement("Insert into packages_details "
 					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
 			logger.info("Inside Empty Packages");
-			
-				objEquipment.setPackages(new ArrayList<Package>());
-				Package emptyPackage = new Package();
-				emptyPackage.setPackageType("CTN");
-				emptyPackage.setPieces("1");
-				objEquipment.getPackages().add(emptyPackage);
-			
+
+			objEquipment.setPackages(new ArrayList<Package>());
+			Package emptyPackage = new Package();
+			emptyPackage.setPackageType("CTN");
+			emptyPackage.setPieces("1");
+			objEquipment.getPackages().add(emptyPackage);
 
 			for (Package objPackage : objEquipment.getPackages()) {
 
