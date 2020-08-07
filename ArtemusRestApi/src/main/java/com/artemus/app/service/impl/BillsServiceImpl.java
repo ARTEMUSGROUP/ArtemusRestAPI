@@ -261,16 +261,22 @@ public class BillsServiceImpl implements BillsService {
 				throw new SQLException();
 			}
 			// Adding insertIntoConsigneeShipperDetails
-			objDao.insertIntoConsigneeShipperDetails(objBillHeader.getConsignee(), "consignee", billLadingId,objBillHeader);
-			objDao.insertIntoConsigneeShipperDetails(objBillHeader.getShipper(), "shipper", billLadingId,objBillHeader);
-			objDao.insertIntoConsigneeShipperDetails(objBillHeader.getBookingParty(), "booking", billLadingId,objBillHeader);
-			objDao.insertIntoConsigneeShipperDetails(objBillHeader.getSeller(), "seller", billLadingId,objBillHeader);
-			objDao.insertIntoConsigneeShipperDetails(objBillHeader.getStuffer(), "stuffer", billLadingId,objBillHeader);	
-			objDao.insertIntoConsigneeShipperDetails(objBillHeader.getNotify(), "notify", billLadingId,objBillHeader);
-			objDao.insertIntoConsigneeShipperDetails(objBillHeader.getConsolidator(), "consolidator", billLadingId,objBillHeader);
-			objDao.insertIntoConsigneeShipperDetails(objBillHeader.getImporter(), "importer", billLadingId,objBillHeader);
-			objDao.insertIntoConsigneeShipperDetails(objBillHeader.getBuyer(), "buyer", billLadingId,objBillHeader);
-			objDao.insertIntoConsigneeShipperDetails(objBillHeader.getShipTo(), "shipTo", billLadingId,objBillHeader);
+			objDao.insertIntoConsigneeShipperDetails(objBillHeader.getConsignee(), "consignee", billLadingId,
+					objBillHeader);
+			objDao.insertIntoConsigneeShipperDetails(objBillHeader.getShipper(), "shipper", billLadingId,
+					objBillHeader);
+			objDao.insertIntoConsigneeShipperDetails(objBillHeader.getBookingParty(), "booking", billLadingId,
+					objBillHeader);
+			objDao.insertIntoConsigneeShipperDetails(objBillHeader.getSeller(), "seller", billLadingId, objBillHeader);
+			objDao.insertIntoConsigneeShipperDetails(objBillHeader.getStuffer(), "stuffer", billLadingId,
+					objBillHeader);
+			objDao.insertIntoConsigneeShipperDetails(objBillHeader.getNotify(), "notify", billLadingId, objBillHeader);
+			objDao.insertIntoConsigneeShipperDetails(objBillHeader.getConsolidator(), "consolidator", billLadingId,
+					objBillHeader);
+			objDao.insertIntoConsigneeShipperDetails(objBillHeader.getImporter(), "importer", billLadingId,
+					objBillHeader);
+			objDao.insertIntoConsigneeShipperDetails(objBillHeader.getBuyer(), "buyer", billLadingId, objBillHeader);
+			objDao.insertIntoConsigneeShipperDetails(objBillHeader.getShipTo(), "shipTo", billLadingId, objBillHeader);
 			// Adding insertIntoNotifyPartyDetails
 			objDao.insertIntoNotifyPartyDetails(objBillHeader.getNotifyParties(), billLadingId);
 			// Setting ISF Type
@@ -278,7 +284,11 @@ public class BillsServiceImpl implements BillsService {
 
 			// Adding Equipments
 			addEquipments(objBillHeader, billLadingId, objDao, objCustomerProfiledao);
-
+			errorMessage = objDao.getPkgType();
+			// PackageType Validation
+			if (errorMessage.length() > 5) {
+				throw new ErrorResponseException(errorMessage.toString());
+			}
 			// validate Hazard Code
 			errorMessage = objDao.getHazardErrorMessage();
 			if (errorMessage.length() > 5) {
@@ -355,22 +365,37 @@ public class BillsServiceImpl implements BillsService {
 				objDao.deleteFromPackages(billLadingId);
 				objDao.deleteFromCargo(billLadingId);
 				// Adding insertIntoConsigneeShipperDetails
-				objDao.insertIntoConsigneeShipperDetails(objBillHeader.getShipper(), "shipper", billLadingId,objBillHeader);
-				objDao.insertIntoConsigneeShipperDetails(objBillHeader.getBookingParty(), "booking", billLadingId,objBillHeader);
-				objDao.insertIntoConsigneeShipperDetails(objBillHeader.getSeller(), "seller", billLadingId,objBillHeader);
-				objDao.insertIntoConsigneeShipperDetails(objBillHeader.getStuffer(), "stuffer", billLadingId,objBillHeader);
-				objDao.insertIntoConsigneeShipperDetails(objBillHeader.getConsignee(), "consignee", billLadingId,objBillHeader);
-				objDao.insertIntoConsigneeShipperDetails(objBillHeader.getNotify(), "notify", billLadingId,objBillHeader);
-				objDao.insertIntoConsigneeShipperDetails(objBillHeader.getConsolidator(), "consolidator", billLadingId,objBillHeader);
-				objDao.insertIntoConsigneeShipperDetails(objBillHeader.getImporter(), "importer", billLadingId,objBillHeader);
-				objDao.insertIntoConsigneeShipperDetails(objBillHeader.getBuyer(), "buyer", billLadingId,objBillHeader);
-				objDao.insertIntoConsigneeShipperDetails(objBillHeader.getShipTo(), "shipTo", billLadingId,objBillHeader);
+				objDao.insertIntoConsigneeShipperDetails(objBillHeader.getShipper(), "shipper", billLadingId,
+						objBillHeader);
+				objDao.insertIntoConsigneeShipperDetails(objBillHeader.getBookingParty(), "booking", billLadingId,
+						objBillHeader);
+				objDao.insertIntoConsigneeShipperDetails(objBillHeader.getSeller(), "seller", billLadingId,
+						objBillHeader);
+				objDao.insertIntoConsigneeShipperDetails(objBillHeader.getStuffer(), "stuffer", billLadingId,
+						objBillHeader);
+				objDao.insertIntoConsigneeShipperDetails(objBillHeader.getConsignee(), "consignee", billLadingId,
+						objBillHeader);
+				objDao.insertIntoConsigneeShipperDetails(objBillHeader.getNotify(), "notify", billLadingId,
+						objBillHeader);
+				objDao.insertIntoConsigneeShipperDetails(objBillHeader.getConsolidator(), "consolidator", billLadingId,
+						objBillHeader);
+				objDao.insertIntoConsigneeShipperDetails(objBillHeader.getImporter(), "importer", billLadingId,
+						objBillHeader);
+				objDao.insertIntoConsigneeShipperDetails(objBillHeader.getBuyer(), "buyer", billLadingId,
+						objBillHeader);
+				objDao.insertIntoConsigneeShipperDetails(objBillHeader.getShipTo(), "shipTo", billLadingId,
+						objBillHeader);
 				// Adding insertIntoNotifyPartyDetails
 				objDao.insertIntoNotifyPartyDetails(objBillHeader.getNotifyParties(), billLadingId);
 				// Setting ISF Type
 				objDao.isFROBBill(objBillHeader);
 				// Adding Equipments
 				addEquipments(objBillHeader, billLadingId, objDao, objCustomerProfiledao);
+				errorMessage = objDao.getPkgType();
+				// PackageType Validation
+				if (errorMessage.length() > 5) {
+					throw new ErrorResponseException(errorMessage.toString());
+				}
 				// Updating into billDetailStatus if all Adding Equipments is succeeds
 
 				// validate Hazard Code
@@ -450,32 +475,32 @@ public class BillsServiceImpl implements BillsService {
 					returnedVal = false;
 					break;
 				}
-				
-				if(objEquipment.getSeals()!=null && !objEquipment.getSeals().isEmpty()) {
+
+				if (objEquipment.getSeals() != null && !objEquipment.getSeals().isEmpty()) {
 					if (!objBillsDao.insertIntoSeals(objEquipment, billLadingId)) {
 						returnedVal = false;
 						break;
 					}
-				}else if(!objBillsDao.insertIntoEmptySeals(objEquipment, billLadingId)) {
+				} else if (!objBillsDao.insertIntoEmptySeals(objEquipment, billLadingId)) {
 					returnedVal = false;
 					break;
 				}
-				
-				if(objEquipment.getPackages() != null && !objEquipment.getPackages().isEmpty()) {
+
+				if (objEquipment.getPackages() != null && !objEquipment.getPackages().isEmpty()) {
 					packageIndex = objBillsDao.addPackages(objEquipment, billLadingId, packageIndex);
 					if (packageIndex == -1) {
 						returnedVal = false;
 						break;
 					}
-				}else {
+				} else {
 					packageIndex = objBillsDao.addEmptyPackages(objEquipment, billLadingId, packageIndex);
 					if (packageIndex == -1) {
 						returnedVal = false;
 						break;
 					}
 				}
-				
-				if(objEquipment.getCargos() != null && !objEquipment.getCargos().isEmpty()) {
+
+				if (objEquipment.getCargos() != null && !objEquipment.getCargos().isEmpty()) {
 					if (cargoIndex < objEquipment.getCargos().size()) {
 						customerProfileDao.validateCustomer(objEquipment.getCargos().get(cargoIndex).getManufacturer(),
 								objBillHeader.getLoginScac());
@@ -485,14 +510,13 @@ public class BillsServiceImpl implements BillsService {
 						returnedVal = false;
 						break;
 					}
-				}else {
+				} else {
 					cargoIndex = objBillsDao.addEmptyCargos(objEquipment, billLadingId, cargoIndex);
 					if (cargoIndex == -1) {
 						returnedVal = false;
 						break;
 					}
 				}
-				
 
 			}
 		} else {

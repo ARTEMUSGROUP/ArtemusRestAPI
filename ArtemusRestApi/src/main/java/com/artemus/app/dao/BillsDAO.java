@@ -20,10 +20,11 @@ import com.artemus.app.model.request.Party;
 public class BillsDAO {
 	private Connection con;
 	private java.sql.PreparedStatement stmt = null;
-	private java.sql.PreparedStatement stmt1 = null, MIstmt = null;
+	private java.sql.PreparedStatement stmt1 = null, MIstmt = null, stmt2 = null;
 	private ResultSet rs = null, MIrs = null;
 	static Logger logger = LogManager.getLogger();
 	StringBuffer errorMessage = new StringBuffer("");
+	StringBuffer pkgType = new StringBuffer("");
 	StringBuffer hazardErrorMessage = new StringBuffer("");
 
 	public BillsDAO(Connection connection) {
@@ -234,10 +235,10 @@ public class BillsDAO {
 			}
 			isDone = true;
 		} else {
-               Party objSameParty=new Party();
+			Party objSameParty = new Party();
 			if (tag.equalsIgnoreCase("booking") || tag.equalsIgnoreCase("seller")
 					|| tag.equalsIgnoreCase("consolidator") || tag.equalsIgnoreCase("stuffer")) {
-			
+
 				objSameParty.setAddressInfo(objBillHeader.getShipper().getAddressInfo());
 				objSameParty.setName(objBillHeader.getShipper().getName());
 
@@ -248,19 +249,23 @@ public class BillsDAO {
 			}
 
 			stmt1 = con.prepareStatement("Insert into consignee_shipper_details values (?, ?, ?, ?, ?, ?, true,?)");
-					stmt1.setInt(1, billLadingId);
+			stmt1.setInt(1, billLadingId);
 			stmt1.setString(2, objSameParty.getName());
 			stmt1.setString(3, tag);
 			stmt1.setString(4, objSameParty.getAddressInfo().getAddressLine1());
 			if (objSameParty.getAddressInfo().getAddressLine2() != null
 					&& !objSameParty.getAddressInfo().getAddressLine2().isEmpty()) {
 				stmt1.setString(5, objSameParty.getAddressInfo().getAddressLine2());
-				stmt1.setString(6, objSameParty.getAddressInfo().getCity() + "," + objSameParty.getAddressInfo().getState() + " "
-						+ objSameParty.getAddressInfo().getZipCode() + " " + objSameParty.getAddressInfo().getCountry());
+				stmt1.setString(6,
+						objSameParty.getAddressInfo().getCity() + "," + objSameParty.getAddressInfo().getState() + " "
+								+ objSameParty.getAddressInfo().getZipCode() + " "
+								+ objSameParty.getAddressInfo().getCountry());
 			} else {
 
-				stmt1.setString(5, objSameParty.getAddressInfo().getCity() + "," + objSameParty.getAddressInfo().getState() + " "
-						+ objSameParty.getAddressInfo().getZipCode() + " " + objSameParty.getAddressInfo().getCountry());
+				stmt1.setString(5,
+						objSameParty.getAddressInfo().getCity() + "," + objSameParty.getAddressInfo().getState() + " "
+								+ objSameParty.getAddressInfo().getZipCode() + " "
+								+ objSameParty.getAddressInfo().getCountry());
 				stmt1.setString(6, "");
 			}
 
@@ -373,81 +378,98 @@ public class BillsDAO {
 			stmt1 = con.prepareStatement("Insert into packages_details "
 					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
 
+			stmt2 = con.prepareStatement("SELECT * FROM artemus.package_type where package_type=?");
+
 			for (Package objPackage : objEquipment.getPackages()) {
-				stmt.setInt(1, billLadingId);
-				stmt.setInt(2, packageIndex);
-				stmt.setString(3, objEquipment.getEquipmentNo());
-				stmt.setString(4, objPackage.getMarks());
-				stmt.setString(5, objPackage.getPieces());
-				stmt.setString(6, objPackage.getPackageType());
-				System.out.println("Package" + stmt);
-				if (stmt.executeUpdate() != 1) {
-					return -1;
-				}
 
-				// following query till end of the list PackagesBean to insert notify party
-				// records in packages table
+				stmt2.setString(1, objPackage.getPackageType());
 
-				stmt1.setInt(1, billLadingId);
-				stmt1.setInt(2, packageIndex);
-				stmt1.setString(3, objEquipment.getEquipmentNo());
+				System.out.println("Package Type" + stmt2);
+				logger.info("Package Type" + stmt2);
+				rs = stmt2.executeQuery();
 
-				if (objPackage.getWeight().getUnit().equalsIgnoreCase("LBS")) {
-					stmt1.setDouble(4, objPackage.getWeight().getValue());
-					stmt1.setString(16, objPackage.getWeight().getUnit());
+				if (!rs.next()) {
+
+					pkgType.append("Package Type " + objPackage.getPackageType()
+							+ " Entered is invalid. Enter 3 character valid Package Type.");
+
 				} else {
-					stmt1.setDouble(4, 0);
-					stmt1.setString(16, "");
+					stmt.setInt(1, billLadingId);
+					stmt.setInt(2, packageIndex);
+					stmt.setString(3, objEquipment.getEquipmentNo());
+					stmt.setString(4, objPackage.getMarks());
+					stmt.setString(5, objPackage.getPieces());
+					stmt.setString(6, objPackage.getPackageType());
+					System.out.println("Package" + stmt);
+					if (stmt.executeUpdate() != 1) {
+						return -1;
+					}
+
+					// following query till end of the list PackagesBean to insert notify party
+					// records in packages table
+
+					stmt1.setInt(1, billLadingId);
+					stmt1.setInt(2, packageIndex);
+					stmt1.setString(3, objEquipment.getEquipmentNo());
+
+					if (objPackage.getWeight().getUnit().equalsIgnoreCase("LBS")) {
+						stmt1.setDouble(4, objPackage.getWeight().getValue());
+						stmt1.setString(16, objPackage.getWeight().getUnit());
+					} else {
+						stmt1.setDouble(4, 0);
+						stmt1.setString(16, "");
+					}
+
+					if (objPackage.getWeight().getUnit().equalsIgnoreCase("KGS")
+							|| objPackage.getWeight().getUnit().equalsIgnoreCase("MT")) {
+						stmt1.setDouble(5, objPackage.getWeight().getValue());
+						stmt1.setString(17, objPackage.getWeight().getUnit());
+					} else {
+						stmt1.setDouble(5, 0);
+						stmt1.setString(17, "");
+					}
+
+					if (objPackage.getVolume().getUnit().equalsIgnoreCase("CF")) {
+						stmt1.setDouble(6, objPackage.getVolume().getValue());
+						stmt1.setString(18, objPackage.getVolume().getUnit());
+					} else {
+						stmt1.setDouble(6, 0);
+						stmt1.setString(18, "");
+					}
+
+					if (objPackage.getVolume().getUnit().equalsIgnoreCase("CM")) {
+						stmt1.setDouble(7, objPackage.getVolume().getValue());
+						stmt1.setString(19, objPackage.getVolume().getUnit());
+					} else {
+						stmt1.setDouble(7, 0);
+						stmt1.setString(19, "");
+					}
+
+					stmt1.setDouble(8, objPackage.getLength().getValue());
+					stmt1.setDouble(9, objPackage.getWidth().getValue());
+					stmt1.setDouble(10, objPackage.getHeight().getValue());
+					stmt1.setDouble(11, objPackage.getSet().getValue());
+					stmt1.setDouble(12, objPackage.getMin().getValue());
+					stmt1.setDouble(13, objPackage.getMax().getValue());
+					stmt1.setDouble(14, objPackage.getVents().getValue());
+					stmt1.setDouble(15, objPackage.getDrainage().getValue());
+
+					stmt1.setString(20, objPackage.getLength().getUnit());
+					stmt1.setString(21, objPackage.getWidth().getUnit());
+					stmt1.setString(22, objPackage.getHeight().getUnit());
+					stmt1.setString(23, objPackage.getSet().getUnit());
+					stmt1.setString(24, objPackage.getMin().getUnit());
+					stmt1.setString(25, objPackage.getMax().getUnit());
+					stmt1.setString(26, objPackage.getVents().getUnit());
+					stmt1.setString(27, objPackage.getDrainage().getUnit());
+
+					if (stmt1.executeUpdate() != 1) {
+						return -1;
+					}
+
+					++packageIndex;
 				}
 
-				if (objPackage.getWeight().getUnit().equalsIgnoreCase("KGS")
-						|| objPackage.getWeight().getUnit().equalsIgnoreCase("MT")) {
-					stmt1.setDouble(5, objPackage.getWeight().getValue());
-					stmt1.setString(17, objPackage.getWeight().getUnit());
-				} else {
-					stmt1.setDouble(5, 0);
-					stmt1.setString(17, "");
-				}
-
-				if (objPackage.getVolume().getUnit().equalsIgnoreCase("CF")) {
-					stmt1.setDouble(6, objPackage.getVolume().getValue());
-					stmt1.setString(18, objPackage.getVolume().getUnit());
-				} else {
-					stmt1.setDouble(6, 0);
-					stmt1.setString(18, "");
-				}
-
-				if (objPackage.getVolume().getUnit().equalsIgnoreCase("CM")) {
-					stmt1.setDouble(7, objPackage.getVolume().getValue());
-					stmt1.setString(19, objPackage.getVolume().getUnit());
-				} else {
-					stmt1.setDouble(7, 0);
-					stmt1.setString(19, "");
-				}
-
-				stmt1.setDouble(8, objPackage.getLength().getValue());
-				stmt1.setDouble(9, objPackage.getWidth().getValue());
-				stmt1.setDouble(10, objPackage.getHeight().getValue());
-				stmt1.setDouble(11, objPackage.getSet().getValue());
-				stmt1.setDouble(12, objPackage.getMin().getValue());
-				stmt1.setDouble(13, objPackage.getMax().getValue());
-				stmt1.setDouble(14, objPackage.getVents().getValue());
-				stmt1.setDouble(15, objPackage.getDrainage().getValue());
-
-				stmt1.setString(20, objPackage.getLength().getUnit());
-				stmt1.setString(21, objPackage.getWidth().getUnit());
-				stmt1.setString(22, objPackage.getHeight().getUnit());
-				stmt1.setString(23, objPackage.getSet().getUnit());
-				stmt1.setString(24, objPackage.getMin().getUnit());
-				stmt1.setString(25, objPackage.getMax().getUnit());
-				stmt1.setString(26, objPackage.getVents().getUnit());
-				stmt1.setString(27, objPackage.getDrainage().getUnit());
-
-				if (stmt1.executeUpdate() != 1) {
-					return -1;
-				}
-
-				++packageIndex;
 			}
 			return packageIndex;
 		} catch (SQLException e) {
@@ -534,11 +556,9 @@ public class BillsDAO {
 						}
 						// logger.info(stmt);
 						System.out.println("Inside CArgos" + objCargo);
-						if (objCargo.getCountry().isEmpty()
-								|| objCargo.getCountry() == null && objCargo.getHarmonizeCode().isEmpty()
-								|| objCargo.getHarmonizeCode() == null) {
-							errorMessage.append("<br>Country is missing for Manufacturer.")
-									.append("<br>Harmonized Code entry is missing.");
+						if (objCargo.getCountry().isEmpty() || objCargo.getCountry() == null) {
+							errorMessage.append("<br>Country is missing for Manufacturer.");
+
 						} else if (objCargo.getHarmonizeCode().isEmpty() || objCargo.getHarmonizeCode() == null) {
 							errorMessage.append("<br>Harmonized Code entry is missing.");
 						}
@@ -741,6 +761,10 @@ public class BillsDAO {
 		return hazardErrorMessage;
 	}
 
+	public StringBuffer getPkgType() {
+		return pkgType;
+	}
+
 	public int addEmptyPackages(Equipment objEquipment, int billLadingId, int packageIndex) {
 		try {
 			stmt = con.prepareStatement(
@@ -854,7 +878,8 @@ public class BillsDAO {
 						+ " (?,?,?,?,?,?,?,?,?,?,?)");
 
 				Cargo emptyCargo = new Cargo();
-				emptyCargo.setHarmonizeCode("869000");
+				emptyCargo.setHarmonizeCode("8609000000");
+				emptyCargo.setDescriptionsOfGoods("EMPTY REPOSITIONING");
 				objEquipment.getCargos().add(emptyCargo);
 
 				for (Cargo objCargo : objEquipment.getCargos()) {
@@ -875,8 +900,8 @@ public class BillsDAO {
 						stmt.setInt(1, billLadingId);
 						stmt.setInt(2, cargoIndex);
 						stmt.setString(3, objEquipment.getEquipmentNo());
-						stmt.setString(4, objCargo.getDescriptionsOfGoods());
-						stmt.setString(5, "869000");
+						stmt.setString(4, "EMPTY REPOSITIONING");
+						stmt.setString(5, "8609000000");
 						stmt.setString(6, objCargo.getHazardCode());
 						if (objCargo.getManufacturer() != null) {
 							stmt.setInt(9, objCargo.getManufacturer().getCustomerId());// Field cannot get
@@ -906,13 +931,9 @@ public class BillsDAO {
 						}
 						// logger.info(stmt);
 						System.out.println("Inside CArgos" + objCargo);
-						if (objCargo.getCountry().isEmpty()
-								|| objCargo.getCountry() == null && objCargo.getHarmonizeCode().isEmpty()
-								|| objCargo.getHarmonizeCode() == null) {
-							errorMessage.append("<br>Country is missing for Manufacturer.")
-									.append("<br>Harmonized Code entry is missing.");
-						} else if (objCargo.getHarmonizeCode().isEmpty() || objCargo.getHarmonizeCode() == null) {
-							errorMessage.append("<br>Harmonized Code entry is missing.");
+						if (objCargo.getCountry().isEmpty() || objCargo.getCountry() == null) {
+							errorMessage.append("<br>Country is missing for Manufacturer.");
+
 						}
 
 					}
