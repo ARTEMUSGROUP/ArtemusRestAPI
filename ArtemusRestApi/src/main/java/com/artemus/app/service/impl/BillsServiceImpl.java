@@ -283,7 +283,16 @@ public class BillsServiceImpl implements BillsService {
 			objDao.isFROBBill(objBillHeader);
 			// Adding Equipments
 			addEquipments(objBillHeader, billLadingId, objDao, objCustomerProfiledao);
-
+			errorMessage = objDao.getPkgType();
+			// PackageType Validation
+			if (errorMessage.length() > 5) {
+				throw new ErrorResponseException(errorMessage.toString());
+			}
+			// validate Hazard Code
+			errorMessage = objDao.getHazardErrorMessage();
+			if (errorMessage.length() > 5) {
+				throw new ErrorResponseException(errorMessage.toString());
+			}
 			// validate Hazard Code
 			errorMessage = objDao.getHazardErrorMessage();
 			if (errorMessage.length() > 5) {
@@ -384,7 +393,16 @@ public class BillsServiceImpl implements BillsService {
 				objDao.isFROBBill(objBillHeader);
 				// Adding Equipments
 				addEquipments(objBillHeader, billLadingId, objDao, objCustomerProfiledao);
-
+				errorMessage = objDao.getPkgType();
+				// PackageType Validation
+				if (errorMessage.length() > 5) {
+					throw new ErrorResponseException(errorMessage.toString());
+				}
+				// validate Hazard Code
+				errorMessage = objDao.getHazardErrorMessage();
+				if (errorMessage.length() > 5) {
+					throw new ErrorResponseException(errorMessage.toString());
+				}
 				// validate Hazard Code
 				errorMessage = objDao.getHazardErrorMessage();
 				if (errorMessage.length() > 5) {
