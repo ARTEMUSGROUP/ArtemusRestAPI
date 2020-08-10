@@ -366,13 +366,17 @@ public class JPVoyageScheduleServiceImpl implements JPVoyageScheduleService {
 
 			String lastloaddate;
 			String dischargeDate;
+			String lastSailingDate;
 			java.util.Date lastloaddate1 = null;
 			java.util.Date dichargedate1 = null;
+			java.util.Date lastSailingDate1 = null;
 			for (PortDetails portCall : objVoyage.getPortDetails()) {
 				if (portCall.getLastLoadPort() == true) {
 					lastloaddate = portCall.getArrivalDate();
+					lastSailingDate = portCall.getSailingDate();
 					try {
 						lastloaddate1 = sdf.parse(lastloaddate);
+						lastSailingDate1 = sdf.parse(lastSailingDate);
 					} catch (Exception e) {
 						System.out.println("Date is not in correct format");
 						errorMessage.append(
@@ -416,6 +420,41 @@ public class JPVoyageScheduleServiceImpl implements JPVoyageScheduleService {
 							errorMessage.append(" , ");
 						}
 						// Error message
+						errorMessage.append("lastLoadPort : Voyage should have atleast one lastLoadPort");
+						break;
+					}
+				}
+			}
+
+			// To check Sailing Date is greater than last load port for Load Ports
+
+			for (PortDetails portCall : objVoyage.getPortDetails()) {
+				if (portCall.getLoad() == true && portCall.getLastLoadPort() != true) {
+					dischargeDate = portCall.getSailingDate();
+					try {
+						dichargedate1 = sdf.parse(dischargeDate);
+					} catch (Exception e) {
+						System.out.println("Date is not in correct format");
+						errorMessage.append("sailingDate : is not in correct format, correct format is YYYY-MM-DD");
+						e.printStackTrace();
+						result = false;
+						break;
+					}
+					if (lastSailingDate1 != null) {
+						if (dichargedate1.compareTo(lastSailingDate1) <= 0) {
+							result = true;
+						} else {
+							if (errorMessage.length() > 0) {
+								errorMessage.append(" , ");
+							} // Error message
+							errorMessage.append(
+									" 'Sailing Date' of Load port for Location " + portCall.getLocation().getLocation()
+											+ " should not be greater than last load port please check 'portDetails' ");
+						}
+					} else {
+						if (errorMessage.length() > 0) {
+							errorMessage.append(" , ");
+						} // Error message
 						errorMessage.append("lastLoadPort : Voyage should have atleast one lastLoadPort");
 						break;
 					}
