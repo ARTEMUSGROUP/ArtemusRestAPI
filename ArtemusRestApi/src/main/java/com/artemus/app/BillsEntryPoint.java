@@ -42,7 +42,6 @@ public class BillsEntryPoint {
 		}
 		BillsService billsService = new BillsServiceImpl();
 		billsService.createBill(requestObj);
-
 		ResponseMessage objResponse = new ResponseMessage();
 		objResponse.setCode(200);
 		objResponse.setStatus(Response.Status.OK);

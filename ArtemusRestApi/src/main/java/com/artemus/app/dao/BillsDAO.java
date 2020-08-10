@@ -554,12 +554,13 @@ public class BillsDAO {
 						if (stmt.executeUpdate() != 1) {
 							return -1;
 						}
-						// logger.info(stmt);
+						logger.info(stmt);
 						System.out.println("Inside CArgos" + objCargo);
 						if (objCargo.getCountry().isEmpty() || objCargo.getCountry() == null) {
 							errorMessage.append("<br>Country is missing for Manufacturer.");
 
-						} else if (objCargo.getHarmonizeCode().isEmpty() || objCargo.getHarmonizeCode() == null) {
+						}
+						if (objCargo.getHarmonizeCode().isEmpty()) {
 							errorMessage.append("<br>Harmonized Code entry is missing.");
 						}
 

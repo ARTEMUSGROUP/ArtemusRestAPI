@@ -421,7 +421,43 @@ public class JPVoyageScheduleServiceImpl implements JPVoyageScheduleService {
 					}
 				}
 			}
-
+			// To check Sailing Date is greater than last load port for Load Ports
+						for (PortDetails portCall : objVoyage.getPortDetails()) {
+							if (portCall.getLoad() == true && portCall.getLastLoadPort()!=true) {
+								dischargeDate = portCall.getSailingDate();
+								try {
+									dichargedate1 = sdf.parse(dischargeDate);
+								} catch (Exception e) {
+									System.out.println("Date is not in correct format");
+									errorMessage.append("sailingDate : is not in correct format, correct format is YYYY-MM-DD");
+									e.printStackTrace();
+									result = false;
+									break;
+								}
+								if (lastloaddate1 != null) {
+									if (dichargedate1.compareTo(lastloaddate1) <= 0
+											|| dichargedate1.compareTo(lastloaddate1) == 0) {
+										result = true;
+									} else {
+										if (errorMessage.length() > 0) {
+											errorMessage.append(" , ");
+										}
+										// Error message
+										errorMessage
+												.append(" 'Sailing Date' of Load port " + portCall.getLocation().getLocation()
+														+ " should not be greater than last load port please check 'portDetails' ");
+									}
+								} else {
+									if (errorMessage.length() > 0) {
+										errorMessage.append(" , ");
+									}
+									// Error message
+									errorMessage.append("lastLoadPort : Voyage should have atleast one lastLoadPort");
+									break;
+								}
+							}
+						}
+						
 			// To check Sailing Date is greater than arrival Date
 			java.util.Date arrivalDate = null;
 			java.util.Date sailingDate = null;
