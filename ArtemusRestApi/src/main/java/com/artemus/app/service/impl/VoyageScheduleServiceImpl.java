@@ -1,5 +1,6 @@
 package com.artemus.app.service.impl;
 
+import java.io.IOException;
 import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -9,6 +10,7 @@ import java.util.Iterator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.artemus.app.awsmail.SendMail;
 import com.artemus.app.dao.LocationDAO;
 import com.artemus.app.dao.VesselVoyageDAO;
 import com.artemus.app.dao.VoyageDAO;
@@ -24,6 +26,7 @@ import com.artemus.app.utils.ValidateBeanUtil;
 public class VoyageScheduleServiceImpl implements VoyageScheduleService {
 	static Logger logger = LogManager.getLogger();
 	StringBuffer errorMessage = new StringBuffer("");
+	SendMail mailResponse = new SendMail();
 
 	@Override
 	public void createVoyage(Voyage objVoyage) {
@@ -41,7 +44,15 @@ public class VoyageScheduleServiceImpl implements VoyageScheduleService {
 //		validateCountry(objVoyage);
 		// VAlidate Vessel,Voyage
 		validateVesselVoyage(objVoyage);
+
 		if (errorMessage.length() > 0) {
+			try {
+				mailResponse.sendMail(objVoyage.getScacCode(), "Voyage", 1, objVoyage.getVoyageNumber(),
+						errorMessage.toString());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			throw new ErrorResponseException(errorMessage.toString());
 		} else {
 			// Validate Location
@@ -50,9 +61,24 @@ public class VoyageScheduleServiceImpl implements VoyageScheduleService {
 				validatePort(objVoyage);
 				if (errorMessage.length() > 0) {
 					logger.info(errorMessage);
+					try {
+						mailResponse.sendMail(objVoyage.getScacCode(), "Voyage", 1, objVoyage.getVoyageNumber(),
+								errorMessage.toString());
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					throw new ErrorResponseException(errorMessage.toString());
 				}
 				if (!validateVoyage(objVoyage)) {
+
+					try {
+						mailResponse.sendMail(objVoyage.getScacCode(), "Voyage", 1, objVoyage.getVoyageNumber(),
+								errorMessage.toString());
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					throw new ErrorResponseException(errorMessage.toString());
 				}
 			} else {
@@ -61,6 +87,7 @@ public class VoyageScheduleServiceImpl implements VoyageScheduleService {
 					throw new ErrorResponseException(errorMessage.toString());
 				}
 			}
+
 		}
 
 	}
@@ -71,24 +98,14 @@ public class VoyageScheduleServiceImpl implements VoyageScheduleService {
 		try {
 			// Get vesselID
 			vesselID = objDao.validateLloydsCode(objVoyage, objVoyage.getScacCode());
+			System.out.println("Vessel ID:" + vesselID);
 			if (vesselID != 0) {
 				objVoyage.setVesselId(vesselID);
-				// Get voyageID
-//				voyageID = objDao.validateVoyage(objVoyage.getVoyageNumber(), vesselID, objVoyage.getScacCode());
-//				if (voyageID != 0) {
-//					objVoyage.setVoyageId(voyageID);
-//
-//				}
-//				else {
-//					if(errorMessage.length()>0) {
-//						errorMessage.append(" , ");
-//					}
-//					errorMessage.append("voyageNumber does not exists.");
-//				}
 			} else {
 				if (errorMessage.length() > 0) {
 					errorMessage.append(" , ");
 				}
+
 				errorMessage.append("vesselName:" + objVoyage.getVesselName() + " does not exists for scac "
 						+ objVoyage.getScacCode());
 			}
@@ -107,13 +124,35 @@ public class VoyageScheduleServiceImpl implements VoyageScheduleService {
 				if (errorMessage.length() > 0) {
 					errorMessage.append(" , ");
 				}
+				try {
+					mailResponse.sendMail(voyage.getScacCode(), "Voyage", 1, voyage.getVoyageNumber(),
+							errorMessage.toString());
+				} catch (Exception e) {
+					// TODO: handle exception
+				}
 				errorMessage.append("voyageNumber : " + voyage.getVoyageNumber() + " already exists");
+
 				result = false;
 			} else {
 				if (objVoyageDao.insert(voyage)) {
+					try {
+						mailResponse.sendMail(voyage.getScacCode(), "Voyage", 0, voyage.getVoyageNumber(),
+								errorMessage.toString());
+					} catch (Exception e) {
+						// TODO: handle exception
+					}
+
 					result = true;
 				} else {
+
 					errorMessage.append(ErrorMessages.INTERNAL_SERVER_ERROR.getErrorMessage());
+					try {
+						mailResponse.sendMail(voyage.getScacCode(), "Voyage", 1, voyage.getVoyageNumber(),
+								errorMessage.toString());
+					} catch (Exception e) {
+						// TODO: handle exception
+					}
+
 				}
 			}
 		} finally {

@@ -1,5 +1,6 @@
 package com.artemus.app.service.impl;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -7,6 +8,7 @@ import java.util.ArrayList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.artemus.app.awsmail.SendMail;
 import com.artemus.app.dao.JPBillsDAO;
 import com.artemus.app.dao.JPCustomerProfileDAO;
 import com.artemus.app.dao.JPVesselVoyageDAO;
@@ -25,7 +27,8 @@ public class JPBillsServiceImpl implements JPBillsService {
 	JPBillHeaderUtils objUtils = new JPBillHeaderUtils();
 	StringBuffer errorMessage = new StringBuffer("");
 	boolean isError;
-
+	SendMail mailResponse = new SendMail();
+	
 	@Override
 	public void createBill(JPBillHeader objBillHeader) {
 		// Validate JSON
@@ -44,16 +47,42 @@ public class JPBillsServiceImpl implements JPBillsService {
 			validateVesselVoyage(objBillHeader);
 			System.out.println(errorMessage);
 			if (errorMessage.length() > 0) {
+				try {
+					mailResponse.sendMail(objBillHeader.getLoginScac(), "Bill", 1,objBillHeader.getBillOfLading(),errorMessage.toString());
+				}catch (Exception e) {
+					// TODO: handle exception
+				}
+				
 				throw new ErrorResponseException(errorMessage.toString());
 			} else {
 				try {
 					processBill(objBillHeader, jpcustomerProfileDao.getConnection());
+					if (errorMessage.length() > 0) {
+						try {
+							mailResponse.sendMail(objBillHeader.getLoginScac(), "Japan Bill", 1,objBillHeader.getBillOfLading(),errorMessage.toString());
+						}catch (Exception e) {
+							// TODO: handle exception
+						}
+						
+						throw new ErrorResponseException(errorMessage.toString().replaceAll("<br>", ""));
+
+					}else {
+						try {
+							mailResponse.sendMail(objBillHeader.getLoginScac(), "Japan Bill", 0,objBillHeader.getBillOfLading(),errorMessage.toString());	
+						}catch (Exception e) {
+							// TODO: handle exception
+						}
+						
+					}
 				} catch (ErrorResponseException e) {
 					throw e;
 				} catch (Exception e) {
 					throw new ErrorResponseException("Internal Bill Processing Error");
 				}
 			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		} finally {
 			jpcustomerProfileDao.closeAll();
 		}
@@ -77,10 +106,18 @@ public class JPBillsServiceImpl implements JPBillsService {
 			validateVesselVoyage(objBillHeader);
 			System.out.println(errorMessage);
 			if (errorMessage.length() > 0) {
+				mailResponse.sendMail(objBillHeader.getLoginScac(), "Bill", 1,objBillHeader.getBillOfLading(),errorMessage.toString());
 				throw new ErrorResponseException(errorMessage.toString());
 			} else {
 				try {
 					processBillForUpdate(objBillHeader, jpcustomerProfileDao.getConnection());
+					if (errorMessage.length() > 0) {
+						mailResponse.sendMail(objBillHeader.getLoginScac(), "Bill", 1,objBillHeader.getBillOfLading(),errorMessage.toString());
+						throw new ErrorResponseException(errorMessage.toString().replaceAll("<br>", ""));
+
+					}else {
+						mailResponse.sendMail(objBillHeader.getLoginScac(), "Bill", 0,objBillHeader.getBillOfLading(),errorMessage.toString());
+					}
 				} catch (ErrorResponseException e) {
 					e.printStackTrace();
 					throw e;
@@ -89,6 +126,9 @@ public class JPBillsServiceImpl implements JPBillsService {
 					throw new ErrorResponseException("Internal Bill Processing Error");
 				}
 			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		} finally {
 			jpcustomerProfileDao.closeAll();
 		}
@@ -145,6 +185,7 @@ public class JPBillsServiceImpl implements JPBillsService {
 		JPBillsDAO objDao = new JPBillsDAO(conn);
 		try {
 			if (objDao.validateBillExist(objBillHeader)) {
+				mailResponse.sendMail(objBillHeader.getLoginScac(), "Bill", 1,objBillHeader.getBillOfLading(),"Bill Number Already Exist");
 				throw new ErrorResponseException("Bill Number Already Exist");
 			}
 			;
@@ -174,6 +215,9 @@ public class JPBillsServiceImpl implements JPBillsService {
 				objDao.insertIntoVoyagePortDetails(objBillHeader, firstUsDischargePort);
 			}
 			objDao.commit();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		} finally {
 			objDao.closeAll();
 		}
@@ -219,8 +263,12 @@ public class JPBillsServiceImpl implements JPBillsService {
 				}
 				objDao.commit();
 			} else {
+				mailResponse.sendMail(objBillHeader.getLoginScac(), "Bill", 1,objBillHeader.getBillOfLading(),"Bill Number Already Exist");
 				throw new ErrorResponseException("Bill number does not exist");
 			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		} finally {
 			objDao.closeAll();
 		}

@@ -1,6 +1,6 @@
 package com.artemus.app;
 
-import javax.ws.rs.ApplicationPath;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;

@@ -65,6 +65,7 @@ public class VesselVoyageDAO {
 				objVoyage.setVesselScacCode(rs.getString("usa_scac_code"));
 				return rs.getInt(1);
 			}
+			return 0;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -97,16 +98,18 @@ public class VesselVoyageDAO {
 			stmt = con.prepareStatement(
 					"(Select a.location_code from location a left outer join alt_location c on a.location_id=c.location_id,"
 							+ " voyage_details b "
-							+ " where c.alt_name like ? and a.login_scac= ? and b.location_id=a.location_id and b.voyage_id = ? and b.is_discharge_port=true )"
+							+ " where (c.alt_name like ? or b.location_name like ?) and a.login_scac= ? and b.location_id=a.location_id and b.voyage_id = ? and b.is_discharge_port=true )"
 							+ " union"
-							+ " (Select a.location_code from location a, voyage_details b  where a.location_name like ? "
-							+ " and a.login_scac= ?  and b.location_id=a.location_id and b.voyage_id = ? and b.is_discharge_port=true)");
+							+ " (Select a.location_code from location a, voyage_details b   where (a.location_name like ? "
+							+ " or b.location_name like ?) and a.login_scac= ?  and b.location_id=a.location_id and b.voyage_id = ? and b.is_discharge_port=true)");
 			stmt.setString(1, objBillHeader.getVesselSchedule().getPortOfDischarge() + "%");
-			stmt.setString(2, objBillHeader.getLoginScac());
-			stmt.setInt(3, objBillHeader.getVesselSchedule().getVoyageId());
-			stmt.setString(4, objBillHeader.getVesselSchedule().getPortOfDischarge() + "%");
-			stmt.setString(5, objBillHeader.getLoginScac());
-			stmt.setInt(6, objBillHeader.getVesselSchedule().getVoyageId());
+			stmt.setString(2, objBillHeader.getVesselSchedule().getPortOfDischarge() + "%");
+			stmt.setString(3, objBillHeader.getLoginScac());
+			stmt.setInt(4, objBillHeader.getVesselSchedule().getVoyageId());
+			stmt.setString(5, objBillHeader.getVesselSchedule().getPortOfDischarge() + "%");
+			stmt.setString(6, objBillHeader.getVesselSchedule().getPortOfDischarge() + "%");
+			stmt.setString(7, objBillHeader.getLoginScac());
+			stmt.setInt(8, objBillHeader.getVesselSchedule().getVoyageId());
 			rs = stmt.executeQuery();
 			System.out.println(stmt.toString());
 			if (rs.next()) {
@@ -127,16 +130,18 @@ public class VesselVoyageDAO {
 			stmt = con.prepareStatement(
 					"(Select a.location_code,a.location_name from location a left outer join alt_location c on a.location_id=c.location_id,"
 							+ " voyage_details b "
-							+ " where c.alt_name like ? and a.login_scac= ? and b.location_id=a.location_id and b.voyage_id = ? and b.is_load_port=true)"
+							+ " where (c.alt_name like ? or b.location_name like ?) and a.login_scac= ? and b.location_id=a.location_id and b.voyage_id = ? and b.is_load_port=true)"
 							+ " union"
-							+ " (Select a.location_code,a.location_name from location a, voyage_details b  where a.location_name like ? "
-							+ " and a.login_scac= ?  and b.location_id=a.location_id and b.voyage_id = ? and b.is_load_port=true )");
+							+ " (Select a.location_code,a.location_name from location a, voyage_details b  where (a.location_name like ? "
+							+ " or b.location_name like ?) and a.login_scac= ?  and b.location_id=a.location_id and b.voyage_id = ? and b.is_load_port=true )");
 			stmt.setString(1, objBillHeader.getVesselSchedule().getPortOfLoading() + "%");
-			stmt.setString(2, objBillHeader.getLoginScac());
-			stmt.setInt(3, objBillHeader.getVesselSchedule().getVoyageId());
-			stmt.setString(4, objBillHeader.getVesselSchedule().getPortOfLoading() + "%");
-			stmt.setString(5, objBillHeader.getLoginScac());
-			stmt.setInt(6, objBillHeader.getVesselSchedule().getVoyageId());
+			stmt.setString(2, objBillHeader.getVesselSchedule().getPortOfLoading() + "%");
+			stmt.setString(3, objBillHeader.getLoginScac());
+			stmt.setInt(4, objBillHeader.getVesselSchedule().getVoyageId());
+			stmt.setString(5, objBillHeader.getVesselSchedule().getPortOfLoading() + "%");
+			stmt.setString(6, objBillHeader.getVesselSchedule().getPortOfLoading() + "%");
+			stmt.setString(7, objBillHeader.getLoginScac());
+			stmt.setInt(8, objBillHeader.getVesselSchedule().getVoyageId());
 			rs = stmt.executeQuery();
 			System.out.println(stmt.toString());
 			if (rs.next()) {

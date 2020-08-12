@@ -1,5 +1,6 @@
 package com.artemus.app.service.impl;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -9,6 +10,7 @@ import java.util.Date;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.artemus.app.awsmail.SendMail;
 import com.artemus.app.dao.JpLocationDAO;
 import com.artemus.app.dao.JpVoyageDAO;
 import com.artemus.app.dao.VesselVoyageDAO;
@@ -24,7 +26,8 @@ import com.artemus.app.utils.ValidateBeanUtil;
 public class JPVoyageScheduleServiceImpl implements JPVoyageScheduleService {
 	static Logger logger = LogManager.getLogger();
 	StringBuffer errorMessage = new StringBuffer("");
-
+	SendMail mailResponse = new SendMail();
+	
 	@Override
 	public void createVoyage(Voyage objVoyage) {
 		logger.info(objVoyage.toString());
@@ -50,9 +53,21 @@ public class JPVoyageScheduleServiceImpl implements JPVoyageScheduleService {
 				validatePort(objVoyage);
 				if (errorMessage.length() > 0) {
 					logger.info(errorMessage);
+					try {
+						mailResponse.sendMail(objVoyage.getScacCode(), "Voyage", 1,objVoyage.getVoyageNumber(),errorMessage.toString());
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					throw new ErrorResponseException(errorMessage.toString());
 				}
 				if (!validateVoyage(objVoyage)) {
+					try {
+						mailResponse.sendMail(objVoyage.getScacCode(), "Voyage", 1,objVoyage.getVoyageNumber(),errorMessage.toString());
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					throw new ErrorResponseException(errorMessage.toString());
 				}
 			} else {
@@ -99,8 +114,20 @@ public class JPVoyageScheduleServiceImpl implements JPVoyageScheduleService {
 				result = false;
 			} else {
 				if (objVoyageDao.insert(voyage)) {
+					try {
+						mailResponse.sendMail(voyage.getScacCode(), "Voyage", 0,voyage.getVoyageNumber(),errorMessage.toString());
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					result = true;
 				} else {
+					try {
+						mailResponse.sendMail(voyage.getScacCode(), "Voyage", 1,voyage.getVoyageNumber(),errorMessage.toString());
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					errorMessage.append(ErrorMessages.INTERNAL_SERVER_ERROR.getErrorMessage());
 				}
 			}

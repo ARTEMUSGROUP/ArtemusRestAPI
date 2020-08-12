@@ -1,11 +1,13 @@
 package com.artemus.app.service.impl;
 
+import java.io.IOException;
 import java.sql.SQLException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.mozilla.javascript.ObjToIntMap;
 
+import com.artemus.app.awsmail.SendMail;
 import com.artemus.app.dao.OriginalManifestDAO;
 import com.artemus.app.exceptions.ErrorResponseException;
 import com.artemus.app.exceptions.MissingRequiredFieldException;
@@ -20,6 +22,7 @@ public class OriginalManifestServiceImpl implements OriginalManifestService {
 	StringBuilder entityErrorMessage = new StringBuilder("");
 	static Logger logger = LogManager.getLogger();
 	boolean isError;
+	SendMail mailResponse = new SendMail();
 
 	@Override
 	public void sentBillToCustoms(AddOriginalManifest objManifest) {
@@ -30,6 +33,8 @@ public class OriginalManifestServiceImpl implements OriginalManifestService {
 		if (invalidJsonMsg.length() > 0) {
 			throw new MissingRequiredFieldException(invalidJsonMsg.toString());
 		}
+		String vesselVoyageInfo=new String("");
+		vesselVoyageInfo="Vessel Name "+objManifest.getVesselName()+" Voyage Number "+objManifest.getVoyageNumber();
 		// Validation of Port Locations
 		validate(objManifest);
 		// Validation of Vessel and Voyage
@@ -40,19 +45,37 @@ public class OriginalManifestServiceImpl implements OriginalManifestService {
 		validateLocation(objManifest, objManifest.getLoginScac());
 
 		validateErrorBills(objManifest);
+		try{
 		if (errorMessage.length() > 0) {
+			mailResponse.sendMail(objManifest.getLoginScac(), "Add Original Manifest", 1,vesselVoyageInfo,errorMessage.toString());
+			
 			throw new ErrorResponseException(errorMessage.toString());
 		}
 		// Insert into AMS Sent
-		try {
 			processBill(objManifest);
 		} catch (ErrorResponseException | SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
 		if (errorMessage.length() > 0) {
+			try {
+				mailResponse.sendMail(objManifest.getLoginScac(), "Add Original Manifest", 1,vesselVoyageInfo,errorMessage.toString());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			throw new ErrorResponseException(errorMessage.toString());
+		}else {
+			try {
+				mailResponse.sendMail(objManifest.getLoginScac(), "Add Original Manifest", 0,vesselVoyageInfo,errorMessage.toString());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 

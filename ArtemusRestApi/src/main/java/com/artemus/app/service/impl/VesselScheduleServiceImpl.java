@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.artemus.app.awsmail.SendMail;
 import com.artemus.app.dao.VesselDAO;
 import com.artemus.app.exceptions.ErrorResponseException;
 import com.artemus.app.exceptions.MissingRequiredFieldException;
@@ -19,6 +20,7 @@ public class VesselScheduleServiceImpl implements VesselScheduleService {
 	static Logger logger = LogManager.getLogger();
 	StringBuffer errorMessage = new StringBuffer("");
 	StringBuffer updateErrorMessage = new StringBuffer("");
+	SendMail mailResponse = new SendMail();
 
 	@Override
 	public void createVessel(Vessel objVessel) {
@@ -40,11 +42,13 @@ public class VesselScheduleServiceImpl implements VesselScheduleService {
 				validateJpnCarrierCode(objVessel);
 			}
 			if (errorMessage.length() > 0) {
+				mailResponse.sendMail(objVessel.getLoginScac(), "Vessel", 1, objVessel.getVesselName(),errorMessage.toString());
 				throw new ErrorResponseException(errorMessage.toString());
 			} else {
 				// Create Vessel
 				try {
 					processVessel(objVessel);
+					mailResponse.sendMail(objVessel.getLoginScac(), "Vessel", 0, objVessel.getVesselName(),errorMessage.toString());
 				} catch (Exception e) {
 					e.printStackTrace();
 					throw new ErrorResponseException("Internal Bill Processing Error");
@@ -79,17 +83,19 @@ public class VesselScheduleServiceImpl implements VesselScheduleService {
 		if (objVessel.getJpnCarrierCode() != "") {
 			validateJpnCarrierCode(objVessel);
 		}
-		if (updateErrorMessage.length() > 0) {
-			throw new ErrorResponseException(updateErrorMessage.toString());
-		} else {
-			// Create Vessel
-			try {
-				processVesselUpdate(objVessel);
-			}catch (Exception e) {
-				e.printStackTrace();
-				throw new ErrorResponseException("Internal Bill Processing Error");
+		try {
+			if (updateErrorMessage.length() > 0) {
+				mailResponse.sendMail(objVessel.getLoginScac(), "Vessel", 1, objVessel.getVesselName(),errorMessage.toString());
+				
+				throw new ErrorResponseException(updateErrorMessage.toString());
+			} else {
+				// Create Vessel
 
+				processVesselUpdate(objVessel);
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new ErrorResponseException("Internal Bill Processing Error");
 
 		}
 
@@ -113,8 +119,8 @@ public class VesselScheduleServiceImpl implements VesselScheduleService {
 				if (updateErrorMessage.length() > 0) {
 					updateErrorMessage.append(" , ");
 				}
-				updateErrorMessage.append("jpnCarrierCode: " + objVessel.getJpnCarrierCode() + " does not exists for scac "
-						+ objVessel.getLoginScac());
+				updateErrorMessage.append("jpnCarrierCode: " + objVessel.getJpnCarrierCode()
+						+ " does not exists for scac " + objVessel.getLoginScac());
 			}
 		} finally {
 			objDao.closeAll();
@@ -172,8 +178,8 @@ public class VesselScheduleServiceImpl implements VesselScheduleService {
 				if (errorMessage.length() > 0) {
 					errorMessage.append(" , ");
 				}
-				errorMessage.append("vesselName: " + objVessel.getVesselName() + " exists for scac "
-						+ objVessel.getLoginScac());
+				errorMessage.append(
+						"vesselName: " + objVessel.getVesselName() + " exists for scac " + objVessel.getLoginScac());
 			} else {
 				System.out.println("Vessel does not Exists.");
 				if (updateErrorMessage.length() > 0) {
@@ -191,8 +197,7 @@ public class VesselScheduleServiceImpl implements VesselScheduleService {
 	private void processVesselUpdate(Vessel objVessel) throws SQLException, ErrorResponseException {
 		VesselDAO objDao = new VesselDAO();
 		try {
-			if (objDao.update(objVessel).equalsIgnoreCase("Success"))
-			{
+			if (objDao.update(objVessel).equalsIgnoreCase("Success")) {
 				objDao.commit();
 			}
 
