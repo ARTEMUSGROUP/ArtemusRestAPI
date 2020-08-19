@@ -1,5 +1,6 @@
 package com.artemus.app.service.impl;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -28,6 +29,12 @@ public class VesselScheduleServiceImpl implements VesselScheduleService {
 		ValidateBeanUtil.buildDefaultValidatorFactory();
 		StringBuffer invalidJsonMsg = ValidateBeanUtil.getConstraintViolationMsgForVessel(objVessel);
 		if (invalidJsonMsg.length() > 0) {
+			try {
+				mailResponse.sendMail(objVessel.getLoginScac(), "Vessel", 1, objVessel.getVesselName(),invalidJsonMsg.toString());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			throw new MissingRequiredFieldException(invalidJsonMsg.toString());
 		}
 		try {

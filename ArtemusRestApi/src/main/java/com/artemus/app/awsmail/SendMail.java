@@ -65,11 +65,12 @@ public class SendMail extends Application {
 		StringTokenizer emailAddresses =  
 	             new StringTokenizer(TO, ","); 
 		subject = SUBJECT + api;
-		TEXTBODY = "<p>"+errormessage+"</p>";
+		TEXTBODY = "";
 		if (errorFlag == 1) {
-			HTMLBODY = api + " is Rejected for "+api+" "+apiName;
+			HTMLBODY = "<h1>"+api + " is Rejected for "+api+" "+apiName+"</h1>"
+					+"<p> Error Message : "+errormessage;
 		} else {
-			HTMLBODY = api + " is Accepted for "+api+" "+apiName;
+			HTMLBODY = "<h1>"+api + " is Accepted for "+api+" "+apiName+"</h1>";
 		}
 		logger.info("Mail representative :Subject : " + subject + " TEXTBODY: " + TEXTBODY + " HTMLBODY: " + HTMLBODY
 				+ " scacCode emailAddresses: " + scacCode.toUpperCase()+" " +emailAddresses);

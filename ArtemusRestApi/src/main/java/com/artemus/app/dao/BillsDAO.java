@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.artemus.app.configscac.ConfigScac;
 import com.artemus.app.connection.DBConnectionFactory;
 import com.artemus.app.model.request.AddressInfo;
 import com.artemus.app.model.request.BillHeader;
@@ -20,8 +21,8 @@ import com.artemus.app.model.request.Party;
 public class BillsDAO {
 	private Connection con;
 	private java.sql.PreparedStatement stmt = null;
-	private java.sql.PreparedStatement stmt1 = null, MIstmt = null, stmt2 = null;
-	private ResultSet rs = null, MIrs = null;
+	private java.sql.PreparedStatement stmt1 = null, MIstmt = null, stmt2 = null, stmt3 = null;
+	private ResultSet rs = null, MIrs = null, rs1 = null;
 	static Logger logger = LogManager.getLogger();
 	StringBuffer errorMessage = new StringBuffer("");
 	StringBuffer pkgType = new StringBuffer("");
@@ -54,6 +55,8 @@ public class BillsDAO {
 				con.close();
 			if (rs != null)
 				rs.close();
+			if (rs1 != null)
+				rs1.close();
 			if (MIrs != null)
 				MIrs.close();
 			if (stmt != null)
@@ -62,6 +65,8 @@ public class BillsDAO {
 				stmt1.close();
 			if (MIstmt != null)
 				MIstmt.close();
+			if (stmt2 != null)
+				stmt2.close();
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -495,9 +500,10 @@ public class BillsDAO {
 		return isDone;
 	}
 
-	public int addCargos(Equipment objEquipment, int billLadingId, int cargoIndex) {
+	public int addCargos(Equipment objEquipment, int billLadingId, int cargoIndex, ConfigScac configScac) {
 		// TODO Auto-generated method stub
 		try {
+			String hsCode = new String("");
 			if (objEquipment.getCargos() != null) {
 
 				stmt1 = con.prepareStatement("SELECT system_code FROM artemus.new_hazard_code where un_code=?");
@@ -506,13 +512,38 @@ public class BillsDAO {
 						+ " (bill_lading_id, cargo_id, equipment_number, description, harmonize_code, "
 						+ " hazard_code, manufacturer, country,customer_id,flash_point,flash_unit) values "
 						+ " (?,?,?,?,?,?,?,?,?,?,?)");
-
+				stmt2 = con.prepareStatement("SELECT * FROM artemus.harmonized_code where harmonized_code=?");
 				for (Cargo objCargo : objEquipment.getCargos()) {
 					if (objCargo != null) {
-
+						ResultSet rs2 = null;
+						boolean emptyrs=false;
 						// get hazard code from hazard un_code
 						stmt1.setString(1, objCargo.getHazardCode());
+
+						stmt2.setString(1, objCargo.getHarmonizeCode());
+
 						rs = stmt1.executeQuery();
+
+						rs2 = stmt2.executeQuery();
+
+						if (rs2 != null && rs2.next()!=false) {
+							logger.info("harmonized_code Found :" + objCargo.getHarmonizeCode());
+						} else {
+							logger.info("harmonized_code Not Found :" + objCargo.getHarmonizeCode());
+							// set harmonized code
+							emptyrs=true;
+							if (objCargo.getHarmonizeCode().length() == 6) {
+								hsCode = objCargo.getHarmonizeCode() + "0000";
+								objCargo.setHarmonizeCode(hsCode);
+							} else if (objCargo.getHarmonizeCode().length() == 8) {
+								hsCode = objCargo.getHarmonizeCode() + "00";
+								objCargo.setHarmonizeCode(hsCode);
+							}
+							
+							
+						}
+						stmt2.setString(1, objCargo.getHarmonizeCode());
+						rs2 = stmt2.executeQuery();
 						if (rs.next()) {
 							objCargo.setHazardCode(rs.getString(1));
 							logger.info(rs.getString(1));
@@ -525,6 +556,18 @@ public class BillsDAO {
 						stmt.setInt(1, billLadingId);
 						stmt.setInt(2, cargoIndex);
 						stmt.setString(3, objEquipment.getEquipmentNo());
+
+						if (!objCargo.getHarmonizeCode().isEmpty() || configScac.getIsHsMandatory()) {
+							if (rs2 != null && rs2.next()!=false) {
+								if (configScac.getReplaceDescFromHs()) {
+									objCargo.setDescriptionsOfGoods(rs2.getString(2));
+								}
+							} else {
+								hazardErrorMessage.append("Invalid Harmonized Code " + objCargo.getHarmonizeCode()
+										+ ". Enter Valid One.");
+							}
+						}
+
 						stmt.setString(4, objCargo.getDescriptionsOfGoods());
 						stmt.setString(5, objCargo.getHarmonizeCode());
 						stmt.setString(6, objCargo.getHazardCode());

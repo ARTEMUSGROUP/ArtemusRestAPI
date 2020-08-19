@@ -80,9 +80,6 @@ public class JPBillsServiceImpl implements JPBillsService {
 					throw new ErrorResponseException("Internal Bill Processing Error");
 				}
 			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} finally {
 			jpcustomerProfileDao.closeAll();
 		}

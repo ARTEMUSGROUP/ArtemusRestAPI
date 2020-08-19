@@ -1,6 +1,5 @@
 package com.artemus.app.service.impl;
 
-
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -8,6 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.artemus.app.awsmail.SendMail;
+import com.artemus.app.configscac.ConfigScac;
 import com.artemus.app.dao.BillsDAO;
 import com.artemus.app.dao.CustomerProfileDAO;
 import com.artemus.app.dao.VesselVoyageDAO;
@@ -20,6 +20,7 @@ import com.artemus.app.model.request.Informal;
 import com.artemus.app.service.BillsService;
 import com.artemus.app.utils.BillHeaderUtils;
 import com.artemus.app.utils.ValidateBeanUtil;
+import com.google.gson.Gson;
 
 public class BillsServiceImpl implements BillsService {
 	static Logger logger = LogManager.getLogger();
@@ -38,10 +39,15 @@ public class BillsServiceImpl implements BillsService {
 			throw new MissingRequiredFieldException(invalidJsonMsg.toString());
 		}
 		objUtils.validateRequiredFields(objBillHeader);
+
 		// Call for DAO
 		CustomerProfileDAO customerProfileDao = new CustomerProfileDAO();
-
+		// Get Config For SCAC
+		ConfigScac configScac = null;
+		configScac = customerProfileDao.getScacConfig(objBillHeader.getLoginScac());
 		try {
+			System.out.println("Config Class :" + configScac);
+			logger.info("Config Class :" + configScac);
 			customerProfileDao.validateBillHeaderParties(objBillHeader);
 			// getting error messages for entity number and type
 			String entityerrormsg = new String("");
@@ -50,7 +56,8 @@ public class BillsServiceImpl implements BillsService {
 			entityErrorMessage.append(entityerrormsg);
 			if (entityErrorMessage.length() > 0) {
 				try {
-					mailResponse.sendMail(objBillHeader.getLoginScac(), "Bill", 1,objBillHeader.getBillOfLading(),entityErrorMessage.toString());
+					mailResponse.sendMail(objBillHeader.getLoginScac(), "Bill", 1, objBillHeader.getBillOfLading(),
+							entityErrorMessage.toString());
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -64,22 +71,26 @@ public class BillsServiceImpl implements BillsService {
 			System.out.println(errorMessage);
 
 			if (errorMessage.length() > 0) {
-				mailResponse.sendMail(objBillHeader.getLoginScac(), "Bill", 1,objBillHeader.getBillOfLading(),errorMessage.toString());
+				mailResponse.sendMail(objBillHeader.getLoginScac(), "Bill", 1, objBillHeader.getBillOfLading(),
+						errorMessage.toString());
 				throw new ErrorResponseException(errorMessage.toString());
 			} else {
 				try {
-					processBill(objBillHeader, customerProfileDao);
+					processBill(objBillHeader, customerProfileDao, configScac);
 					if (errorMessage.length() > 0) {
-						mailResponse.sendMail(objBillHeader.getLoginScac(), "Bill", 1,objBillHeader.getBillOfLading(),errorMessage.toString());
+						mailResponse.sendMail(objBillHeader.getLoginScac(), "Bill", 1, objBillHeader.getBillOfLading(),
+								errorMessage.toString());
 						throw new ErrorResponseException(errorMessage.toString().replaceAll("<br>", ""));
 
-					}else {
-						mailResponse.sendMail(objBillHeader.getLoginScac(), "Bill", 0,objBillHeader.getBillOfLading(),errorMessage.toString());
+					} else {
+						mailResponse.sendMail(objBillHeader.getLoginScac(), "Bill", 0, objBillHeader.getBillOfLading(),
+								errorMessage.toString());
 					}
 				} catch (ErrorResponseException e) {
 					throw e;
 				} catch (Exception e) {
-					mailResponse.sendMail(objBillHeader.getLoginScac(), "Bill", 1,objBillHeader.getBillOfLading().toString(),"Internal Bill Processing Error");
+					mailResponse.sendMail(objBillHeader.getLoginScac(), "Bill", 1,
+							objBillHeader.getBillOfLading().toString(), "Internal Bill Processing Error");
 					e.printStackTrace();
 					throw new ErrorResponseException("Internal Bill Processing Error");
 
@@ -164,7 +175,12 @@ public class BillsServiceImpl implements BillsService {
 		objUtils.validateRequiredFields(objBillHeader);
 		// Call for DAO
 		CustomerProfileDAO customerProfileDao = new CustomerProfileDAO();
+		// Get Config For SCAC
+		ConfigScac configScac = null;
+		configScac = customerProfileDao.getScacConfig(objBillHeader.getLoginScac());
 		try {
+			System.out.println("Config Class :" + configScac);
+			logger.info("Config Class :" + configScac);
 			customerProfileDao.validateBillHeaderParties(objBillHeader);
 			// getting error messages for entity number and type
 			String entityerrormsg = new String("");
@@ -172,7 +188,8 @@ public class BillsServiceImpl implements BillsService {
 			System.out.println("Entity message" + entityerrormsg);
 			entityErrorMessage.append(entityerrormsg);
 			if (entityErrorMessage.length() > 0) {
-				mailResponse.sendMail(objBillHeader.getLoginScac(), "Bill", 1,objBillHeader.getBillOfLading(),entityErrorMessage.toString());
+				mailResponse.sendMail(objBillHeader.getLoginScac(), "Bill", 1, objBillHeader.getBillOfLading(),
+						entityErrorMessage.toString());
 				throw new ErrorResponseException(entityErrorMessage.toString());
 			}
 			System.out.println(objBillHeader.toString());
@@ -181,17 +198,20 @@ public class BillsServiceImpl implements BillsService {
 			validateScacUser(objBillHeader, customerProfileDao);
 			System.out.println(errorMessage);
 			if (errorMessage.length() > 0) {
-				mailResponse.sendMail(objBillHeader.getLoginScac(), "Bill", 1,objBillHeader.getBillOfLading(),errorMessage.toString());
+				mailResponse.sendMail(objBillHeader.getLoginScac(), "Bill", 1, objBillHeader.getBillOfLading(),
+						errorMessage.toString());
 				throw new ErrorResponseException(errorMessage.toString());
 			} else {
 				try {
-					processBillForUpdate(objBillHeader, customerProfileDao);
+					processBillForUpdate(objBillHeader, customerProfileDao,configScac);
 					if (errorMessage.length() > 0) {
-						mailResponse.sendMail(objBillHeader.getLoginScac(), "Bill", 1,objBillHeader.getBillOfLading(),errorMessage.toString());
+						mailResponse.sendMail(objBillHeader.getLoginScac(), "Bill", 1, objBillHeader.getBillOfLading(),
+								errorMessage.toString());
 						throw new ErrorResponseException(errorMessage.toString().replaceAll("<br>", ""));
 
-					}else {
-						mailResponse.sendMail(objBillHeader.getLoginScac(), "Bill", 0,objBillHeader.getBillOfLading(),errorMessage.toString());
+					} else {
+						mailResponse.sendMail(objBillHeader.getLoginScac(), "Bill", 0, objBillHeader.getBillOfLading(),
+								errorMessage.toString());
 					}
 				} catch (ErrorResponseException e) {
 					e.printStackTrace();
@@ -278,14 +298,15 @@ public class BillsServiceImpl implements BillsService {
 		}
 	}
 
-	private void processBill(BillHeader objBillHeader, CustomerProfileDAO objCustomerProfiledao)
+	private void processBill(BillHeader objBillHeader, CustomerProfileDAO objCustomerProfiledao, ConfigScac configScac)
 			throws SQLException, ErrorResponseException {
 		System.out.println("processBill :: ");
 		String isferrormsg = new String("");
 		BillsDAO objDao = new BillsDAO(objCustomerProfiledao.getConnection());
 		try {
 			if (objDao.validateBillExist(objBillHeader)) {
-				mailResponse.sendMail(objBillHeader.getLoginScac(), "Bill", 1,objBillHeader.getBillOfLading(),"Bill Number Already Exist");
+				mailResponse.sendMail(objBillHeader.getLoginScac(), "Bill", 1, objBillHeader.getBillOfLading(),
+						"Bill Number Already Exist");
 				throw new ErrorResponseException("Bill Number Already Exist");
 			}
 			int billLadingId = objDao.insertIntoBillHeader(objBillHeader);
@@ -315,17 +336,19 @@ public class BillsServiceImpl implements BillsService {
 			objDao.isFROBBill(objBillHeader);
 
 			// Adding Equipments
-			addEquipments(objBillHeader, billLadingId, objDao, objCustomerProfiledao);
+			addEquipments(objBillHeader, billLadingId, objDao, objCustomerProfiledao, configScac);
 			errorMessage = objDao.getPkgType();
 			// PackageType Validation
 			if (errorMessage.length() > 5) {
-				mailResponse.sendMail(objBillHeader.getLoginScac(), "Bill", 1,objBillHeader.getBillOfLading(),errorMessage.toString());
+				mailResponse.sendMail(objBillHeader.getLoginScac(), "Bill", 1, objBillHeader.getBillOfLading(),
+						errorMessage.toString());
 				throw new ErrorResponseException(errorMessage.toString());
 			}
 			// validate Hazard Code
 			errorMessage = objDao.getHazardErrorMessage();
 			if (errorMessage.length() > 5) {
-				mailResponse.sendMail(objBillHeader.getLoginScac(), "Bill", 1,objBillHeader.getBillOfLading(),errorMessage.toString());
+				mailResponse.sendMail(objBillHeader.getLoginScac(), "Bill", 1, objBillHeader.getBillOfLading(),
+						errorMessage.toString());
 				throw new ErrorResponseException(errorMessage.toString());
 			}
 
@@ -384,7 +407,7 @@ public class BillsServiceImpl implements BillsService {
 
 	}
 
-	private void processBillForUpdate(BillHeader objBillHeader, CustomerProfileDAO objCustomerProfiledao)
+	private void processBillForUpdate(BillHeader objBillHeader, CustomerProfileDAO objCustomerProfiledao, ConfigScac configScac)
 			throws SQLException, ErrorResponseException {
 		logger.info("processBillForUpdate :: ");
 		String isferrormsg = new String("");
@@ -427,11 +450,12 @@ public class BillsServiceImpl implements BillsService {
 				// Setting ISF Type
 				objDao.isFROBBill(objBillHeader);
 				// Adding Equipments
-				addEquipments(objBillHeader, billLadingId, objDao, objCustomerProfiledao);
+				addEquipments(objBillHeader, billLadingId, objDao, objCustomerProfiledao,configScac);
 				errorMessage = objDao.getPkgType();
 				// PackageType Validation
 				if (errorMessage.length() > 5) {
-					mailResponse.sendMail(objBillHeader.getLoginScac(), "Bill", 1,objBillHeader.getBillOfLading(),errorMessage.toString());
+					mailResponse.sendMail(objBillHeader.getLoginScac(), "Bill", 1, objBillHeader.getBillOfLading(),
+							errorMessage.toString());
 					throw new ErrorResponseException(errorMessage.toString());
 				}
 				// Updating into billDetailStatus if all Adding Equipments is succeeds
@@ -439,7 +463,8 @@ public class BillsServiceImpl implements BillsService {
 				// validate Hazard Code
 				errorMessage = objDao.getHazardErrorMessage();
 				if (errorMessage.length() > 5) {
-					mailResponse.sendMail(objBillHeader.getLoginScac(), "Bill", 1,objBillHeader.getBillOfLading(),errorMessage.toString());
+					mailResponse.sendMail(objBillHeader.getLoginScac(), "Bill", 1, objBillHeader.getBillOfLading(),
+							errorMessage.toString());
 					throw new ErrorResponseException(errorMessage.toString());
 				}
 
@@ -489,7 +514,8 @@ public class BillsServiceImpl implements BillsService {
 				}
 
 			} else {
-				mailResponse.sendMail(objBillHeader.getLoginScac(), "Bill", 1,objBillHeader.getBillOfLading(),"Bill number does not exist");
+				mailResponse.sendMail(objBillHeader.getLoginScac(), "Bill", 1, objBillHeader.getBillOfLading(),
+						"Bill number does not exist");
 				throw new ErrorResponseException("Bill number does not exist");
 			}
 			;
@@ -504,10 +530,12 @@ public class BillsServiceImpl implements BillsService {
 	}
 
 	private void addEquipments(BillHeader objBillHeader, int billLadingId, BillsDAO objBillsDao,
-			CustomerProfileDAO customerProfileDao) throws SQLException {
+			CustomerProfileDAO customerProfileDao, ConfigScac configScac) throws SQLException {
 		boolean returnedVal = true;
 		int packageIndex = 0;
 		int cargoIndex = 0;
+		String loginScac = new String("");
+		loginScac = objBillHeader.getLoginScac();
 
 		// adding empty containers
 		if (objBillHeader.getBillType().equalsIgnoreCase("empty")) {
@@ -548,7 +576,7 @@ public class BillsServiceImpl implements BillsService {
 						customerProfileDao.validateCustomer(objEquipment.getCargos().get(cargoIndex).getManufacturer(),
 								objBillHeader.getLoginScac());
 					}
-					cargoIndex = objBillsDao.addCargos(objEquipment, billLadingId, cargoIndex);
+					cargoIndex = objBillsDao.addCargos(objEquipment, billLadingId, cargoIndex,configScac);
 					if (cargoIndex == -1) {
 						returnedVal = false;
 						break;
@@ -581,7 +609,7 @@ public class BillsServiceImpl implements BillsService {
 					customerProfileDao.validateCustomer(objEquipment.getCargos().get(cargoIndex).getManufacturer(),
 							objBillHeader.getLoginScac());
 				}
-				cargoIndex = objBillsDao.addCargos(objEquipment, billLadingId, cargoIndex);
+				cargoIndex = objBillsDao.addCargos(objEquipment, billLadingId, cargoIndex,configScac);
 				if (cargoIndex == -1) {
 					returnedVal = false;
 					break;
