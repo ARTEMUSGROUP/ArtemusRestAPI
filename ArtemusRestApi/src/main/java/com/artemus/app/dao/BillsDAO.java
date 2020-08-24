@@ -526,22 +526,6 @@ public class BillsDAO {
 
 						rs2 = stmt2.executeQuery();
 
-						if (rs2 != null && rs2.next()!=false) {
-							logger.info("harmonized_code Found :" + objCargo.getHarmonizeCode());
-						} else {
-							logger.info("harmonized_code Not Found :" + objCargo.getHarmonizeCode());
-							// set harmonized code
-							emptyrs=true;
-							if (objCargo.getHarmonizeCode().length() == 6) {
-								hsCode = objCargo.getHarmonizeCode() + "0000";
-								objCargo.setHarmonizeCode(hsCode);
-							} else if (objCargo.getHarmonizeCode().length() == 8) {
-								hsCode = objCargo.getHarmonizeCode() + "00";
-								objCargo.setHarmonizeCode(hsCode);
-							}
-							
-							
-						}
 						stmt2.setString(1, objCargo.getHarmonizeCode());
 						rs2 = stmt2.executeQuery();
 						if (rs.next()) {
@@ -563,6 +547,7 @@ public class BillsDAO {
 									objCargo.setDescriptionsOfGoods(rs2.getString(2));
 								}
 							} else {
+								logger.info("harmonized_code Found :" + objCargo.getHarmonizeCode());
 								hazardErrorMessage.append("Invalid Harmonized Code " + objCargo.getHarmonizeCode()
 										+ ". Enter Valid One.");
 							}
