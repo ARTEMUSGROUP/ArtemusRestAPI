@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.artemus.app.configscac.ConfigScac;
 import com.artemus.app.dao.BillsDAO;
 import com.artemus.app.dao.CustomerProfileDAO;
 import com.artemus.app.dao.VesselVoyageDAO;
@@ -37,7 +38,12 @@ public class BillsServiceImpl implements BillsService {
 		objUtils.validateRequiredFields(objBillHeader);
 		// Call for DAO
 		CustomerProfileDAO customerProfileDao = new CustomerProfileDAO();
+		// Get Config For SCAC
+		ConfigScac configScac = null;
+		configScac = customerProfileDao.getScacConfig(objBillHeader.getLoginScac());
 		try {
+			System.out.println("Config Class :" + configScac);
+			logger.info("Config Class :" + configScac);
 			customerProfileDao.validateBillHeaderParties(objBillHeader);
 			// getting error messages for entity number and type
 			String entityerrormsg = new String("");
@@ -57,7 +63,7 @@ public class BillsServiceImpl implements BillsService {
 				throw new ErrorResponseException(errorMessage.toString());
 			} else {
 				try {
-					processBill(objBillHeader, customerProfileDao);
+					processBill(objBillHeader, customerProfileDao, configScac);
 					if (errorMessage.length() > 0) {
 						throw new ErrorResponseException(errorMessage.toString().replaceAll("<br>", ""));
 					}
@@ -145,8 +151,12 @@ public class BillsServiceImpl implements BillsService {
 		objUtils.validateRequiredFields(objBillHeader);
 		// Call for DAO
 		CustomerProfileDAO customerProfileDao = new CustomerProfileDAO();
+		// Get Config For SCAC
+		ConfigScac configScac = null;
+		configScac = customerProfileDao.getScacConfig(objBillHeader.getLoginScac());
 		try {
-			customerProfileDao.validateBillHeaderParties(objBillHeader);
+			System.out.println("Config Class :" + configScac);
+			logger.info("Config Class :" + configScac);
 			// getting error messages for entity number and type
 			String entityerrormsg = new String("");
 			entityerrormsg = "" + customerProfileDao.getErrorMessage().toString();
@@ -164,7 +174,7 @@ public class BillsServiceImpl implements BillsService {
 				throw new ErrorResponseException(errorMessage.toString());
 			} else {
 				try {
-					processBillForUpdate(objBillHeader, customerProfileDao);
+					processBillForUpdate(objBillHeader, customerProfileDao, configScac);
 				} catch (ErrorResponseException e) {
 					e.printStackTrace();
 					throw e;
@@ -247,7 +257,7 @@ public class BillsServiceImpl implements BillsService {
 		}
 	}
 
-	private void processBill(BillHeader objBillHeader, CustomerProfileDAO objCustomerProfiledao)
+	private void processBill(BillHeader objBillHeader, CustomerProfileDAO objCustomerProfiledao, ConfigScac configScac)
 			throws SQLException, ErrorResponseException {
 		System.out.println("processBill :: ");
 		String isferrormsg = new String("");
@@ -282,7 +292,7 @@ public class BillsServiceImpl implements BillsService {
 			// Setting ISF Type
 			objDao.isFROBBill(objBillHeader);
 			// Adding Equipments
-			addEquipments(objBillHeader, billLadingId, objDao, objCustomerProfiledao);
+			addEquipments(objBillHeader, billLadingId, objDao, objCustomerProfiledao, configScac);
 			errorMessage = objDao.getPkgType();
 			// PackageType Validation
 			if (errorMessage.length() > 5) {
@@ -349,8 +359,8 @@ public class BillsServiceImpl implements BillsService {
 
 	}
 
-	private void processBillForUpdate(BillHeader objBillHeader, CustomerProfileDAO objCustomerProfiledao)
-			throws SQLException, ErrorResponseException {
+	private void processBillForUpdate(BillHeader objBillHeader, CustomerProfileDAO objCustomerProfiledao,
+			ConfigScac configScac) throws SQLException, ErrorResponseException {
 		logger.info("processBillForUpdate :: ");
 		String isferrormsg = new String("");
 		BillsDAO objDao = new BillsDAO(objCustomerProfiledao.getConnection());
@@ -392,7 +402,7 @@ public class BillsServiceImpl implements BillsService {
 				// Setting ISF Type
 				objDao.isFROBBill(objBillHeader);
 				// Adding Equipments
-				addEquipments(objBillHeader, billLadingId, objDao, objCustomerProfiledao);
+				addEquipments(objBillHeader, billLadingId, objDao, objCustomerProfiledao, configScac);
 				errorMessage = objDao.getPkgType();
 				// PackageType Validation
 				if (errorMessage.length() > 5) {
@@ -467,7 +477,7 @@ public class BillsServiceImpl implements BillsService {
 	}
 
 	private void addEquipments(BillHeader objBillHeader, int billLadingId, BillsDAO objBillsDao,
-			CustomerProfileDAO customerProfileDao) throws SQLException {
+			CustomerProfileDAO customerProfileDao, ConfigScac configScac) throws SQLException {
 		boolean returnedVal = true;
 		int packageIndex = 0;
 		int cargoIndex = 0;
@@ -511,7 +521,7 @@ public class BillsServiceImpl implements BillsService {
 						customerProfileDao.validateCustomer(objEquipment.getCargos().get(cargoIndex).getManufacturer(),
 								objBillHeader.getLoginScac());
 					}
-					cargoIndex = objBillsDao.addCargos(objEquipment, billLadingId, cargoIndex);
+					cargoIndex = objBillsDao.addCargos(objEquipment, billLadingId, cargoIndex, configScac);
 					if (cargoIndex == -1) {
 						returnedVal = false;
 						break;
@@ -544,7 +554,7 @@ public class BillsServiceImpl implements BillsService {
 					customerProfileDao.validateCustomer(objEquipment.getCargos().get(cargoIndex).getManufacturer(),
 							objBillHeader.getLoginScac());
 				}
-				cargoIndex = objBillsDao.addCargos(objEquipment, billLadingId, cargoIndex);
+				cargoIndex = objBillsDao.addCargos(objEquipment, billLadingId, cargoIndex, configScac);
 				if (cargoIndex == -1) {
 					returnedVal = false;
 					break;

@@ -13,10 +13,12 @@ import java.util.regex.Pattern;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.artemus.app.configscac.ConfigScac;
 import com.artemus.app.connection.DBConnectionFactory;
 import com.artemus.app.model.request.AddressInfo;
 import com.artemus.app.model.request.BillHeader;
 import com.artemus.app.model.request.Party;
+import com.google.gson.Gson;
 
 public class CustomerProfileDAO {
 
@@ -71,21 +73,21 @@ public class CustomerProfileDAO {
 		validateCustomer(objBillHeader.getSeller(), objBillHeader.getLoginScac());
 		validateCustomer(objBillHeader.getConsolidator(), objBillHeader.getLoginScac());
 		validateCustomer(objBillHeader.getStuffer(), objBillHeader.getLoginScac());
-		if(objBillHeader.getConsignee().getName().trim().equalsIgnoreCase("To Order")) {
+		if (objBillHeader.getConsignee().getName().trim().equalsIgnoreCase("To Order")) {
 			objBillHeader.getConsignee().setName("TO ORDER");
-				if (isCustomerExists(objBillHeader.getConsignee(), objBillHeader.getLoginScac())) {
-					toOrderExists = true;
-				} else {
-					custErrorMessage.append("Consignee Party with name :"+objBillHeader.getConsignee().getName()+" does not Exist in the AMS"
-							+ "System. Create one Customer with name as 'To Order' in the AMS System.");
-				}
-		
+			if (isCustomerExists(objBillHeader.getConsignee(), objBillHeader.getLoginScac())) {
+				toOrderExists = true;
+			} else {
+				custErrorMessage.append("Consignee Party with name :" + objBillHeader.getConsignee().getName()
+						+ " does not Exist in the AMS"
+						+ "System. Create one Customer with name as 'To Order' in the AMS System.");
+			}
 
-		}else {
-			validateCustomer(objBillHeader.getConsignee(), objBillHeader.getLoginScac(), objBillHeader,true);
+		} else {
+			validateCustomer(objBillHeader.getConsignee(), objBillHeader.getLoginScac(), objBillHeader, true);
 		}
 		validateCustomer(objBillHeader.getNotify(), objBillHeader.getLoginScac());
-		validateCustomer(objBillHeader.getImporter(), objBillHeader.getLoginScac(), objBillHeader,false);
+		validateCustomer(objBillHeader.getImporter(), objBillHeader.getLoginScac(), objBillHeader, false);
 		validateCustomer(objBillHeader.getBuyer(), objBillHeader.getLoginScac());
 		validateCustomer(objBillHeader.getShipTo(), objBillHeader.getLoginScac());
 
@@ -107,52 +109,50 @@ public class CustomerProfileDAO {
 
 	}
 
-	public void validateCustomer(Party objParty, String loginScac, BillHeader objBillHeader,Boolean isConsignee) {
+	public void validateCustomer(Party objParty, String loginScac, BillHeader objBillHeader, Boolean isConsignee) {
 		boolean customerGen = false;
-        String parytname="";
-        if(isConsignee.equals(true)) {
-        	parytname="Consignee";
-        }else {
-        	parytname="Importer";
-        }
-		
+		String parytname = "";
+		if (isConsignee.equals(true)) {
+			parytname = "Consignee";
+		} else {
+			parytname = "Importer";
+		}
+
 		if (objParty != null) {
 
 			if (objParty.getAddressInfo().getEntityType() == null || objParty.getAddressInfo().getEntityType() == "") {
-				custIsfErrorMessage.append(
-						"<br>Entity Type is required for "+parytname);
+				custIsfErrorMessage.append("<br>Entity Type is required for " + parytname);
 			}
 
 			if (objParty.getAddressInfo().getEntityNumber() == null
 					|| objParty.getAddressInfo().getEntityNumber() == "") {
-				custIsfErrorMessage.append(
-						"<br>Entity number is required for "+parytname);
-			} 
-			
-			if(objParty.getAddressInfo().getEntityNumber()=="" || objParty.getAddressInfo().getEntityType() == "") {
+				custIsfErrorMessage.append("<br>Entity number is required for " + parytname);
+			}
+
+			if (objParty.getAddressInfo().getEntityNumber() == "" || objParty.getAddressInfo().getEntityType() == "") {
 				setAddressInfo(objParty);
-			}else {
+			} else {
 				setEntityTypeNumber(objParty);
 			}
 
-				if (!isEntityNumberExists(objParty, loginScac, objBillHeader)) {
-					System.out.println("Entity Number Exists");
+			if (!isEntityNumberExists(objParty, loginScac, objBillHeader)) {
+				System.out.println("Entity Number Exists");
 
-					if (isCustomerExists(objParty, loginScac)) {
-						customerGen = true;
-						customerGen = updateCustomer(objParty, loginScac);
+				if (isCustomerExists(objParty, loginScac)) {
+					customerGen = true;
+					customerGen = updateCustomer(objParty, loginScac);
 
-					} else {
-						customerGen = addCustomer(objParty, loginScac);
-					}
+				} else {
+					customerGen = addCustomer(objParty, loginScac);
 				}
-			
+			}
+
 		}
 
 	}
 
 	private boolean isEntityNumberExists(Party objParty, String loginScac, BillHeader objBillHeader) {
-		
+
 		try {
 			stmt = con.prepareStatement("select entity_number " + " from customer "
 					+ " where login_scac_code=? and customer_name=? and entity_number=?");
@@ -471,7 +471,7 @@ public class CustomerProfileDAO {
 	public StringBuilder getErrorMessage() {
 		return custErrorMessage;
 	}
-	
+
 	public StringBuilder getIsfErrorMessage() {
 		return custIsfErrorMessage;
 	}
@@ -494,6 +494,36 @@ public class CustomerProfileDAO {
 
 		}
 		return userType;
+	}
+
+	public ConfigScac getScacConfig(String loginScac) {
+		String config = new String();
+		Gson gson = new Gson();
+		ConfigScac configScac = new ConfigScac(false, false);
+		String jsonConfig = gson.toJson(configScac);
+		System.out.println("jsonconfig" + jsonConfig);
+		try {
+			stmt = con.prepareStatement("SELECT config FROM artemus.login_scac_token where login_scac=?");
+			stmt.setString(1, loginScac);
+			System.out.println(stmt.toString());
+			logger.info(stmt);
+			rs = stmt.executeQuery();
+			if (rs.next()) {
+				if (rs.getString(1) != null && !rs.getString(1).isEmpty()) {
+					System.out.println("Got Config from tbl");
+					config = rs.getString(1);
+					configScac = gson.fromJson(config, ConfigScac.class);
+					return configScac;
+				}
+
+			}
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return configScac;
 	}
 
 }
