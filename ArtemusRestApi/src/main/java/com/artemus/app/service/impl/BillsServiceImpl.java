@@ -290,9 +290,13 @@ public class BillsServiceImpl implements BillsService {
 			// Adding insertIntoNotifyPartyDetails
 			objDao.insertIntoNotifyPartyDetails(objBillHeader.getNotifyParties(), billLadingId);
 			// Setting ISF Type
-			objDao.isFROBBill(objBillHeader);
+			boolean isFrob = false;
+			isFrob = objDao.isFROBBill(objBillHeader);
+			if (!isFrob) {
+				entityErrorMessage.append(objCustomerProfiledao.getEntityIsfErrorMessage());
+			}
 			// Adding Equipments
-			addEquipments(objBillHeader, billLadingId, objDao, objCustomerProfiledao, configScac);
+			addEquipments(objBillHeader, billLadingId, objDao, objCustomerProfiledao, configScac, isFrob);
 			errorMessage = objDao.getPkgType();
 			// PackageType Validation
 			if (errorMessage.length() > 5) {
@@ -347,6 +351,7 @@ public class BillsServiceImpl implements BillsService {
 			// Adding into voyagePortDetails
 			objDao.insertIntoVoyagePortDetails(objBillHeader, "");
 			// Checking isFROBBill
+			
 			if (objDao.isFROBBill(objBillHeader)) {
 				String firstUsDischargePort = objDao.getDistrictPortForFROB(
 						objBillHeader.getVesselSchedule().getVoyageId(), objBillHeader.getLoginScac());
@@ -400,9 +405,12 @@ public class BillsServiceImpl implements BillsService {
 				// Adding insertIntoNotifyPartyDetails
 				objDao.insertIntoNotifyPartyDetails(objBillHeader.getNotifyParties(), billLadingId);
 				// Setting ISF Type
-				objDao.isFROBBill(objBillHeader);
+				boolean isIsf10 = objDao.isFROBBill(objBillHeader);
+				if (!isIsf10) {
+					entityErrorMessage.append(objCustomerProfiledao.getEntityIsfErrorMessage());
+				}
 				// Adding Equipments
-				addEquipments(objBillHeader, billLadingId, objDao, objCustomerProfiledao, configScac);
+				addEquipments(objBillHeader, billLadingId, objDao, objCustomerProfiledao, configScac, isIsf10);
 				errorMessage = objDao.getPkgType();
 				// PackageType Validation
 				if (errorMessage.length() > 5) {
@@ -477,7 +485,7 @@ public class BillsServiceImpl implements BillsService {
 	}
 
 	private void addEquipments(BillHeader objBillHeader, int billLadingId, BillsDAO objBillsDao,
-			CustomerProfileDAO customerProfileDao, ConfigScac configScac) throws SQLException {
+			CustomerProfileDAO customerProfileDao, ConfigScac configScac, boolean isFrob) throws SQLException {
 		boolean returnedVal = true;
 		int packageIndex = 0;
 		int cargoIndex = 0;
@@ -521,13 +529,13 @@ public class BillsServiceImpl implements BillsService {
 						customerProfileDao.validateCustomer(objEquipment.getCargos().get(cargoIndex).getManufacturer(),
 								objBillHeader.getLoginScac());
 					}
-					cargoIndex = objBillsDao.addCargos(objEquipment, billLadingId, cargoIndex, configScac);
+					cargoIndex = objBillsDao.addCargos(objEquipment, billLadingId, cargoIndex, configScac, isFrob);
 					if (cargoIndex == -1) {
 						returnedVal = false;
 						break;
 					}
 				} else {
-					cargoIndex = objBillsDao.addEmptyCargos(objEquipment, billLadingId, cargoIndex);
+					cargoIndex = objBillsDao.addEmptyCargos(objEquipment, billLadingId, cargoIndex, isFrob);
 					if (cargoIndex == -1) {
 						returnedVal = false;
 						break;
@@ -554,7 +562,7 @@ public class BillsServiceImpl implements BillsService {
 					customerProfileDao.validateCustomer(objEquipment.getCargos().get(cargoIndex).getManufacturer(),
 							objBillHeader.getLoginScac());
 				}
-				cargoIndex = objBillsDao.addCargos(objEquipment, billLadingId, cargoIndex, configScac);
+				cargoIndex = objBillsDao.addCargos(objEquipment, billLadingId, cargoIndex, configScac, isFrob);
 				if (cargoIndex == -1) {
 					returnedVal = false;
 					break;

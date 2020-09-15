@@ -241,10 +241,12 @@ public class BillsDAO {
 
 				objSameParty.setAddressInfo(objBillHeader.getShipper().getAddressInfo());
 				objSameParty.setName(objBillHeader.getShipper().getName());
+				objSameParty.setCustomerId(objBillHeader.getShipper().getCustomerId());
 
 			} else {
 				objSameParty.setAddressInfo(objBillHeader.getConsignee().getAddressInfo());
 				objSameParty.setName(objBillHeader.getConsignee().getName());
+				objSameParty.setCustomerId(objBillHeader.getConsignee().getCustomerId());
 
 			}
 
@@ -493,110 +495,116 @@ public class BillsDAO {
 		return isDone;
 	}
 
-	public int addCargos(Equipment objEquipment, int billLadingId, int cargoIndex,ConfigScac configScac) {
+	public int addCargos(Equipment objEquipment, int billLadingId, int cargoIndex, ConfigScac configScac,
+			boolean isIsf10) {
 		// TODO Auto-generated method stub
-				try {
-					String hsCode = new String("");
-					if (objEquipment.getCargos() != null) {
+		try {
+			String hsCode = new String("");
+			if (objEquipment.getCargos() != null) {
 
-						stmt1 = con.prepareStatement("SELECT system_code FROM artemus.new_hazard_code where un_code=?");
+				stmt1 = con.prepareStatement("SELECT system_code FROM artemus.new_hazard_code where un_code=?");
 
-						stmt = con.prepareStatement("Insert into cargo "
-								+ " (bill_lading_id, cargo_id, equipment_number, description, harmonize_code, "
-								+ " hazard_code, manufacturer, country,customer_id,flash_point,flash_unit) values "
-								+ " (?,?,?,?,?,?,?,?,?,?,?)");
-						stmt2 = con.prepareStatement("SELECT * FROM artemus.harmonized_code where harmonized_code=?");
-						for (Cargo objCargo : objEquipment.getCargos()) {
-							if (objCargo != null) {
-								ResultSet rs2 = null;
-								boolean emptyrs=false;
-								// get hazard code from hazard un_code
-								stmt1.setString(1, objCargo.getHazardCode());
+				stmt = con.prepareStatement("Insert into cargo "
+						+ " (bill_lading_id, cargo_id, equipment_number, description, harmonize_code, "
+						+ " hazard_code, manufacturer, country,customer_id,flash_point,flash_unit) values "
+						+ " (?,?,?,?,?,?,?,?,?,?,?)");
+				stmt2 = con.prepareStatement("SELECT * FROM artemus.harmonized_code where harmonized_code=?");
+				for (Cargo objCargo : objEquipment.getCargos()) {
+					if (objCargo != null) {
+						ResultSet rs2 = null;
+						boolean emptyrs = false;
+						// get hazard code from hazard un_code
+						stmt1.setString(1, objCargo.getHazardCode());
 
-								stmt2.setString(1, objCargo.getHarmonizeCode());
+						stmt2.setString(1, objCargo.getHarmonizeCode());
 
-								rs = stmt1.executeQuery();
+						rs = stmt1.executeQuery();
 
-								rs2 = stmt2.executeQuery();
+						rs2 = stmt2.executeQuery();
 
-								stmt2.setString(1, objCargo.getHarmonizeCode());
-								rs2 = stmt2.executeQuery();
-								if (rs.next()) {
-									objCargo.setHazardCode(rs.getString(1));
-									logger.info(rs.getString(1));
-								} else if (objCargo.getHazardCode() != null && !objCargo.getHazardCode().isEmpty()) {
-									hazardErrorMessage.append("Entered hazard_code " + objCargo.getHazardCode()
-											+ " is invalid .Insert Valid one.");
-								}
-
-								// Insert into Cargo
-								stmt.setInt(1, billLadingId);
-								stmt.setInt(2, cargoIndex);
-								stmt.setString(3, objEquipment.getEquipmentNo());
-
-								if (!objCargo.getHarmonizeCode().isEmpty() || configScac.getIsHsMandatory()) {
-									if (rs2 != null && rs2.next()!=false) {
-										if (configScac.getReplaceDescFromHs()) {
-											objCargo.setDescriptionsOfGoods(rs2.getString(2));
-										}
-									} else {
-										logger.info("harmonized_code Found :" + objCargo.getHarmonizeCode());
-										hazardErrorMessage.append("Invalid Harmonized Code " + objCargo.getHarmonizeCode()
-												+ ". Enter Valid One.");
-									}
-								}
-
-								stmt.setString(4, objCargo.getDescriptionsOfGoods());
-								stmt.setString(5, objCargo.getHarmonizeCode());
-								stmt.setString(6, objCargo.getHazardCode());
-								if (objCargo.getManufacturer() != null) {
-									stmt.setInt(9, objCargo.getManufacturer().getCustomerId());// Field cannot get
-									if (objCargo.getManufacturer().getName() == null
-											|| objCargo.getManufacturer().getName().isEmpty()) {
-										stmt.setString(7, "");
-									} else {
-										stmt.setString(7, objCargo.getManufacturer().getName());
-									}
-								} else {
-									stmt.setString(7, "");
-									stmt.setInt(9, 0);// Field cannot get
-									errorMessage.append("<br>Manufacturer entry is missing.");
-								}
-
-								stmt.setString(8, objCargo.getCountry());
-								if (objCargo.getFlashPointDetails() != null) {
-									stmt.setDouble(10, objCargo.getFlashPointDetails().getFlashPoint());
-									stmt.setString(11, objCargo.getFlashPointDetails().getFlashUnit());
-								} else {
-									stmt.setDouble(10, 0);
-									stmt.setString(11, "");
-								}
-
-								if (stmt.executeUpdate() != 1) {
-									return -1;
-								}
-								logger.info(stmt);
-								System.out.println("Inside CArgos" + objCargo);
-								if (objCargo.getCountry().isEmpty() || objCargo.getCountry() == null) {
-									errorMessage.append("<br>Country is missing for Manufacturer.");
-
-								}
-								if (objCargo.getHarmonizeCode().isEmpty()) {
-									errorMessage.append("<br>Harmonized Code entry is missing.");
-								}
-
-							}
-							++cargoIndex;
+						stmt2.setString(1, objCargo.getHarmonizeCode());
+						rs2 = stmt2.executeQuery();
+						if (rs.next()) {
+							objCargo.setHazardCode(rs.getString(1));
+							logger.info(rs.getString(1));
+						} else if (objCargo.getHazardCode() != null && !objCargo.getHazardCode().isEmpty()) {
+							hazardErrorMessage.append("Entered hazard_code " + objCargo.getHazardCode()
+									+ " is invalid .Insert Valid one.");
 						}
+
+						// Insert into Cargo
+						stmt.setInt(1, billLadingId);
+						stmt.setInt(2, cargoIndex);
+						stmt.setString(3, objEquipment.getEquipmentNo());
+
+						if (!objCargo.getHarmonizeCode().isEmpty() || configScac.getIsHsMandatory()) {
+							if (rs2 != null && rs2.next() != false) {
+								if (configScac.getReplaceDescFromHs()) {
+									objCargo.setDescriptionsOfGoods(rs2.getString(2));
+								}
+							} else {
+								logger.info("harmonized_code Found :" + objCargo.getHarmonizeCode());
+								hazardErrorMessage.append("Invalid Harmonized Code " + objCargo.getHarmonizeCode()
+										+ ". Enter Valid One.");
+							}
+						}
+
+						stmt.setString(4, objCargo.getDescriptionsOfGoods());
+						stmt.setString(5, objCargo.getHarmonizeCode());
+						stmt.setString(6, objCargo.getHazardCode());
+						if (objCargo.getManufacturer() != null) {
+							stmt.setInt(9, objCargo.getManufacturer().getCustomerId());// Field cannot get
+							if (objCargo.getManufacturer().getName() == null
+									|| objCargo.getManufacturer().getName().isEmpty()) {
+								stmt.setString(7, "");
+							} else {
+								stmt.setString(7, objCargo.getManufacturer().getName());
+							}
+						} else {
+							stmt.setString(7, "");
+							stmt.setInt(9, 0);// Field cannot get
+							if (!isIsf10) {
+								errorMessage.append("<br>Manufacturer entry is missing.");
+							}
+
+						}
+						System.out.println("IsFrob : " + isIsf10);
+						stmt.setString(8, objCargo.getCountry());
+						if (objCargo.getFlashPointDetails() != null) {
+							stmt.setDouble(10, objCargo.getFlashPointDetails().getFlashPoint());
+							stmt.setString(11, objCargo.getFlashPointDetails().getFlashUnit());
+						} else {
+							stmt.setDouble(10, 0);
+							stmt.setString(11, "");
+						}
+
+						if (stmt.executeUpdate() != 1) {
+							return -1;
+						}
+						logger.info(stmt);
+						logger.info("Inside CArgos" + objCargo);
+						System.out.println("Inside CArgos" + objCargo);
+						if (objCargo.getCountry().isEmpty() || objCargo.getCountry() == null) {
+							if (!isIsf10) {
+								errorMessage.append("<br>Country is missing for Manufacturer.");
+							}
+						}
+						if (objCargo.getHarmonizeCode().isEmpty()) {
+							errorMessage.append("<br>Harmonized Code entry is missing.");
+						}
+
 					}
-				} catch (SQLException e) {
-					e.printStackTrace();
-					return -1;
-				} catch (Exception e) {
-					e.printStackTrace();
-					return -1;
+					++cargoIndex;
 				}
-				return cargoIndex;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return -1;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return -1;
+		}
+		return cargoIndex;
 	}
 
 	public boolean deleteFromCargo(int billLadingId) throws SQLException {
@@ -726,8 +734,10 @@ public class BillsDAO {
 				isFROB = true;
 				objBillHeader.setIsfType("ISF-5");
 				System.out.println(stmt);
+				return true;
 			} else {
 				objBillHeader.setIsfType("ISF-10");
+				System.out.println(stmt);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -884,7 +894,7 @@ public class BillsDAO {
 		}
 	}
 
-	public int addEmptyCargos(Equipment objEquipment, int billLadingId, int cargoIndex) {
+	public int addEmptyCargos(Equipment objEquipment, int billLadingId, int cargoIndex, boolean isFrob) {
 		try {
 
 			objEquipment.setCargos(new ArrayList<Cargo>());
@@ -935,7 +945,10 @@ public class BillsDAO {
 						} else {
 							stmt.setString(7, "");
 							stmt.setInt(9, 0);// Field cannot get
-							errorMessage.append("<br>Manufacturer entry is missing.");
+							if(!isFrob) {
+								errorMessage.append("<br>Manufacturer entry is missing.");
+							}
+							
 						}
 
 						stmt.setString(8, objCargo.getCountry());
@@ -953,8 +966,11 @@ public class BillsDAO {
 						// logger.info(stmt);
 						System.out.println("Inside CArgos" + objCargo);
 						if (objCargo.getCountry().isEmpty() || objCargo.getCountry() == null) {
-							errorMessage.append("<br>Country is missing for Manufacturer.");
-						} 
+							if(!isFrob) {
+								errorMessage.append("<br>Country is missing for Manufacturer.");
+							}
+							
+						}
 
 					}
 					++cargoIndex;

@@ -27,6 +27,7 @@ public class CustomerProfileDAO {
 	private ResultSet rs = null;
 	StringBuilder custErrorMessage = new StringBuilder("");
 	StringBuilder custIsfErrorMessage = new StringBuilder("");
+	StringBuilder EntityIsfErrorMessage = new StringBuilder("");
 	static Logger logger = LogManager.getLogger();
 
 	public CustomerProfileDAO() {
@@ -67,6 +68,7 @@ public class CustomerProfileDAO {
 
 	public boolean validateBillHeaderParties(BillHeader objBillHeader) {
 		boolean toOrderExists = false;
+
 		System.out.println("validateBillHeaderParties ::");
 		validateCustomer(objBillHeader.getShipper(), objBillHeader.getLoginScac());
 		validateCustomer(objBillHeader.getBookingParty(), objBillHeader.getLoginScac());
@@ -121,12 +123,12 @@ public class CustomerProfileDAO {
 		if (objParty != null) {
 
 			if (objParty.getAddressInfo().getEntityType() == null || objParty.getAddressInfo().getEntityType() == "") {
-				custIsfErrorMessage.append("<br>Entity Type is required for " + parytname);
+				EntityIsfErrorMessage.append("<br>Entity Type is required for " + parytname);
 			}
 
 			if (objParty.getAddressInfo().getEntityNumber() == null
 					|| objParty.getAddressInfo().getEntityNumber() == "") {
-				custIsfErrorMessage.append("<br>Entity number is required for " + parytname);
+				EntityIsfErrorMessage.append("<br>Entity number is required for " + parytname);
 			}
 
 			if (objParty.getAddressInfo().getEntityNumber() == "" || objParty.getAddressInfo().getEntityType() == "") {
@@ -135,16 +137,16 @@ public class CustomerProfileDAO {
 				setEntityTypeNumber(objParty);
 			}
 
-			if (!isEntityNumberExists(objParty, loginScac, objBillHeader)) {
-				System.out.println("Entity Number Exists");
+			boolean entityPresent = isEntityNumberExists(objParty, loginScac, objBillHeader);
 
-				if (isCustomerExists(objParty, loginScac)) {
-					customerGen = true;
+			if (isCustomerExists(objParty, loginScac)) {
+				customerGen = true;
+				if (entityPresent) {
 					customerGen = updateCustomer(objParty, loginScac);
-
-				} else {
-					customerGen = addCustomer(objParty, loginScac);
 				}
+
+			} else {
+				customerGen = addCustomer(objParty, loginScac);
 			}
 
 		}
@@ -154,7 +156,7 @@ public class CustomerProfileDAO {
 	private boolean isEntityNumberExists(Party objParty, String loginScac, BillHeader objBillHeader) {
 
 		try {
-			stmt = con.prepareStatement("select entity_number " + " from customer "
+			stmt = con.prepareStatement("select * " + " from customer "
 					+ " where login_scac_code=? and customer_name=? and entity_number=?");
 			stmt.setString(1, loginScac);
 			stmt.setString(2, objParty.getName());
@@ -165,7 +167,7 @@ public class CustomerProfileDAO {
 
 			// Set Customer ID
 			if (rs.next()) {
-
+				objParty.setCustomerId(rs.getInt(2));
 				if (objParty.getAddressInfo().getEntityNumber() != "") {
 					System.out.print("Entity Number Exist");
 					logger.info("Entity Number Exist");
@@ -472,6 +474,10 @@ public class CustomerProfileDAO {
 		return custErrorMessage;
 	}
 
+	public StringBuilder getEntityIsfErrorMessage() {
+		return EntityIsfErrorMessage;
+	}
+
 	public StringBuilder getIsfErrorMessage() {
 		return custIsfErrorMessage;
 	}
@@ -524,6 +530,27 @@ public class CustomerProfileDAO {
 		}
 
 		return configScac;
+	}
+
+	public boolean isFROBBill(BillHeader objBillHeader) {
+		// TODO Auto-generated method stub
+		boolean isFROB = false;
+		try {
+			stmt = con.prepareStatement("select port_code from foreign_port where port_code=?");
+			stmt.setString(1, objBillHeader.getVesselSchedule().getPortOfDischarge());
+			if (stmt.executeQuery().next()) {
+				isFROB = true;
+				objBillHeader.setIsfType("ISF-5");
+				System.out.println(stmt);
+				return true;
+			} else {
+				objBillHeader.setIsfType("ISF-10");
+				System.out.println(stmt);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return isFROB;
 	}
 
 }
