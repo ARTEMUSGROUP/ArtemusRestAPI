@@ -6,4 +6,5 @@ public interface VesselScheduleService {
 	public void createVessel(Vessel objVessel);
 
 	public void updateVessel(Vessel objRequest);
+
 }

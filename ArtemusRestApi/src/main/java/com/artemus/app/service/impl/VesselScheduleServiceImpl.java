@@ -205,7 +205,7 @@ public class VesselScheduleServiceImpl implements VesselScheduleService {
 		Pattern p = null;
 		Matcher m = null;
 
-		p = Pattern.compile("^[\\w\\d_.-]+$"); // the pattern to search for
+		p = Pattern.compile("[a-zA-Z][a-zA-Z ]+[a-zA-Z]$"); // the pattern to search for ^[\\w\\d_.-]+$
 		m = p.matcher(objVessel.getVesselName());
 		if (!m.matches()) {
 			errorMessage.append("Vessel Name must contain Alphabets only.");

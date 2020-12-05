@@ -1,5 +1,5 @@
 <!-- Test Server Config -->
-<Context path="/ArtemusApi" reloadable="true">
+<!-- <Context path="/ArtemusApi" reloadable="true">
 	<Loader delegate="true"/>
 	<Resource name="jdbc/artemus" 
 		auth="Container" 
@@ -11,7 +11,7 @@
 		password="@ss123" 
 		driverClassName="com.mysql.jdbc.Driver" 
 		url="jdbc:mysql://localhost:3306/artemus?autoReconnect=true"/>
-</Context>  
+</Context> -->  
 
 <!-- Radhika Server Config -->
 <!-- <Context path="/ArtemusApi" reloadable="true"> -->
@@ -42,8 +42,8 @@
 		password="pretoriu@98335" 
 		driverClassName="com.mysql.jdbc.Driver" 
 		url="jdbc:mysql://localhost:3306/artemus?autoReconnect=true"/>
-</Context> -->
-
+</Context>
+ -->
 <!-- Production Server Config -->
 <!-- <Context path="/ArtemusApi" reloadable="true">
 	<Loader delegate="true"/>
@@ -60,7 +60,7 @@
 </Context>   -->
 
 <!-- New API Production Server Config -->
-<!-- <Context path="/ArtemusApi" reloadable="true">
+<Context path="/ArtemusApi" reloadable="true">
 	<Loader delegate="true"/>
 	<Resource name="jdbc/artemus"
 		auth="Container"
@@ -73,4 +73,3 @@
 		driverClassName="com.mysql.jdbc.Driver"
 		url="jdbc:mysql://34.232.156.35:3306/artemus?autoReconnect=true"/>
 </Context>  
- -->
