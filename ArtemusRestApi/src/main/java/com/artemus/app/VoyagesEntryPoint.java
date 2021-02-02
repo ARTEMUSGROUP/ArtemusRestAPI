@@ -20,7 +20,7 @@ import com.artemus.app.service.impl.VoyageScheduleServiceImpl;
 @Consumes("application/json; charset=UTF-8")
 @Produces(MediaType.APPLICATION_JSON)
 @Path("voyages")
-@io.swagger.v3.oas.annotations.tags.Tag(name="Voyage Service",description="To create Voyage")
+@io.swagger.v3.oas.annotations.tags.Tag(name="Voyage Service for AMS and Canada Customs",description="To create Voyage")
 public class VoyagesEntryPoint {
 
 	@Secured

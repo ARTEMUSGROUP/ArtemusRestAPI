@@ -26,7 +26,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 @Consumes("application/json; charset=UTF-8")
 @Produces({MediaType.APPLICATION_JSON})
 @ApiResponse(responseCode = "200", description = "Bill Created Successfully")
-@io.swagger.v3.oas.annotations.tags.Tag(name = "Bill Service",description="To Create and Update Bill")
+@io.swagger.v3.oas.annotations.tags.Tag(name = "Bill Service for AMS and Canada Customs",description="To Create and Update Bill")
 public class BillsEntryPoint {
 
 	@Secured
