@@ -495,8 +495,12 @@ public class VoyageScheduleServiceImpl implements VoyageScheduleService {
 
 				if (locationbean.getCustomCode() == null || locationbean.getCustomCode().isEmpty()) {
 					// setting customCode from locationCode
-					customCodefromUNCode = objLocationdao.getLocationCode(locationbean.getUnlocode(), loginScac);
-					locationbean.setCustomCode(customCodefromUNCode);
+					if (locationbean.getUnlocode() != null && !locationbean.getUnlocode().isEmpty()) {
+						customCodefromUNCode = objLocationdao.getLocationCode(locationbean.getUnlocode(), loginScac);
+						locationbean.setCustomCode(customCodefromUNCode);
+					} else {
+						locationbean.setCustomCode("");
+					}
 				}
 
 				if (!locationbean.getCustomCode().isEmpty()) {
@@ -513,7 +517,7 @@ public class VoyageScheduleServiceImpl implements VoyageScheduleService {
 					}
 
 					// Insert into location
-					if (locationIdfromLocation == 0 && locationIdfromUNCode == 0) {
+					if (locationIdfromLocation == 0) {
 						objLocationdao.insert(locationbean, loginScac);
 					}
 
@@ -540,10 +544,11 @@ public class VoyageScheduleServiceImpl implements VoyageScheduleService {
 					if (errorMessage.length() > 0) {
 						errorMessage.append(" , ");
 					}
-					if (locationbean.getUnlocode() != null && (!locationbean.getUnlocode().isEmpty())) {
-						errorMessage.append("customCode for unlocode : " + locationbean.getUnlocode()
-								+ "is invalid or  does not exists for the login scac" + loginScac);
-					}
+
+					errorMessage.append("customCode for unlocode : " + locationbean.getUnlocode() + "and Location Name : "
+							+ locationbean.getLocation() + "is invalid or  does not exists for the login scac"
+							+ loginScac);
+
 				}
 			}
 		} finally {

@@ -554,7 +554,7 @@ public class JPVoyageScheduleServiceImpl implements JPVoyageScheduleService {
 					}
 
 					// Insert into location
-					if (locationIdfromLocation == 0 && locationIdfromUNCode == 0) {
+					if (locationIdfromLocation == 0) {
 						objLocationdao.insert(locationbean, loginScac);
 					}
 

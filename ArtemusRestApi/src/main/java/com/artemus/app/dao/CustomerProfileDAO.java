@@ -449,7 +449,7 @@ public class CustomerProfileDAO {
 					.prepareStatement("select * " + " from customer " + " where login_scac_code=? and customer_name=?");
 			stmt.setString(1, loginScac);
 			stmt.setString(2, partyBean.getName());
-
+			logger.info(stmt.toString());
 			System.out.println(stmt.toString());
 			rs = stmt.executeQuery();
 
@@ -509,7 +509,7 @@ public class CustomerProfileDAO {
 		String jsonConfig = gson.toJson(configScac);
 		System.out.println("jsonconfig" + jsonConfig);
 		try {
-			stmt = con.prepareStatement("SELECT config FROM artemus.login_scac_token where login_scac=?");
+			stmt = con.prepareStatement("SELECT config FROM login_scac_token where login_scac=?");
 			stmt.setString(1, loginScac);
 			System.out.println(stmt.toString());
 			logger.info(stmt);

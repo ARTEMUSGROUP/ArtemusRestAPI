@@ -13,6 +13,7 @@ import com.artemus.app.dao.VesselVoyageDAO;
 import com.artemus.app.exceptions.ErrorResponseException;
 import com.artemus.app.exceptions.MissingRequiredFieldException;
 import com.artemus.app.model.request.BillHeader;
+import com.artemus.app.model.request.Cargo;
 import com.artemus.app.model.request.Carnet;
 import com.artemus.app.model.request.Equipment;
 import com.artemus.app.model.request.Informal;
@@ -25,6 +26,7 @@ public class BillsServiceImpl implements BillsService {
 	BillHeaderUtils objUtils = new BillHeaderUtils();
 	StringBuffer errorMessage = new StringBuffer("");
 	StringBuilder entityErrorMessage = new StringBuilder("");
+	StringBuilder manifestEntityErrorMessage = new StringBuilder("");
 	boolean isError;
 
 	public void createBill(BillHeader objBillHeader) {
@@ -157,6 +159,7 @@ public class BillsServiceImpl implements BillsService {
 		try {
 			System.out.println("Config Class :" + configScac);
 			logger.info("Config Class :" + configScac);
+			customerProfileDao.validateBillHeaderParties(objBillHeader);
 			// getting error messages for entity number and type
 			String entityerrormsg = new String("");
 			entityerrormsg = "" + customerProfileDao.getErrorMessage().toString();
@@ -295,6 +298,7 @@ public class BillsServiceImpl implements BillsService {
 			if (!isFrob) {
 				entityErrorMessage.append(objCustomerProfiledao.getEntityIsfErrorMessage());
 			}
+
 			// Adding Equipments
 			addEquipments(objBillHeader, billLadingId, objDao, objCustomerProfiledao, configScac, isFrob);
 			errorMessage = objDao.getPkgType();
@@ -342,6 +346,57 @@ public class BillsServiceImpl implements BillsService {
 				 * entityErrorMessage.append("<br>Importer information is not entered."); }
 				 */
 			}
+			// Validating Cargo Entry Empty or not
+			// Setting N/C as equipment number
+			if (!objBillHeader.getBillType().equalsIgnoreCase("empty")) {
+				boolean outerLoopBreak = false;
+				boolean emptyCargo = false;
+				boolean containerPresent = false;
+				for (int i = 0; i < objBillHeader.getEquipments().size() && !outerLoopBreak; i++) {
+					for (Cargo objCargo : objBillHeader.getEquipments().get(i).getCargos()) {
+						if (objCargo.getDescriptionsOfGoods().isEmpty() && objCargo.getHazardCode().isEmpty()
+								&& objCargo.getCountry().isEmpty()) {
+							Equipment nocontainer = new Equipment();
+							nocontainer.setEquipmentNo("N/C");
+							nocontainer.setCargos(null);
+							nocontainer.setPackages(null);
+							nocontainer.setSeals(null);
+							objDao.insertIntoEquipments(nocontainer, billLadingId);
+							outerLoopBreak = true;
+							break;
+						}
+					}
+				}
+				// to check for each Cargo if the caargo values is present where empty cargo
+				// fields are inserted
+				if (outerLoopBreak) {
+					for (int i = 0; i < objBillHeader.getEquipments().size(); i++) {
+						for (Cargo objCargo : objBillHeader.getEquipments().get(i).getCargos()) {
+							if (objCargo.getDescriptionsOfGoods().isEmpty() && objCargo.getHazardCode().isEmpty()
+									&& objCargo.getCountry().isEmpty()) {
+								emptyCargo = true;
+								break;
+							}
+						}
+						if (emptyCargo) {
+							for (Cargo objCargo : objBillHeader.getEquipments().get(i).getCargos()) {
+								if (!objCargo.getDescriptionsOfGoods().isEmpty() || !objCargo.getHazardCode().isEmpty()
+										|| !objCargo.getCountry().isEmpty()) {
+									containerPresent = true;
+									break;
+								}
+							}
+							if (!containerPresent) {
+								manifestEntityErrorMessage
+										.append("Equipment & Package should have each entry from Cargo<br>");
+								objBillHeader.setManifestErrorDescription(manifestEntityErrorMessage.toString());
+							}
+						}
+					}
+				}
+
+			}
+
 			// Setting Entity Error
 			entityErrorMessage.append(objCustomerProfiledao.getIsfErrorMessage());
 			// Setting ISF errorDescription
@@ -351,7 +406,7 @@ public class BillsServiceImpl implements BillsService {
 			// Adding into voyagePortDetails
 			objDao.insertIntoVoyagePortDetails(objBillHeader, "");
 			// Checking isFROBBill
-			
+
 			if (objDao.isFROBBill(objBillHeader)) {
 				String firstUsDischargePort = objDao.getDistrictPortForFROB(
 						objBillHeader.getVesselSchedule().getVoyageId(), objBillHeader.getLoginScac());
@@ -409,6 +464,7 @@ public class BillsServiceImpl implements BillsService {
 				if (!isIsf10) {
 					entityErrorMessage.append(objCustomerProfiledao.getEntityIsfErrorMessage());
 				}
+
 				// Adding Equipments
 				addEquipments(objBillHeader, billLadingId, objDao, objCustomerProfiledao, configScac, isIsf10);
 				errorMessage = objDao.getPkgType();
@@ -459,6 +515,57 @@ public class BillsServiceImpl implements BillsService {
 					 */
 
 				}
+				// Validating Cargo Entry Empty or not
+				// Setting N/C as equipment number
+				if (!objBillHeader.getBillType().equalsIgnoreCase("empty")) {
+					boolean outerLoopBreak = false;
+					boolean emptyCargo = false;
+					boolean containerPresent = false;
+					for (int i = 0; i < objBillHeader.getEquipments().size() && !outerLoopBreak; i++) {
+						for (Cargo objCargo : objBillHeader.getEquipments().get(i).getCargos()) {
+							if (objCargo.getDescriptionsOfGoods().isEmpty() && objCargo.getHazardCode().isEmpty()
+									&& objCargo.getCountry().isEmpty()) {
+								Equipment nocontainer = new Equipment();
+								nocontainer.setEquipmentNo("N/C");
+								nocontainer.setCargos(null);
+								nocontainer.setPackages(null);
+								nocontainer.setSeals(null);
+								objDao.insertIntoEquipments(nocontainer, billLadingId);
+								outerLoopBreak = true;
+								break;
+							}
+						}
+					}
+					// to check for each Cargo if the caargo values is present where empty cargo
+					// fields are inserted
+					if (outerLoopBreak) {
+						for (int i = 0; i < objBillHeader.getEquipments().size(); i++) {
+							for (Cargo objCargo : objBillHeader.getEquipments().get(i).getCargos()) {
+								if (objCargo.getDescriptionsOfGoods().isEmpty() && objCargo.getHazardCode().isEmpty()
+										&& objCargo.getCountry().isEmpty()) {
+									emptyCargo = true;
+									break;
+								}
+							}
+							if (emptyCargo) {
+								for (Cargo objCargo : objBillHeader.getEquipments().get(i).getCargos()) {
+									if (!objCargo.getDescriptionsOfGoods().isEmpty()
+											|| !objCargo.getHazardCode().isEmpty()
+											|| !objCargo.getCountry().isEmpty()) {
+										containerPresent = true;
+										break;
+									}
+								}
+								if (!containerPresent) {
+									manifestEntityErrorMessage
+											.append("Equipment & Package should have each entry from Cargo<br>");
+									objBillHeader.setManifestErrorDescription(manifestEntityErrorMessage.toString());
+								}
+							}
+						}
+					}
+				}
+
 				// Setting Entity Error
 				entityErrorMessage.append(objCustomerProfiledao.getIsfErrorMessage());
 				// Setting ISF errorDescription

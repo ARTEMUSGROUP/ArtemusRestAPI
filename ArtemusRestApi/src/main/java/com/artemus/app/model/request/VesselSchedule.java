@@ -153,8 +153,9 @@ public class VesselSchedule {
 	}
 
 	public String getMoveType() {
-		if (moveType == null)
-			return moveType;
+		if (moveType == null || moveType.isEmpty()) {
+			return "";
+		}
 		else
 			return moveType.toUpperCase();
 	}
@@ -192,12 +193,7 @@ public class VesselSchedule {
 
 	public StringBuffer validateVesselSchedule() {
 		StringBuffer objVesselMessage = new StringBuffer();
-		if (moveType == null || moveType.isEmpty()) {
-			if (objVesselMessage.length() > 0) {
-				objVesselMessage.append(",");
-			}
-			objVesselMessage.append("moveType");
-		}
+
 		if (countryOfOrigin == null || countryOfOrigin.isEmpty()) {
 			if (objVesselMessage.length() > 0) {
 				objVesselMessage.append(",");

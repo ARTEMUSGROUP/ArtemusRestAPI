@@ -12,6 +12,8 @@ import com.artemus.app.dao.JPCustomerProfileDAO;
 import com.artemus.app.dao.JPVesselVoyageDAO;
 import com.artemus.app.exceptions.ErrorResponseException;
 import com.artemus.app.exceptions.MissingRequiredFieldException;
+import com.artemus.app.model.request.Cargo;
+import com.artemus.app.model.request.Equipment;
 import com.artemus.app.model.request.JPBillHeader;
 import com.artemus.app.model.request.JPEquipment;
 import com.artemus.app.model.request.Party;
@@ -24,6 +26,7 @@ public class JPBillsServiceImpl implements JPBillsService {
 	static Logger logger = LogManager.getLogger();
 	JPBillHeaderUtils objUtils = new JPBillHeaderUtils();
 	StringBuffer errorMessage = new StringBuffer("");
+	StringBuilder jpManifestEntityErrorMessage = new StringBuilder("");
 	boolean isError;
 
 	@Override
@@ -163,6 +166,55 @@ public class JPBillsServiceImpl implements JPBillsService {
 
 			// Adding Equipments
 			addEquipments(objBillHeader, billLadingId, objDao);
+			
+			// Validating Cargo Entry Empty or not
+			// Setting N/C as equipment number
+			boolean outerLoopBreak = false;
+			boolean emptyCargo = false;
+			boolean containerPresent = false;
+			for (int i = 0; i < objBillHeader.getJpequipments().size() && !outerLoopBreak; i++) {
+				for (Cargo objCargo : objBillHeader.getJpequipments().get(i).getCargos()) {
+					if (objCargo.getDescriptionsOfGoods().isEmpty() && objCargo.getHazardCode().isEmpty()
+							&& objCargo.getCountry().isEmpty()) {
+						JPEquipment nocontainer = new JPEquipment();
+						nocontainer.setEquipmentNo("N/C");
+						nocontainer.setCargos(null);
+						nocontainer.setPackages(null);
+						nocontainer.setSeals(null);
+						objDao.insertIntoEquipments(nocontainer, billLadingId);
+						outerLoopBreak = true;
+						break;
+					}
+				}
+			}
+			// to check for each Cargo if the caargo values is present where empty cargo
+			// fields are inserted
+			if (outerLoopBreak) {
+				for (int i = 0; i < objBillHeader.getJpequipments().size(); i++) {
+					for (Cargo objCargo : objBillHeader.getJpequipments().get(i).getCargos()) {
+						if (objCargo.getDescriptionsOfGoods().isEmpty() && objCargo.getHazardCode().isEmpty()
+								&& objCargo.getCountry().isEmpty()) {
+							emptyCargo = true;
+							break;
+						}
+					}
+					if (emptyCargo) {
+						for (Cargo objCargo : objBillHeader.getJpequipments().get(i).getCargos()) {
+							if (!objCargo.getDescriptionsOfGoods().isEmpty() || !objCargo.getHazardCode().isEmpty()
+									|| !objCargo.getCountry().isEmpty()) {
+								containerPresent = true;
+								break;
+							}
+						}
+						if (!containerPresent) {
+							jpManifestEntityErrorMessage
+									.append("Equipment & Package should have each entry from Cargo<br>");
+							objBillHeader.setJpManifestErrorDescription(jpManifestEntityErrorMessage.toString());
+						}
+					}
+				}
+			}
+			
 			// Adding into billDetailStatus if all Adding Equipments is succeeds
 			objDao.insertIntoBillDetailStatus(objBillHeader, billLadingId);
 			// Adding into voyagePortDetails
@@ -207,6 +259,28 @@ public class JPBillsServiceImpl implements JPBillsService {
 
 				// Adding Equipments
 				addEquipments(objBillHeader, billLadingId, objDao);
+				// Validating Cargo Entry Empty or not
+				// Setting N/C as equipment number
+				boolean outerLoopBreak = false;
+				for (int i = 0; i < objBillHeader.getJpequipments().size() && !outerLoopBreak; i++) {
+					for (Cargo objCargo : objBillHeader.getJpequipments().get(i).getCargos()) {
+						if (objCargo.getDescriptionsOfGoods().isEmpty() && objCargo.getHazardCode().isEmpty()
+								&& objCargo.getCountry().isEmpty()) {
+							JPEquipment nocontainer = new JPEquipment();
+							nocontainer.setEquipmentNo("N/C");
+							nocontainer.setCcid("");
+							nocontainer.setContainerOwnership("");
+							nocontainer.setContainerOwnershipId("");
+							nocontainer.setCustomConventionId("");
+							nocontainer.setVanningTypeId("");
+							objDao.insertIntoEquipments(nocontainer, billLadingId);
+							jpManifestEntityErrorMessage.append("Equipment & Package should have each entry from Cargo<br>");
+							objBillHeader.setJpManifestErrorDescription(jpManifestEntityErrorMessage.toString());
+							outerLoopBreak = true;
+							break;
+						}
+					}
+				}
 				// Update billDetailStatus if all Adding Equipments is succeeds
 				objDao.updateBillDetailStatus(objBillHeader, billLadingId);
 				// Adding into voyagePortDetails

@@ -333,7 +333,13 @@ public class JPBillsDAO {
 					if (objCargo != null) {
 						stmt.setInt(1, billLadingId);
 						stmt.setInt(2, cargoIndex);
-						stmt.setString(3, objEquipment.getEquipmentNo());
+						
+						if (objCargo.getDescriptionsOfGoods().isEmpty() && objCargo.getHazardCode().isEmpty()
+								&& objCargo.getCountry().isEmpty() && objCargo.getHarmonizeCode().isEmpty()) {
+							stmt.setString(3, "N/C");
+						} else {
+							stmt.setString(3, objEquipment.getEquipmentNo());
+						}
 						stmt.setString(4, objCargo.getDescriptionsOfGoods());
 						stmt.setString(5, objCargo.getHarmonizeCode());
 						stmt.setString(6, objCargo.getHazardCode());
@@ -368,8 +374,13 @@ public class JPBillsDAO {
 		stmt.setBoolean(5, false);
 		stmt.setString(6, "");
 		stmt.setString(7, "");
-		stmt.setString(8, "");
+		stmt.setString(8, objBillHeader.getJpManifestErrorDescription());
 		stmt.setString(9, "");
+		if (objBillHeader.getJpManifestErrorDescription()!=null && objBillHeader.getJpManifestErrorDescription().length() > 3) {
+			stmt.setBoolean(10, true);
+		} else {
+			stmt.setBoolean(10, false);
+		}
 		stmt.setBoolean(10, false);
 		stmt.setBoolean(11, false);
 		stmt.setBoolean(12, false);

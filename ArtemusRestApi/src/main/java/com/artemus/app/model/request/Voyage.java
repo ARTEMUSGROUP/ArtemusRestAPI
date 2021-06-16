@@ -22,7 +22,7 @@ public class Voyage {
     @Schema(description = "The voyage number identifying this voyage.",required = true)
 	@Attributes(required = true, description = "The voyage number identifying this voyage.")
 	@NotBlank(message = "voyageNumber cannot be blank")
-	@Size(max = 5, message = "The voyageNumber must be max 5 characters only")
+	@Size(max = 10, message = "The voyageNumber must be max 10 characters only")
 	private String voyageNumber;
 
 	@Schema(description = "The vessel name for the vessel for this voyage. It must already exist in our system.",required = true)

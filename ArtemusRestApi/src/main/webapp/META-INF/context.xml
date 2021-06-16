@@ -1,5 +1,5 @@
 <!-- Test Server Config -->
-<Context path="/ArtemusApi" reloadable="true">
+<!-- <Context path="/ArtemusApi" reloadable="true">
 	<Loader delegate="true"/>
 	<Resource name="jdbc/artemus" 
 		auth="Container" 
@@ -10,8 +10,8 @@
 		username="admin" 
 		password="3HSSbVcj6PMPNN9arGTC" 
 		driverClassName="com.mysql.jdbc.Driver" 
-		url="jdbc:mysql://artemus.cmmiskakg2dm.us-east-1.rds.amazonaws.com:3306/artemus?autoReconnect=true"/>
-</Context>  
+		url="jdbc:mysql://artemus.cmmiskakg2dm.us-east-1.rds.amazonaws.com:3306/artemus_dev?autoReconnect=true"/>
+</Context> -->  
 
 <!-- Radhika Server Config -->
 <!-- <Context path="/ArtemusApi" reloadable="true"> -->
@@ -44,23 +44,8 @@
 		url="jdbc:mysql://localhost:3306/artemus?autoReconnect=true"/>
 </Context> -->
 
-<!-- Production Server Config -->
-<!-- <Context path="/ArtemusApi" reloadable="true">
-	<Loader delegate="true"/>
-	<Resource name="jdbc/artemus"
-		auth="Container"
-		type="javax.sql.DataSource"
-		maxActive="100"
-		maxIdle="30"
-		maxWait="10000"
-		username="root"
-		password="@ss123"
-		driverClassName="com.mysql.jdbc.Driver"
-		url="jdbc:mysql://localhost:3306/artemus?autoReconnect=true"/>
-</Context>   -->
-
 <!-- New API Production Server Config -->
-<!-- <Context path="/ArtemusApi" reloadable="true">
+<Context path="/ArtemusApi" reloadable="true">
 	<Loader delegate="true"/>
 	<Resource name="jdbc/artemus" 
 		auth="Container" 
@@ -72,4 +57,4 @@
 		password="3HSSbVcj6PMPNN9arGTC" 
 		driverClassName="com.mysql.jdbc.Driver" 
 		url="jdbc:mysql://artemus.cmmiskakg2dm.us-east-1.rds.amazonaws.com:3306/artemus?autoReconnect=true"/>
-</Context>   -->
+</Context>  

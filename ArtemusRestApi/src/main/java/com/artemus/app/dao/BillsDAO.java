@@ -378,7 +378,7 @@ public class BillsDAO {
 							+ " values (?, ?, ?, ?, ?, ?)");
 			stmt1 = con.prepareStatement("Insert into packages_details "
 					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
-			stmt2 = con.prepareStatement("SELECT * FROM artemus.package_type where package_type=?");
+			stmt2 = con.prepareStatement("SELECT * FROM package_type where package_type=?");
 
 			for (Package objPackage : objEquipment.getPackages()) {
 				stmt2.setString(1, objPackage.getPackageType());
@@ -502,13 +502,13 @@ public class BillsDAO {
 			String hsCode = new String("");
 			if (objEquipment.getCargos() != null) {
 
-				stmt1 = con.prepareStatement("SELECT system_code FROM artemus.new_hazard_code where un_code=?");
+				stmt1 = con.prepareStatement("SELECT system_code FROM new_hazard_code where un_code=?");
 
 				stmt = con.prepareStatement("Insert into cargo "
 						+ " (bill_lading_id, cargo_id, equipment_number, description, harmonize_code, "
 						+ " hazard_code, manufacturer, country,customer_id,flash_point,flash_unit) values "
 						+ " (?,?,?,?,?,?,?,?,?,?,?)");
-				stmt2 = con.prepareStatement("SELECT * FROM artemus.harmonized_code where harmonized_code=?");
+				stmt2 = con.prepareStatement("SELECT * FROM harmonized_code where harmonized_code=?");
 				for (Cargo objCargo : objEquipment.getCargos()) {
 					if (objCargo != null) {
 						ResultSet rs2 = null;
@@ -535,8 +535,12 @@ public class BillsDAO {
 						// Insert into Cargo
 						stmt.setInt(1, billLadingId);
 						stmt.setInt(2, cargoIndex);
-						stmt.setString(3, objEquipment.getEquipmentNo());
-
+						if (objCargo.getDescriptionsOfGoods().isEmpty() && objCargo.getHazardCode().isEmpty()
+								&& objCargo.getCountry().isEmpty() && objCargo.getHarmonizeCode().isEmpty()) {
+							stmt.setString(3, "N/C");
+						} else {
+							stmt.setString(3, objEquipment.getEquipmentNo());
+						}
 						if (!objCargo.getHarmonizeCode().isEmpty() || configScac.getIsHsMandatory()) {
 							if (rs2 != null && rs2.next() != false) {
 								if (configScac.getReplaceDescFromHs()) {
@@ -571,6 +575,7 @@ public class BillsDAO {
 						System.out.println("IsFrob : " + isIsf10);
 						stmt.setString(8, objCargo.getCountry());
 						if (objCargo.getFlashPointDetails() != null) {
+
 							stmt.setDouble(10, objCargo.getFlashPointDetails().getFlashPoint());
 							stmt.setString(11, objCargo.getFlashPointDetails().getFlashUnit());
 						} else {
@@ -630,9 +635,13 @@ public class BillsDAO {
 		stmt.setBoolean(5, false);
 		stmt.setString(6, "");
 		stmt.setString(7, "");
-		stmt.setString(8, "");
+		stmt.setString(8, objBillHeader.getManifestErrorDescription());
 		stmt.setString(9, objBillHeader.getIsfErrorDescription());
-		stmt.setBoolean(10, false);
+		if (objBillHeader.getManifestErrorDescription()!=null && objBillHeader.getManifestErrorDescription().length() > 3) {
+			stmt.setBoolean(10, true);
+		} else {
+			stmt.setBoolean(10, false);
+		}
 		if (objBillHeader.getIsfErrorDescription().length() > 7) {
 			stmt.setBoolean(11, true);
 		} else {
@@ -901,7 +910,7 @@ public class BillsDAO {
 
 			if (objEquipment.getCargos() != null) {
 
-				stmt1 = con.prepareStatement("SELECT system_code FROM artemus.new_hazard_code where un_code=?");
+				stmt1 = con.prepareStatement("SELECT system_code FROM new_hazard_code where un_code=?");
 
 				stmt = con.prepareStatement("Insert into cargo "
 						+ " (bill_lading_id, cargo_id, equipment_number, description, harmonize_code, "
@@ -945,10 +954,10 @@ public class BillsDAO {
 						} else {
 							stmt.setString(7, "");
 							stmt.setInt(9, 0);// Field cannot get
-							if(!isFrob) {
+							if (!isFrob) {
 								errorMessage.append("<br>Manufacturer entry is missing.");
 							}
-							
+
 						}
 
 						stmt.setString(8, objCargo.getCountry());
@@ -966,10 +975,10 @@ public class BillsDAO {
 						// logger.info(stmt);
 						System.out.println("Inside CArgos" + objCargo);
 						if (objCargo.getCountry().isEmpty() || objCargo.getCountry() == null) {
-							if(!isFrob) {
+							if (!isFrob) {
 								errorMessage.append("<br>Country is missing for Manufacturer.");
 							}
-							
+
 						}
 
 					}

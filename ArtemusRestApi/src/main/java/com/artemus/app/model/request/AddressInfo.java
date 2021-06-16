@@ -2,6 +2,7 @@ package com.artemus.app.model.request;
 
 import java.sql.Date;
 
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -20,10 +21,14 @@ public class AddressInfo {
 	private String addressLine1;
 	@Schema(description="The second line of the party’s address.",required = false)
 	private String addressLine2;
-	@Schema(description="The party’s city.",required = false)
+	@Schema(description="The party’s city.",required = true)
+	@Attributes(required = true, description = "The city")
+	@NotNull(message = "city cannot be blank or null")
 	private String city;
-	@Schema(description="The party’s two letter country code, as defined by ISO 3166-1 alpha-3.",required = false)
+	@Schema(description="The party’s two letter country code, as defined by ISO 3166-1 alpha-3.",required = true)
+	@Attributes(required = true, description = "The country code")
 	@Size(max = 2, message = "country must be 2 letter country code")
+	@NotNull(message = "country cannot be blank or null")
 	private String country;
 	@Schema(description="The party’s state.",required = false)
 	private String state;
@@ -235,10 +240,19 @@ public class AddressInfo {
 
 	public String validateAddressInfo() {
 		String objAddressInfoMessage = "";
-		if(country.length()>2)
+		if(country!=null && country.length()!=2)
 		{
 			objAddressInfoMessage = " country code must be two letters only ";
 
+		}
+		if(country==null) {
+			objAddressInfoMessage = " country code is mandatory ";
+		}
+		if(city==null) {
+			objAddressInfoMessage = " city attribute is mandatory ";
+		}
+		if(city!=null && city.isEmpty()) {
+			objAddressInfoMessage = " city should not be Blank/Empty ";
 		}
 		if (addressLine1 == null || addressLine1.isEmpty())
 		{
