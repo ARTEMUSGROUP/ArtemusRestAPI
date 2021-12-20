@@ -15,6 +15,10 @@ public class Cargo {
 	@Schema(description = "Mandatory for ISF-10.If the customer exists in the AMS system then only provide the name else for "
 		+ "creating new manufacturer customer provide addressInfo as well",required = false,example=" ")
 	private Party manufacturer;
+	
+	@Schema(description = "Flash Point Details.For Panama Voyage",required = false,example=" ")
+	private FlashPointDetails flashPointDetails;
+
 
 	public String getDescriptionsOfGoods() {
 		if (descriptionsOfGoods==null)
@@ -63,6 +67,14 @@ public class Cargo {
 
 	public void setCountry(String country) {
 		this.country = country;
+	}
+
+	public FlashPointDetails getFlashPointDetails() {
+		return flashPointDetails;
+	}
+
+	public void setFlashPointDetails(FlashPointDetails flashPointDetails) {
+		this.flashPointDetails = flashPointDetails;
 	}
 
 	

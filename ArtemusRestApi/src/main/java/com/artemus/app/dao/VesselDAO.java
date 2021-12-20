@@ -3,13 +3,13 @@ package com.artemus.app.dao;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.artemus.app.connection.DBConnectionFactory;
 import com.artemus.app.model.request.Vessel;
-import com.mysql.jdbc.Statement;
 
 public class VesselDAO {
 

@@ -31,6 +31,11 @@ public class JPBillsEntryPoint {
 		System.out.println(requestObj.toString());
 		String scacCode = authorization.substring(0, 4);
 		requestObj.setLoginScac(scacCode);
+		if (requestObj.getHblScac() != null && !requestObj.getHblScac().isEmpty()) {
+
+		} else {
+			requestObj.setHblScac(scacCode);
+		}
 		JPBillsService billsService = new JPBillsServiceImpl();
 		billsService.createBill(requestObj);
 
@@ -48,6 +53,11 @@ public class JPBillsEntryPoint {
 		System.out.println(requestObj.toString());
 		String scacCode = authorization.substring(0, 4);
 		requestObj.setLoginScac(scacCode);
+		if (requestObj.getHblScac() != null && !requestObj.getHblScac().isEmpty()) {
+
+		} else {
+			requestObj.setHblScac(scacCode);
+		}
 		JPBillsService billsService = new JPBillsServiceImpl();
 		billsService.updateBill(requestObj);
 

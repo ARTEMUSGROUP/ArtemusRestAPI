@@ -26,7 +26,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 @Consumes("application/json; charset=UTF-8")
 @Produces({MediaType.APPLICATION_JSON})
 @ApiResponse(responseCode = "200", description = "Bill Created Successfully")
-@io.swagger.v3.oas.annotations.tags.Tag(name = "Bill Service",description="To Create and Update Bill")
+@io.swagger.v3.oas.annotations.tags.Tag(name = "Bill Service for AMS and Canada Customs",description="To Create and Update Bill")
 public class BillsEntryPoint {
 
 	@Secured
@@ -38,6 +38,11 @@ public class BillsEntryPoint {
 		System.out.println(requestObj.toString());
 		String scacCode = authorization.substring(0,4)  ;
 		requestObj.setLoginScac(scacCode);
+		if (requestObj.getHblScac() != null && !requestObj.getHblScac().isEmpty()) {
+
+		} else {
+			requestObj.setHblScac(scacCode);
+		}
 		BillsService billsService = new BillsServiceImpl();
 		billsService.createBill(requestObj);
 		
@@ -55,7 +60,11 @@ public class BillsEntryPoint {
 		System.out.println(requestObj.toString());
 		String scacCode = authorization.substring(0,4)  ;
 		requestObj.setLoginScac(scacCode);
-		
+		if (requestObj.getHblScac() != null && !requestObj.getHblScac().isEmpty()) {
+
+		} else {
+			requestObj.setHblScac(scacCode);
+		}
 		BillsService billsService = new BillsServiceImpl();
 		billsService.updateBill(requestObj);
 		

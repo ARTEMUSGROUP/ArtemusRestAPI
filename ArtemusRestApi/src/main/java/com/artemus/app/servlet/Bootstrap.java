@@ -20,15 +20,15 @@ import io.swagger.v3.oas.annotations.tags.Tag;
         )
     ),tags = {
             @Tag(name = "Vessel Service", description = "To Create and Update Vessel"),
-            @Tag(name = "Voyage Service",description="To create Voyage"),
-            @Tag(name = "Bill Service", description = "To Create and Update Bill"),
+            @Tag(name = "Voyage Service for AMS and Canada Customs",description="To create Voyage"),
+            @Tag(name = "Bill Service for AMS and Canada Customs", description = "To Create and Update Bill"),
             @Tag(name="Japan Voyage Service",description="To create Voyage"),
         	@Tag(name="Japan Bill Service",description="To Create and Update Bill"),
         	@Tag(name = "Original Manifest Service",description="To Send Bill To Customs")
     },servers = {
             @Server(
                     description = "Artemus API Production Server",
-                    url = "https://api.artemusgroupusa.com/ArtemusApi/"
+                    url = "https://api.artemusgroupusa.com/ArtemusApi/v1/"
                    )
     }
 )
@@ -37,8 +37,8 @@ public class Bootstrap {
 	private static final long serialVersionUID = 1L;
 	
 	@Tag(name = "Vessel Service", description = "To Create and Update Vessel")
-    @Tag(name = "Voyage Service",description="To create Voyage")
-    @Tag(name = "Bill Service", description = "To Create and Update Bill")
+    @Tag(name = "Voyage Service for AMS and Canada Customs",description="To create Voyage")
+    @Tag(name = "Bill Service for AMS and Canada Customs", description = "To Create and Update Bill")
 	@Tag(name="Japan Voyage Service",description="To create Voyage")
 	@Tag(name="Japan Bill Service",description="To Create and Update Bill")
 	@Tag(name = "Original Manifest Service",description="To Send Bill To Customs")

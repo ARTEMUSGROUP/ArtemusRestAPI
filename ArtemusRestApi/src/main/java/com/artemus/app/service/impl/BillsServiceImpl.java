@@ -6,12 +6,14 @@ import java.sql.SQLException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.artemus.app.configscac.ConfigScac;
 import com.artemus.app.dao.BillsDAO;
 import com.artemus.app.dao.CustomerProfileDAO;
 import com.artemus.app.dao.VesselVoyageDAO;
 import com.artemus.app.exceptions.ErrorResponseException;
 import com.artemus.app.exceptions.MissingRequiredFieldException;
 import com.artemus.app.model.request.BillHeader;
+import com.artemus.app.model.request.Cargo;
 import com.artemus.app.model.request.Carnet;
 import com.artemus.app.model.request.Equipment;
 import com.artemus.app.model.request.Informal;
@@ -22,22 +24,28 @@ import com.artemus.app.utils.ValidateBeanUtil;
 public class BillsServiceImpl implements BillsService {
 	static Logger logger = LogManager.getLogger();
 	BillHeaderUtils objUtils = new BillHeaderUtils();
-	StringBuilder errorMessage = new StringBuilder("");
+	StringBuffer errorMessage = new StringBuffer("");
 	StringBuilder entityErrorMessage = new StringBuilder("");
+	StringBuilder manifestEntityErrorMessage = new StringBuilder("");
 	boolean isError;
 
 	public void createBill(BillHeader objBillHeader) {
 		// Validate JSON
 		logger.debug(objBillHeader.toString());
-				ValidateBeanUtil.buildDefaultValidatorFactory();
-				StringBuffer invalidJsonMsg = ValidateBeanUtil.getConstraintViolationMsgForVoyage(objBillHeader);
-				if (invalidJsonMsg.length() > 0) {
-					throw new MissingRequiredFieldException(invalidJsonMsg.toString());
-				}
+		ValidateBeanUtil.buildDefaultValidatorFactory();
+		StringBuffer invalidJsonMsg = ValidateBeanUtil.getConstraintViolationMsgForVoyage(objBillHeader);
+		if (invalidJsonMsg.length() > 0) {
+			throw new MissingRequiredFieldException(invalidJsonMsg.toString());
+		}
 		objUtils.validateRequiredFields(objBillHeader);
 		// Call for DAO
 		CustomerProfileDAO customerProfileDao = new CustomerProfileDAO();
+		// Get Config For SCAC
+		ConfigScac configScac = null;
+		configScac = customerProfileDao.getScacConfig(objBillHeader.getLoginScac());
 		try {
+			System.out.println("Config Class :" + configScac);
+			logger.info("Config Class :" + configScac);
 			customerProfileDao.validateBillHeaderParties(objBillHeader);
 			// getting error messages for entity number and type
 			String entityerrormsg = new String("");
@@ -57,7 +65,7 @@ public class BillsServiceImpl implements BillsService {
 				throw new ErrorResponseException(errorMessage.toString());
 			} else {
 				try {
-					processBill(objBillHeader, customerProfileDao);
+					processBill(objBillHeader, customerProfileDao, configScac);
 					if (errorMessage.length() > 0) {
 						throw new ErrorResponseException(errorMessage.toString().replaceAll("<br>", ""));
 					}
@@ -145,7 +153,12 @@ public class BillsServiceImpl implements BillsService {
 		objUtils.validateRequiredFields(objBillHeader);
 		// Call for DAO
 		CustomerProfileDAO customerProfileDao = new CustomerProfileDAO();
+		// Get Config For SCAC
+		ConfigScac configScac = null;
+		configScac = customerProfileDao.getScacConfig(objBillHeader.getLoginScac());
 		try {
+			System.out.println("Config Class :" + configScac);
+			logger.info("Config Class :" + configScac);
 			customerProfileDao.validateBillHeaderParties(objBillHeader);
 			// getting error messages for entity number and type
 			String entityerrormsg = new String("");
@@ -164,7 +177,7 @@ public class BillsServiceImpl implements BillsService {
 				throw new ErrorResponseException(errorMessage.toString());
 			} else {
 				try {
-					processBillForUpdate(objBillHeader, customerProfileDao);
+					processBillForUpdate(objBillHeader, customerProfileDao, configScac);
 				} catch (ErrorResponseException e) {
 					e.printStackTrace();
 					throw e;
@@ -247,7 +260,7 @@ public class BillsServiceImpl implements BillsService {
 		}
 	}
 
-	private void processBill(BillHeader objBillHeader, CustomerProfileDAO objCustomerProfiledao)
+	private void processBill(BillHeader objBillHeader, CustomerProfileDAO objCustomerProfiledao, ConfigScac configScac)
 			throws SQLException, ErrorResponseException {
 		System.out.println("processBill :: ");
 		String isferrormsg = new String("");
@@ -261,53 +274,130 @@ public class BillsServiceImpl implements BillsService {
 				throw new SQLException();
 			}
 			// Adding insertIntoConsigneeShipperDetails
-			objDao.insertIntoConsigneeShipperDetails(objBillHeader.getShipper(), "shipper", billLadingId);
-			objDao.insertIntoConsigneeShipperDetails(objBillHeader.getBookingParty(), "booking", billLadingId);
-			objDao.insertIntoConsigneeShipperDetails(objBillHeader.getSeller(), "seller", billLadingId);
-			objDao.insertIntoConsigneeShipperDetails(objBillHeader.getStuffer(), "stuffer", billLadingId);
-			objDao.insertIntoConsigneeShipperDetails(objBillHeader.getConsignee(), "consignee", billLadingId);
-			objDao.insertIntoConsigneeShipperDetails(objBillHeader.getNotify(), "notify", billLadingId);
-			objDao.insertIntoConsigneeShipperDetails(objBillHeader.getConsolidator(), "consolidator", billLadingId);
-			objDao.insertIntoConsigneeShipperDetails(objBillHeader.getImporter(), "importer", billLadingId);
-			objDao.insertIntoConsigneeShipperDetails(objBillHeader.getBuyer(), "buyer", billLadingId);
-			objDao.insertIntoConsigneeShipperDetails(objBillHeader.getShipTo(), "shipTo", billLadingId);
+			objDao.insertIntoConsigneeShipperDetails(objBillHeader.getShipper(), "shipper", billLadingId,
+					objBillHeader);
+			objDao.insertIntoConsigneeShipperDetails(objBillHeader.getBookingParty(), "booking", billLadingId,
+					objBillHeader);
+			objDao.insertIntoConsigneeShipperDetails(objBillHeader.getSeller(), "seller", billLadingId, objBillHeader);
+			objDao.insertIntoConsigneeShipperDetails(objBillHeader.getStuffer(), "stuffer", billLadingId,
+					objBillHeader);
+			objDao.insertIntoConsigneeShipperDetails(objBillHeader.getConsignee(), "consignee", billLadingId,
+					objBillHeader);
+			objDao.insertIntoConsigneeShipperDetails(objBillHeader.getNotify(), "notify", billLadingId, objBillHeader);
+			objDao.insertIntoConsigneeShipperDetails(objBillHeader.getConsolidator(), "consolidator", billLadingId,
+					objBillHeader);
+			objDao.insertIntoConsigneeShipperDetails(objBillHeader.getImporter(), "importer", billLadingId,
+					objBillHeader);
+			objDao.insertIntoConsigneeShipperDetails(objBillHeader.getBuyer(), "buyer", billLadingId, objBillHeader);
+			objDao.insertIntoConsigneeShipperDetails(objBillHeader.getShipTo(), "shipTo", billLadingId, objBillHeader);
 			// Adding insertIntoNotifyPartyDetails
 			objDao.insertIntoNotifyPartyDetails(objBillHeader.getNotifyParties(), billLadingId);
 			// Setting ISF Type
-			objDao.isFROBBill(objBillHeader);
-			// Adding Equipments
-			addEquipments(objBillHeader, billLadingId, objDao, objCustomerProfiledao);
-			// Setting ISF Error
+			boolean isFrob = false;
+			isFrob = objDao.isFROBBill(objBillHeader);
+			if (!isFrob) {
+				entityErrorMessage.append(objCustomerProfiledao.getEntityIsfErrorMessage());
+			}
 
+			// Adding Equipments
+			addEquipments(objBillHeader, billLadingId, objDao, objCustomerProfiledao, configScac, isFrob);
+			errorMessage = objDao.getPkgType();
+			// PackageType Validation
+			if (errorMessage.length() > 5) {
+				throw new ErrorResponseException(errorMessage.toString());
+			}
+			// validate Hazard Code
+			errorMessage = objDao.getHazardErrorMessage();
+			if (errorMessage.length() > 5) {
+				throw new ErrorResponseException(errorMessage.toString());
+			}
+			// validate Hazard Code
+			errorMessage = objDao.getHazardErrorMessage();
+			if (errorMessage.length() > 5) {
+				throw new ErrorResponseException(errorMessage.toString());
+			}
+
+			// Setting ISF Error
 			isferrormsg = objBillHeader.getIsfType() + ":" + objDao.getErrorMessage().toString();
 			System.out.println(isferrormsg);
 			entityErrorMessage.append(isferrormsg);
 			System.out.println(entityErrorMessage);
 
 			if (objBillHeader.getIsfType() == "ISF-5") {
-				if (objBillHeader.getShipTo() == null) {
-					entityErrorMessage.append("<br>Ship To information is not entered.");
-				}
-				if (objBillHeader.getBookingParty() == null) {
-					entityErrorMessage.append("<br>Booking Party information is not entered.");
-				}
+				/*
+				 * if (objBillHeader.getShipTo() == null) {
+				 * entityErrorMessage.append("<br>Ship To information is not entered."); } if
+				 * (objBillHeader.getBookingParty() == null) {
+				 * entityErrorMessage.append("<br>Booking Party information is not entered."); }
+				 */
 			} else if (objBillHeader.getIsfType() == "ISF-10") {
-				if (objBillHeader.getShipTo() == null) {
-					entityErrorMessage.append("<br>Ship To information is not entered.");
-				} else if (objBillHeader.getSeller() == null) {
-					entityErrorMessage.append("<br>Seller information is not entered.");
-				} else if (objBillHeader.getBuyer() == null) {
-					entityErrorMessage.append("<br>Buyer information is not entered.");
-				} else if (objBillHeader.getStuffer() == null) {
-					entityErrorMessage.append("<br>Stuffer information is not entered.");
-				} else if (objBillHeader.getConsolidator() == null) {
-					entityErrorMessage.append("<br>Consolidator information is not entered.");
-				} else if (objBillHeader.getImporter() == null) {
-					entityErrorMessage.append("<br>Importer information is not entered.");
+				/*
+				 * if (objBillHeader.getShipTo() == null) {
+				 * entityErrorMessage.append("<br>Ship To information is not entered."); } else
+				 * if (objBillHeader.getSeller() == null) {
+				 * entityErrorMessage.append("<br>Seller information is not entered."); } else
+				 * if (objBillHeader.getBuyer() == null) {
+				 * entityErrorMessage.append("<br>Buyer information is not entered."); } else if
+				 * (objBillHeader.getStuffer() == null) {
+				 * entityErrorMessage.append("<br>Stuffer information is not entered."); } else
+				 * if (objBillHeader.getConsolidator() == null) {
+				 * entityErrorMessage.append("<br>Consolidator information is not entered."); }
+				 * else if (objBillHeader.getImporter() == null) {
+				 * entityErrorMessage.append("<br>Importer information is not entered."); }
+				 */
+			}
+			// Validating Cargo Entry Empty or not
+			// Setting N/C as equipment number
+			if (!objBillHeader.getBillType().equalsIgnoreCase("empty")) {
+				boolean outerLoopBreak = false;
+				boolean emptyCargo = false;
+				boolean containerPresent = false;
+				for (int i = 0; i < objBillHeader.getEquipments().size() && !outerLoopBreak; i++) {
+					for (Cargo objCargo : objBillHeader.getEquipments().get(i).getCargos()) {
+						if (objCargo.getDescriptionsOfGoods().isEmpty() && objCargo.getHazardCode().isEmpty()
+								&& objCargo.getCountry().isEmpty()) {
+							Equipment nocontainer = new Equipment();
+							nocontainer.setEquipmentNo("N/C");
+							nocontainer.setCargos(null);
+							nocontainer.setPackages(null);
+							nocontainer.setSeals(null);
+							objDao.insertIntoEquipments(nocontainer, billLadingId);
+							outerLoopBreak = true;
+							break;
+						}
+					}
+				}
+				// to check for each Cargo if the caargo values is present where empty cargo
+				// fields are inserted
+				if (outerLoopBreak) {
+					for (int i = 0; i < objBillHeader.getEquipments().size(); i++) {
+						for (Cargo objCargo : objBillHeader.getEquipments().get(i).getCargos()) {
+							if (objCargo.getDescriptionsOfGoods().isEmpty() && objCargo.getHazardCode().isEmpty()
+									&& objCargo.getCountry().isEmpty()) {
+								emptyCargo = true;
+								break;
+							}
+						}
+						if (emptyCargo) {
+							for (Cargo objCargo : objBillHeader.getEquipments().get(i).getCargos()) {
+								if (!objCargo.getDescriptionsOfGoods().isEmpty() || !objCargo.getHazardCode().isEmpty()
+										|| !objCargo.getCountry().isEmpty()) {
+									containerPresent = true;
+									break;
+								}
+							}
+							if (!containerPresent) {
+								manifestEntityErrorMessage
+										.append("Equipment & Package should have each entry from Cargo<br>");
+								objBillHeader.setManifestErrorDescription(manifestEntityErrorMessage.toString());
+							}
+						}
+					}
 				}
 
 			}
-			//Setting Entity Error
+
+			// Setting Entity Error
 			entityErrorMessage.append(objCustomerProfiledao.getIsfErrorMessage());
 			// Setting ISF errorDescription
 			objBillHeader.setIsfErrorDescription(entityErrorMessage.toString());
@@ -316,6 +406,7 @@ public class BillsServiceImpl implements BillsService {
 			// Adding into voyagePortDetails
 			objDao.insertIntoVoyagePortDetails(objBillHeader, "");
 			// Checking isFROBBill
+
 			if (objDao.isFROBBill(objBillHeader)) {
 				String firstUsDischargePort = objDao.getDistrictPortForFROB(
 						objBillHeader.getVesselSchedule().getVoyageId(), objBillHeader.getLoginScac());
@@ -328,8 +419,8 @@ public class BillsServiceImpl implements BillsService {
 
 	}
 
-	private void processBillForUpdate(BillHeader objBillHeader, CustomerProfileDAO objCustomerProfiledao)
-			throws SQLException, ErrorResponseException {
+	private void processBillForUpdate(BillHeader objBillHeader, CustomerProfileDAO objCustomerProfiledao,
+			ConfigScac configScac) throws SQLException, ErrorResponseException {
 		logger.info("processBillForUpdate :: ");
 		String isferrormsg = new String("");
 		BillsDAO objDao = new BillsDAO(objCustomerProfiledao.getConnection());
@@ -346,22 +437,52 @@ public class BillsServiceImpl implements BillsService {
 				objDao.deleteFromPackages(billLadingId);
 				objDao.deleteFromCargo(billLadingId);
 				// Adding insertIntoConsigneeShipperDetails
-				objDao.insertIntoConsigneeShipperDetails(objBillHeader.getShipper(), "shipper", billLadingId);
-				objDao.insertIntoConsigneeShipperDetails(objBillHeader.getBookingParty(), "booking", billLadingId);
-				objDao.insertIntoConsigneeShipperDetails(objBillHeader.getSeller(), "seller", billLadingId);
-				objDao.insertIntoConsigneeShipperDetails(objBillHeader.getStuffer(), "stuffer", billLadingId);
-				objDao.insertIntoConsigneeShipperDetails(objBillHeader.getConsignee(), "consignee", billLadingId);
-				objDao.insertIntoConsigneeShipperDetails(objBillHeader.getNotify(), "notify", billLadingId);
-				objDao.insertIntoConsigneeShipperDetails(objBillHeader.getConsolidator(), "consolidator", billLadingId);
-				objDao.insertIntoConsigneeShipperDetails(objBillHeader.getImporter(), "importer", billLadingId);
-				objDao.insertIntoConsigneeShipperDetails(objBillHeader.getBuyer(), "buyer", billLadingId);
-				objDao.insertIntoConsigneeShipperDetails(objBillHeader.getShipTo(), "shipTo", billLadingId);
+				objDao.insertIntoConsigneeShipperDetails(objBillHeader.getShipper(), "shipper", billLadingId,
+						objBillHeader);
+				objDao.insertIntoConsigneeShipperDetails(objBillHeader.getBookingParty(), "booking", billLadingId,
+						objBillHeader);
+				objDao.insertIntoConsigneeShipperDetails(objBillHeader.getSeller(), "seller", billLadingId,
+						objBillHeader);
+				objDao.insertIntoConsigneeShipperDetails(objBillHeader.getStuffer(), "stuffer", billLadingId,
+						objBillHeader);
+				objDao.insertIntoConsigneeShipperDetails(objBillHeader.getConsignee(), "consignee", billLadingId,
+						objBillHeader);
+				objDao.insertIntoConsigneeShipperDetails(objBillHeader.getNotify(), "notify", billLadingId,
+						objBillHeader);
+				objDao.insertIntoConsigneeShipperDetails(objBillHeader.getConsolidator(), "consolidator", billLadingId,
+						objBillHeader);
+				objDao.insertIntoConsigneeShipperDetails(objBillHeader.getImporter(), "importer", billLadingId,
+						objBillHeader);
+				objDao.insertIntoConsigneeShipperDetails(objBillHeader.getBuyer(), "buyer", billLadingId,
+						objBillHeader);
+				objDao.insertIntoConsigneeShipperDetails(objBillHeader.getShipTo(), "shipTo", billLadingId,
+						objBillHeader);
 				// Adding insertIntoNotifyPartyDetails
 				objDao.insertIntoNotifyPartyDetails(objBillHeader.getNotifyParties(), billLadingId);
 				// Setting ISF Type
-				objDao.isFROBBill(objBillHeader);
+				boolean isIsf10 = objDao.isFROBBill(objBillHeader);
+				if (!isIsf10) {
+					entityErrorMessage.append(objCustomerProfiledao.getEntityIsfErrorMessage());
+				}
+
 				// Adding Equipments
-				addEquipments(objBillHeader, billLadingId, objDao, objCustomerProfiledao);
+				addEquipments(objBillHeader, billLadingId, objDao, objCustomerProfiledao, configScac, isIsf10);
+				errorMessage = objDao.getPkgType();
+				// PackageType Validation
+				if (errorMessage.length() > 5) {
+					throw new ErrorResponseException(errorMessage.toString());
+				}
+				// validate Hazard Code
+				errorMessage = objDao.getHazardErrorMessage();
+				if (errorMessage.length() > 5) {
+					throw new ErrorResponseException(errorMessage.toString());
+				}
+				// validate Hazard Code
+				errorMessage = objDao.getHazardErrorMessage();
+				if (errorMessage.length() > 5) {
+					throw new ErrorResponseException(errorMessage.toString());
+				}
+
 				// Updating into billDetailStatus if all Adding Equipments is succeeds
 				// Setting ISF Error
 
@@ -371,29 +492,81 @@ public class BillsServiceImpl implements BillsService {
 				System.out.println(entityErrorMessage);
 
 				if (objBillHeader.getIsfType() == "ISF-5") {
-					if (objBillHeader.getShipTo() == null) {
-						entityErrorMessage.append("<br>Ship To information is not entered.");
-					}
-					if (objBillHeader.getBookingParty() == null) {
-						entityErrorMessage.append("<br>Booking Party information is not entered.");
-					}
+					/*
+					 * if (objBillHeader.getShipTo() == null) {
+					 * entityErrorMessage.append("<br>Ship To information is not entered."); } if
+					 * (objBillHeader.getBookingParty() == null) {
+					 * entityErrorMessage.append("<br>Booking Party information is not entered."); }
+					 */
 				} else if (objBillHeader.getIsfType() == "ISF-10") {
-					if (objBillHeader.getShipTo() == null) {
-						entityErrorMessage.append("<br>Ship To information is not entered.");
-					} else if (objBillHeader.getSeller() == null) {
-						entityErrorMessage.append("<br>Seller information is not entered.");
-					} else if (objBillHeader.getBuyer() == null) {
-						entityErrorMessage.append("<br>Buyer information is not entered.");
-					} else if (objBillHeader.getStuffer() == null) {
-						entityErrorMessage.append("<br>Stuffer information is not entered.");
-					} else if (objBillHeader.getConsolidator() == null) {
-						entityErrorMessage.append("<br>Consolidator information is not entered.");
-					} else if (objBillHeader.getImporter() == null) {
-						entityErrorMessage.append("<br>Importer information is not entered.");
-					}
+					/*
+					 * if (objBillHeader.getShipTo() == null) {
+					 * entityErrorMessage.append("<br>Ship To information is not entered."); } else
+					 * if (objBillHeader.getSeller() == null) {
+					 * entityErrorMessage.append("<br>Seller information is not entered."); } else
+					 * if (objBillHeader.getBuyer() == null) {
+					 * entityErrorMessage.append("<br>Buyer information is not entered."); } else if
+					 * (objBillHeader.getStuffer() == null) {
+					 * entityErrorMessage.append("<br>Stuffer information is not entered."); } else
+					 * if (objBillHeader.getConsolidator() == null) {
+					 * entityErrorMessage.append("<br>Consolidator information is not entered."); }
+					 * else if (objBillHeader.getImporter() == null) {
+					 * entityErrorMessage.append("<br>Importer information is not entered."); }
+					 */
 
 				}
-				//Setting Entity Error
+				// Validating Cargo Entry Empty or not
+				// Setting N/C as equipment number
+				if (!objBillHeader.getBillType().equalsIgnoreCase("empty")) {
+					boolean outerLoopBreak = false;
+					boolean emptyCargo = false;
+					boolean containerPresent = false;
+					for (int i = 0; i < objBillHeader.getEquipments().size() && !outerLoopBreak; i++) {
+						for (Cargo objCargo : objBillHeader.getEquipments().get(i).getCargos()) {
+							if (objCargo.getDescriptionsOfGoods().isEmpty() && objCargo.getHazardCode().isEmpty()
+									&& objCargo.getCountry().isEmpty()) {
+								Equipment nocontainer = new Equipment();
+								nocontainer.setEquipmentNo("N/C");
+								nocontainer.setCargos(null);
+								nocontainer.setPackages(null);
+								nocontainer.setSeals(null);
+								objDao.insertIntoEquipments(nocontainer, billLadingId);
+								outerLoopBreak = true;
+								break;
+							}
+						}
+					}
+					// to check for each Cargo if the caargo values is present where empty cargo
+					// fields are inserted
+					if (outerLoopBreak) {
+						for (int i = 0; i < objBillHeader.getEquipments().size(); i++) {
+							for (Cargo objCargo : objBillHeader.getEquipments().get(i).getCargos()) {
+								if (objCargo.getDescriptionsOfGoods().isEmpty() && objCargo.getHazardCode().isEmpty()
+										&& objCargo.getCountry().isEmpty()) {
+									emptyCargo = true;
+									break;
+								}
+							}
+							if (emptyCargo) {
+								for (Cargo objCargo : objBillHeader.getEquipments().get(i).getCargos()) {
+									if (!objCargo.getDescriptionsOfGoods().isEmpty()
+											|| !objCargo.getHazardCode().isEmpty()
+											|| !objCargo.getCountry().isEmpty()) {
+										containerPresent = true;
+										break;
+									}
+								}
+								if (!containerPresent) {
+									manifestEntityErrorMessage
+											.append("Equipment & Package should have each entry from Cargo<br>");
+									objBillHeader.setManifestErrorDescription(manifestEntityErrorMessage.toString());
+								}
+							}
+						}
+					}
+				}
+
+				// Setting Entity Error
 				entityErrorMessage.append(objCustomerProfiledao.getIsfErrorMessage());
 				// Setting ISF errorDescription
 				objBillHeader.setIsfErrorDescription(entityErrorMessage.toString());
@@ -419,35 +592,91 @@ public class BillsServiceImpl implements BillsService {
 	}
 
 	private void addEquipments(BillHeader objBillHeader, int billLadingId, BillsDAO objBillsDao,
-			CustomerProfileDAO customerProfileDao) throws SQLException {
+			CustomerProfileDAO customerProfileDao, ConfigScac configScac, boolean isFrob) throws SQLException {
 		boolean returnedVal = true;
 		int packageIndex = 0;
 		int cargoIndex = 0;
 
-		for (Equipment objEquipment : objBillHeader.getEquipments()) {
-			if (!objBillsDao.insertIntoEquipments(objEquipment, billLadingId)) {
-				returnedVal = false;
-				break;
+		// adding empty containers
+		if (objBillHeader.getBillType().equalsIgnoreCase("empty")) {
+			System.out.println("Inside empty Containers");
+			for (Equipment objEquipment : objBillHeader.getEquipments()) {
+
+				if (!objBillsDao.insertIntoEquipments(objEquipment, billLadingId)) {
+					returnedVal = false;
+					break;
+				}
+
+				if (objEquipment.getSeals() != null && !objEquipment.getSeals().isEmpty()) {
+					if (!objBillsDao.insertIntoSeals(objEquipment, billLadingId)) {
+						returnedVal = false;
+						break;
+					}
+				} else if (!objBillsDao.insertIntoEmptySeals(objEquipment, billLadingId)) {
+					returnedVal = false;
+					break;
+				}
+
+				if (objEquipment.getPackages() != null && !objEquipment.getPackages().isEmpty()) {
+					packageIndex = objBillsDao.addPackages(objEquipment, billLadingId, packageIndex);
+					if (packageIndex == -1) {
+						returnedVal = false;
+						break;
+					}
+				} else {
+					packageIndex = objBillsDao.addEmptyPackages(objEquipment, billLadingId, packageIndex);
+					if (packageIndex == -1) {
+						returnedVal = false;
+						break;
+					}
+				}
+
+				if (objEquipment.getCargos() != null && !objEquipment.getCargos().isEmpty()) {
+					if (cargoIndex < objEquipment.getCargos().size()) {
+						customerProfileDao.validateCustomer(objEquipment.getCargos().get(cargoIndex).getManufacturer(),
+								objBillHeader.getLoginScac());
+					}
+					cargoIndex = objBillsDao.addCargos(objEquipment, billLadingId, cargoIndex, configScac, isFrob);
+					if (cargoIndex == -1) {
+						returnedVal = false;
+						break;
+					}
+				} else {
+					cargoIndex = objBillsDao.addEmptyCargos(objEquipment, billLadingId, cargoIndex, isFrob);
+					if (cargoIndex == -1) {
+						returnedVal = false;
+						break;
+					}
+				}
+
 			}
-			if (!objBillsDao.insertIntoSeals(objEquipment, billLadingId)) {
-				returnedVal = false;
-				break;
-			}
-			packageIndex = objBillsDao.addPackages(objEquipment, billLadingId, packageIndex);
-			if (packageIndex == -1) {
-				returnedVal = false;
-				break;
-			}
-			if (cargoIndex < objEquipment.getCargos().size()) {
-				customerProfileDao.validateCustomer(objEquipment.getCargos().get(cargoIndex).getManufacturer(),
-						objBillHeader.getLoginScac());
-			}
-			cargoIndex = objBillsDao.addCargos(objEquipment, billLadingId, cargoIndex);
-			if (cargoIndex == -1) {
-				returnedVal = false;
-				break;
+		} else {
+			for (Equipment objEquipment : objBillHeader.getEquipments()) {
+				if (!objBillsDao.insertIntoEquipments(objEquipment, billLadingId)) {
+					returnedVal = false;
+					break;
+				}
+				if (!objBillsDao.insertIntoSeals(objEquipment, billLadingId)) {
+					returnedVal = false;
+					break;
+				}
+				packageIndex = objBillsDao.addPackages(objEquipment, billLadingId, packageIndex);
+				if (packageIndex == -1) {
+					returnedVal = false;
+					break;
+				}
+				if (cargoIndex < objEquipment.getCargos().size()) {
+					customerProfileDao.validateCustomer(objEquipment.getCargos().get(cargoIndex).getManufacturer(),
+							objBillHeader.getLoginScac());
+				}
+				cargoIndex = objBillsDao.addCargos(objEquipment, billLadingId, cargoIndex, configScac, isFrob);
+				if (cargoIndex == -1) {
+					returnedVal = false;
+					break;
+				}
 			}
 		}
+
 		if (!returnedVal) {
 			throw new SQLException();
 		}

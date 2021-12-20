@@ -50,7 +50,7 @@ public class Party {
 			objPartyMessage = " name :, ";
 		String addressInfoMessage = addressInfo.validateAddressInfo();
 		if (addressInfoMessage.length() > 0)
-			objPartyMessage = objPartyMessage + " addressInfo:{" + addressInfoMessage + "}";
+			objPartyMessage = objPartyMessage + " addressInfo:{" + addressInfoMessage +" for Party "+name+ "}";
 		return objPartyMessage;
 	}
 }

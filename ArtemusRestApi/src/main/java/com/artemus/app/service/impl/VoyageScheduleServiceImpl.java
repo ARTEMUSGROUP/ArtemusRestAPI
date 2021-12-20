@@ -300,16 +300,40 @@ public class VoyageScheduleServiceImpl implements VoyageScheduleService {
 				result = false;
 			}
 
+			// Location enter must be loadport or discharge port
+			portValidation = false;
+			String locationName = "";
+			for (PortDetails portCall : objVoyage.getPortDetails()) {
+				if (portCall.getLoad() != true && portCall.getDischarge() != true) {
+					locationName = portCall.getLocation().getLocation();
+					portValidation = true;
+					break;
+				}
+			}
+
+			if (portValidation) {
+				if (errorMessage.length() > 0) {
+					errorMessage.append(" , ");
+				}
+				errorMessage.append(
+						"Location entered:" + locationName + " must be assigned as a Load Port or Dischage Port  ");
+				result = false;
+			}
+
 			String lastloaddate;
 			String dischargeDate;
+			String lastSailingDate;
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 			java.util.Date lastloaddate1 = null;
 			java.util.Date dichargedate1 = null;
+			java.util.Date lastSailingDate1 = null;
 			for (PortDetails portCall : objVoyage.getPortDetails()) {
 				if (portCall.getLastLoadPort() == true) {
 					lastloaddate = portCall.getArrivalDate();
+					lastSailingDate = portCall.getSailingDate();
 					try {
 						lastloaddate1 = sdf.parse(lastloaddate);
+						lastSailingDate1 = sdf.parse(lastSailingDate);
 					} catch (Exception e) {
 						System.out.println("Date is not in correct format");
 						errorMessage.append(
@@ -335,15 +359,63 @@ public class VoyageScheduleServiceImpl implements VoyageScheduleService {
 						result = false;
 						break;
 					}
-					if (dichargedate1.compareTo(lastloaddate1) >= 0 || dichargedate1.compareTo(lastloaddate1) == 0) {
-						result = true;
+
+					if (lastloaddate1 != null) {
+						if (dichargedate1.compareTo(lastloaddate1) >= 0
+								|| dichargedate1.compareTo(lastloaddate1) == 0) {
+							result = true;
+						} else {
+							if (errorMessage.length() > 0) {
+								errorMessage.append(" , ");
+							}
+							// Error message
+							errorMessage
+									.append(" 'arrivalDate' of discharge port " + portCall.getLocation().getLocation()
+											+ "should not be less than last load port please check 'portDetails' ");
+						}
 					} else {
 						if (errorMessage.length() > 0) {
 							errorMessage.append(" , ");
 						}
 						// Error message
-						errorMessage.append(" 'arrivalDate' of discharge port " + portCall.getLocation().getLocation()
-								+ "should not be less than last load port please check 'portDetails' ");
+						errorMessage.append("lastLoadPort : Voyage should have atleast one lastLoadPort");
+						break;
+					}
+
+				}
+			}
+
+			// To check Sailing Date is greater than last load port for Load Ports
+
+			for (PortDetails portCall : objVoyage.getPortDetails()) {
+				if (portCall.getLoad() == true && portCall.getLastLoadPort() != true) {
+					dischargeDate = portCall.getSailingDate();
+					try {
+						dichargedate1 = sdf.parse(dischargeDate);
+					} catch (Exception e) {
+						System.out.println("Date is not in correct format");
+						errorMessage.append("sailingDate : is not in correct format, correct format is YYYY-MM-DD");
+						e.printStackTrace();
+						result = false;
+						break;
+					}
+					if (lastSailingDate1 != null) {
+						if (dichargedate1.compareTo(lastSailingDate1) <= 0) {
+							result = true;
+						} else {
+							if (errorMessage.length() > 0) {
+								errorMessage.append(" , ");
+							} // Error message
+							errorMessage.append(
+									" 'Sailing Date' of Load port for Location " + portCall.getLocation().getLocation()
+											+ " should not be greater than last load port please check 'portDetails' ");
+						}
+					} else {
+						if (errorMessage.length() > 0) {
+							errorMessage.append(" , ");
+						} // Error message
+						errorMessage.append("lastLoadPort : Voyage should have atleast one lastLoadPort");
+						break;
 					}
 				}
 			}
@@ -411,6 +483,7 @@ public class VoyageScheduleServiceImpl implements VoyageScheduleService {
 		boolean result = true;
 		try {
 			for (PortDetails objPortDetail : objVoyage.getPortDetails()) {
+				String customCodefromUNCode = "";
 				Location locationbean = objPortDetail.getLocation();
 				objLocationdao.setLocationBean(locationbean);
 				if (locationbean.getLocationType().equalsIgnoreCase("I")) {
@@ -422,24 +495,31 @@ public class VoyageScheduleServiceImpl implements VoyageScheduleService {
 
 				if (locationbean.getCustomCode() == null || locationbean.getCustomCode().isEmpty()) {
 					// setting customCode from locationCode
-					String customCodefromUNCode = objLocationdao.getLocationCode(locationbean.getUnlocode(), loginScac);
-					locationbean.setCustomCode(customCodefromUNCode);
+					if (locationbean.getUnlocode() != null && !locationbean.getUnlocode().isEmpty()) {
+						customCodefromUNCode = objLocationdao.getLocationCode(locationbean.getUnlocode(), loginScac);
+						locationbean.setCustomCode(customCodefromUNCode);
+					} else {
+						locationbean.setCustomCode("");
+					}
 				}
 
-				if (locationbean.getCustomCode() != null || !locationbean.getCustomCode().isEmpty()) {
+				if (!locationbean.getCustomCode().isEmpty()) {
 
 					int locationIdfromUNCode = objLocationdao.getLocationIdfromUnlocode(locationbean.getCustomCode(),
 							loginScac);
 					int locationIdfromLocation = objLocationdao.getLocationId(locationbean.getLocation(), loginScac);
-					if(locationIdfromLocation!=0) {
+					if (locationIdfromLocation != 0 && locationIdfromUNCode != 0) {
 						if (locationIdfromUNCode != locationIdfromLocation) {
-							errorMessage.append("Unlocode: " + locationbean.getUnlocode()
-							+ " entered is same for multiple Locations in AMS system.");
+							errorMessage.append("Unlocode: " + locationbean.getUnlocode() + "for Custom Code"
+									+ locationbean.getCustomCode()
+									+ "entered is same for multiple Locations in AMS system.");
 						}
-					}else {
+					}
+
+					// Insert into location
+					if (locationIdfromLocation == 0) {
 						objLocationdao.insert(locationbean, loginScac);
 					}
-					
 
 					if (objLocationdao.isForeignPort(locationbean.getCustomCode())) {
 						locationbean.setCustomForeign(true);
@@ -464,9 +544,11 @@ public class VoyageScheduleServiceImpl implements VoyageScheduleService {
 					if (errorMessage.length() > 0) {
 						errorMessage.append(" , ");
 					}
-					if (locationbean.getUnlocode() != null && (!locationbean.getUnlocode().isEmpty())) {
-						errorMessage.append("customCode for unlocode : " + locationbean.getUnlocode()+" does not exists for the login scac" + loginScac);
-					}
+
+					errorMessage.append("customCode for unlocode : " + locationbean.getUnlocode() + "and Location Name : "
+							+ locationbean.getLocation() + "is invalid or  does not exists for the login scac"
+							+ loginScac);
+
 				}
 			}
 		} finally {

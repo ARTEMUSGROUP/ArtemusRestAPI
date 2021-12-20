@@ -156,7 +156,7 @@ public class BillHeaderUtils {
 			StringBuffer objEquipmentsMessage = new StringBuffer();
 			int equipmentCount = 0;
 			for (Equipment objEquipment : objBillHeader.getEquipments()) {
-				String str = objEquipment.validateEquipment().toString();
+				String str = objEquipment.validateEquipment(objBillHeader.getBillType()).toString();
 				if (str.length() > 0) {
 					objEquipmentsMessage.append(equipmentCount + ": {" + str + "}");
 				}

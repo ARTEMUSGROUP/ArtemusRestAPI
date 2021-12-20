@@ -83,7 +83,7 @@ public class OriginalManifestDAO {
 		try {
 
 			stmt = con.prepareStatement(
-					"SELECT voyage_id FROM artemus.voyage where vessel_id=? and login_scac=? and voyage_number=?");
+					"SELECT voyage_id FROM voyage where vessel_id=? and login_scac=? and voyage_number=?");
 			stmt.setInt(1, vesselID);
 			stmt.setString(2, objManifest.getLoginScac());
 			stmt.setString(3, objManifest.getVoyageNumber());
@@ -164,7 +164,7 @@ public class OriginalManifestDAO {
 		String result = "";
 		try {
 			stmt1 = con.prepareStatement(
-					"SELECT location_name FROM artemus.location where location_code=? and login_scac=?");
+					"SELECT location_name FROM location where location_code=? and login_scac=?");
 			stmt1.setString(1, loadPortCustomCode);
 			stmt1.setString(2, loginScac);
 			rs = stmt1.executeQuery();
