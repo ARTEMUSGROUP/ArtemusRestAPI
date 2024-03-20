@@ -29,6 +29,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
             @Server(
                     description = "Artemus API Production Server",
                     url = "https://api.artemusgroupusa.com/ArtemusApi/v1/"
+                    
                    )
     }
 )

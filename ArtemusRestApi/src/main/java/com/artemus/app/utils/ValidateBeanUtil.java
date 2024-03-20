@@ -9,6 +9,7 @@ import javax.validation.ValidatorFactory;
 
 import com.artemus.app.model.request.AddOriginalManifest;
 import com.artemus.app.model.request.BillHeader;
+import com.artemus.app.model.request.BillStatus;
 import com.artemus.app.model.request.JPBillHeader;
 import com.artemus.app.model.request.Vessel;
 import com.artemus.app.model.request.Voyage;
@@ -99,5 +100,16 @@ public class ValidateBeanUtil {
 		
 		return objString;
 	}
+	public static StringBuffer getConstraintViolationMsgForBillStatus(BillStatus objBillStatus) {
+		Set<ConstraintViolation<BillStatus>> violations = validator.validate(objBillStatus);
+		StringBuffer objString = new StringBuffer();
+		for (ConstraintViolation<BillStatus> violation : violations) {
+			if (objString.length()>0) {
+				objString.append(" , ");
+			}
+			objString.append(violation.getMessage());
+		}
 
+		return objString;
+	}
 }
